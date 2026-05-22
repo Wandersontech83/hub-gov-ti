@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal de Governança de TI · Enterprise</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --bg:#07070f;--bg2:#0e0e1a;--bg3:#141422;--card:#18182a;--card2:#1e1e30;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);--border3:rgba(255,255,255,0.18);
+  --text:#eeeef8;--text2:#8888bb;--text3:#44445a;
+  --blue:#4f8ef7;--blue2:#1a3a6e;--blue3:#0d1f3c;
+  --green:#2dd4a0;--green2:#0d3d2e;--green3:#062018;
+  --amber:#f5a623;--amber2:#3d2800;--amber3:#1f1400;
+  --red:#f75f5f;--red2:#3d1010;--red3:#1f0808;
+  --purple:#a78bfa;--purple2:#2d1f4e;--purple3:#180f2a;
+  --teal:#22d3ee;--teal2:#0d3040;
+  --pink:#f472b6;--pink2:#3d1030;
+  --gray-500:#6b7280;--gray-400:#9ca3af;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,142,247,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,0.02) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+
+/* TICKER */
+.ticker-wrap{background:var(--bg2);border-bottom:1px solid var(--border2);overflow:hidden;height:32px;display:flex;align-items:center;position:sticky;top:0;z-index:100;}
+.ticker-label{background:linear-gradient(90deg,var(--blue),var(--purple));color:#fff;font-size:9px;font-weight:700;letter-spacing:0.12em;padding:0 12px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;text-transform:uppercase;}
+.ticker-track{overflow:hidden;flex:1;}
+.ticker-inner{display:flex;align-items:center;white-space:nowrap;animation:ticker 50s linear infinite;}
+.ticker-inner:hover{animation-play-state:paused;}
+@keyframes ticker{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.ti{display:inline-flex;align-items:center;gap:4px;padding:0 20px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text2);}
+.ti b{font-weight:600;}.vb{color:var(--blue);}.vg{color:var(--green);}.va{color:var(--amber);}.vr{color:var(--red);}.vp{color:var(--purple);}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;position:relative;z-index:1;border-bottom:1px solid var(--border);background:rgba(7,7,15,0.95);backdrop-filter:blur(20px);}
+.header-left{display:flex;align-items:center;gap:12px;}
+.logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.header h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;}
+.header p{font-size:10px;color:var(--text2);margin-top:1px;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.badge-live{display:flex;align-items:center;gap:5px;background:var(--green2);color:var(--green);font-size:10px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid rgba(45,212,160,0.2);}
+.dot-live{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.btn-sm{background:var(--card);border:1px solid var(--border2);color:var(--text2);font-size:11px;font-family:inherit;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all 0.2s;}
+.btn-sm:hover{background:var(--card2);color:var(--text);}
+.btn-sm.active-auto{background:var(--purple2);color:var(--purple);border-color:rgba(167,139,250,0.3);}
+#clock{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+
+/* TABS */
+.tabs-wrap{background:rgba(7,7,15,0.9);border-bottom:1px solid var(--border);position:sticky;top:32px;z-index:99;padding:0 24px;backdrop-filter:blur(20px);}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;position:relative;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{display:flex;align-items:center;gap:6px;padding:10px 16px;font-size:11px;font-weight:500;color:var(--text2);border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;flex-shrink:0;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--text);border-bottom-color:var(--tab-color,var(--blue));}
+.tab-icon{font-size:14px;}
+.tab-progress{position:absolute;bottom:0;left:0;height:2px;background:var(--purple);transition:width 0.1s linear;}
+
+/* CONTENT */
+.content{padding:20px 24px;position:relative;z-index:1;min-height:calc(100vh - 130px);}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:12px;}
+.kpi-grid-sm{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:12px;}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.card-sm{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;}
+.card-title{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;}
+.chart-h160{position:relative;width:100%;height:160px;}
+.chart-h200{position:relative;width:100%;height:200px;}
+.chart-h220{position:relative;width:100%;height:220px;}
+.chart-h260{position:relative;width:100%;height:260px;}
+
+/* KPI */
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;position:relative;overflow:hidden;transition:transform 0.2s,border-color 0.2s;cursor:default;}
+.kpi:hover{transform:translateY(-1px);border-color:var(--border2);}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--blue));}
+.kpi-icon{font-size:16px;margin-bottom:6px;}
+.kpi-label{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}
+.kpi-val{font-size:20px;font-weight:700;letter-spacing:-0.4px;}
+.kpi-sub{font-size:9px;color:var(--text3);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+
+/* BADGES */
+.badge{font-size:9px;font-weight:600;padding:2px 7px;border-radius:99px;white-space:nowrap;}
+.b-red{background:var(--red2);color:var(--red);border:1px solid rgba(247,95,95,0.2);}
+.b-amber{background:var(--amber2);color:var(--amber);border:1px solid rgba(245,166,35,0.2);}
+.b-blue{background:var(--blue2);color:var(--blue);border:1px solid rgba(79,142,247,0.2);}
+.b-green{background:var(--green2);color:var(--green);border:1px solid rgba(45,212,160,0.2);}
+.b-purple{background:var(--purple2);color:var(--purple);border:1px solid rgba(167,139,250,0.2);}
+.b-teal{background:var(--teal2);color:var(--teal);border:1px solid rgba(34,211,238,0.2);}
+.b-gray{background:var(--bg3);color:var(--text2);border:1px solid var(--border2);}
+
+/* TABLES */
+.tbl-wrap{overflow-x:auto;max-height:320px;overflow-y:auto;}
+.tbl-wrap::-webkit-scrollbar{width:3px;height:3px;}
+.tbl-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.tbl{width:100%;border-collapse:collapse;font-size:11px;}
+.tbl th{text-align:left;padding:8px 10px;font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);font-weight:500;white-space:nowrap;background:var(--bg2);}
+.tbl td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--bg3);cursor:pointer;}
+.tbl tr.clickable:hover td{background:var(--bg3);cursor:pointer;}
+
+/* PROGRESS */
+.prog-wrap{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.prog-bar{height:100%;border-radius:3px;transition:width 1s ease;}
+
+/* ROW ITEM */
+.row-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.row-item:last-child{border-bottom:none;}
+
+/* SEMAFORO */
+.semaforo{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;}
+.dot-sem{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:700px;max-height:85vh;overflow-y:auto;position:relative;}
+.modal::-webkit-scrollbar{width:3px;}
+.modal::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card);z-index:1;border-radius:16px 16px 0 0;}
+.modal-title{font-size:15px;font-weight:600;}
+.modal-close{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.modal-close:hover{background:var(--red2);color:var(--red);}
+.modal-body{padding:20px;}
+.modal-section{margin-bottom:16px;}
+.modal-section-title{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.modal-field{background:var(--bg3);border-radius:8px;padding:10px 12px;}
+.modal-field-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}
+.modal-field-val{font-size:12px;font-weight:500;color:var(--text);}
+.modal-field-val.mono{font-family:'JetBrains Mono',monospace;font-size:11px;}
+.timeline{display:flex;flex-direction:column;gap:0;}
+.timeline-item{display:flex;gap:12px;position:relative;}
+.timeline-item::before{content:'';position:absolute;left:7px;top:20px;bottom:-4px;width:2px;background:var(--border2);}
+.timeline-item:last-child::before{display:none;}
+.timeline-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;border:2px solid;margin-top:4px;}
+.timeline-content{flex:1;padding-bottom:16px;}
+.timeline-time{font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-bottom:2px;}
+.timeline-text{font-size:11px;color:var(--text2);}
+
+/* DASHBOARD GERAL */
+.dash-geral{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:16px;}
+.dash-card-mod{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.dash-card-mod::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--mc,var(--blue));}
+.dash-card-mod:hover{border-color:var(--border2);transform:translateY(-2px);}
+.dash-card-mod-icon{font-size:22px;margin-bottom:8px;}
+.dash-card-mod-name{font-size:12px;font-weight:600;margin-bottom:4px;}
+.dash-card-mod-status{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2);}
+.dash-card-mod-kpis{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+.dash-kpi-mini{font-size:10px;font-family:'JetBrains Mono',monospace;}
+
+/* AI BOX */
+.ai-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:12px;}
+.ai-msgs{display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto;margin-bottom:12px;}
+.ai-msgs::-webkit-scrollbar{width:3px;}
+.ai-msgs::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.msg{max-width:88%;padding:8px 12px;border-radius:10px;font-size:12px;line-height:1.6;}
+.msg-u{align-self:flex-end;background:var(--blue2);color:var(--blue);border:1px solid rgba(79,142,247,0.2);border-radius:10px 10px 2px 10px;}
+.msg-a{align-self:flex-start;background:var(--bg3);color:var(--text);border:1px solid var(--border);border-radius:10px 10px 10px 2px;}
+.msg-a.loading{color:var(--text3);}
+.ai-row{display:flex;gap:8px;}
+.ai-inp{flex:1;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;padding:8px 12px;border-radius:9px;outline:none;transition:border-color 0.2s;}
+.ai-inp:focus{border-color:rgba(79,142,247,0.4);}
+.ai-inp::placeholder{color:var(--text3);}
+.btn-send{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;border:none;font-family:inherit;font-size:12px;font-weight:500;padding:8px 14px;border-radius:9px;cursor:pointer;}
+.btn-send:disabled{opacity:0.4;cursor:not-allowed;}
+.suggs{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap;}
+.sugg{font-size:10px;padding:4px 9px;border-radius:7px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:inherit;}
+.sugg:hover{border-color:rgba(79,142,247,0.4);color:var(--blue);}
+
+/* LEGEND */
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.leg{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2);}
+.leg-d{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+
+/* SECTION DIVIDER */
+.sec-div{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.1em;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+
+/* SCROLLBAR GLOBAL */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr;}.modal-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-label">⚡ gov·ti</div>
+  <div class="ticker-track"><div class="ticker-inner" id="tickerEl"></div></div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">🏛️</div>
+    <div>
+      <h1>Portal de Governança de TI · Enterprise</h1>
+      <p>COBIT · ITIL · ISO 27001 · ISO 42001 · NIST · LGPD · TBM</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="badge-live"><div class="dot-live"></div>Live</div>
+    <span id="clock"></span>
+    <button class="btn-sm" id="btnAuto" onclick="toggleAuto()">▶ Auto 5min</button>
+    <button class="btn-sm" onclick="location.reload()">↺</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs" style="position:relative;">
+    <button class="tab active" data-tab="geral" style="--tab-color:var(--blue);" onclick="switchTab('geral',this)"><span class="tab-icon">📊</span> Visão Geral</button>
+    <button class="tab" data-tab="contratos" style="--tab-color:var(--blue);" onclick="switchTab('contratos',this)"><span class="tab-icon">📋</span> Contratos</button>
+    <button class="tab" data-tab="fornecedores" style="--tab-color:var(--green);" onclick="switchTab('fornecedores',this)"><span class="tab-icon">🤝</span> Fornecedores</button>
+    <button class="tab" data-tab="itsm" style="--tab-color:var(--red);" onclick="switchTab('itsm',this)"><span class="tab-icon">🚨</span> ITSM</button>
+    <button class="tab" data-tab="projetos" style="--tab-color:var(--purple);" onclick="switchTab('projetos',this)"><span class="tab-icon">📁</span> Projetos</button>
+    <button class="tab" data-tab="conformidade" style="--tab-color:var(--teal);" onclick="switchTab('conformidade',this)"><span class="tab-icon">✅</span> Conformidade</button>
+    <button class="tab" data-tab="seguranca" style="--tab-color:var(--amber);" onclick="switchTab('seguranca',this)"><span class="tab-icon">🔐</span> Segurança & IAM</button>
+    <button class="tab" data-tab="ia" style="--tab-color:var(--purple);" onclick="switchTab('ia',this)"><span class="tab-icon">🤖</span> Gov. IA</button>
+    <button class="tab" data-tab="budget" style="--tab-color:var(--green);" onclick="switchTab('budget',this)"><span class="tab-icon">💰</span> Budget</button>
+    <button class="tab" data-tab="mudancas" style="--tab-color:var(--blue);" onclick="switchTab('mudancas',this)"><span class="tab-icon">🔄</span> Mudanças</button>
+    <div class="tab-progress" id="tabProgress" style="width:0%"></div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- ===== VISÃO GERAL ===== -->
+<div class="tab-panel active" id="panel-geral">
+  <div class="sec-div">Dashboard Executivo · Visão Consolidada</div>
+  <div class="dash-geral" id="dashGeral"></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Alertas críticos em aberto</div>
+      <div id="alertasCriticos" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Budget de TI · Visão consolidada</div>
+      <div id="budgetGeral"></div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="card"><div class="card-title">Contratos por status</div><div class="chart-h160"><canvas id="gChartContratos"></canvas></div></div>
+    <div class="card"><div class="card-title">Incidentes por prioridade</div><div class="chart-h160"><canvas id="gChartItsm"></canvas></div></div>
+    <div class="card"><div class="card-title">Maturidade COBIT por domínio</div><div class="chart-h160"><canvas id="gChartCobit"></canvas></div></div>
+  </div>
+  <div class="ai-box">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <div class="card-title" style="margin:0;">Assistente de Governança</div>
+      <span style="background:linear-gradient(135deg,var(--purple2),var(--blue2));border:1px solid rgba(167,139,250,0.3);color:var(--purple);font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;">✦ IA</span>
+    </div>
+    <div class="suggs">
+      <button class="sugg" onclick="ask('Qual o status geral da Governança de TI?')">📊 Status geral</button>
+      <button class="sugg" onclick="ask('Quais são os alertas mais críticos?')">⚠️ Alertas</button>
+      <button class="sugg" onclick="ask('Como está o budget de TI?')">💰 Budget</button>
+      <button class="sugg" onclick="ask('Quais contratos vencem em 90 dias?')">📋 Contratos</button>
+      <button class="sugg" onclick="ask('Quais incidentes estão críticos?')">🚨 Incidentes</button>
+      <button class="sugg" onclick="ask('Qual o nível de maturidade COBIT?')">📐 COBIT</button>
+    </div>
+    <div class="ai-msgs" id="aiMsgs"><div class="msg msg-a">Olá! Sou seu assistente de Governança de TI. Pergunte sobre qualquer módulo — contratos, incidentes, riscos, budget, conformidade ou IA. 😊</div></div>
+    <div class="ai-row">
+      <input class="ai-inp" id="aiInp" placeholder="Pergunte sobre qualquer módulo de Governança..." onkeydown="if(event.key==='Enter')sendAI()"/>
+      <button class="btn-send" id="btnSend" onclick="sendAI()">↗</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONTRATOS ===== -->
+<div class="tab-panel" id="panel-contratos">
+  <div class="kpi-grid" id="kpiContratos"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">CAPEX vs OPEX</div><div class="legend" id="legCv"></div><div class="chart-h200"><canvas id="cTipo"></canvas></div></div>
+    <div class="card"><div class="card-title">Valor por categoria</div><div class="chart-h200"><canvas id="cCat"></canvas></div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-title">% consumido por contrato</div><div class="chart-h220"><canvas id="cConsumo"></canvas></div></div>
+    <div class="card"><div class="card-title">Budget · Sustentação · Melhoria · Inovação</div><div id="budgetContratos"></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Todos os contratos · clique para detalhes</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblContratos"></table></div>
+  </div>
+</div>
+
+<!-- ===== FORNECEDORES ===== -->
+<div class="tab-panel" id="panel-fornecedores">
+  <div class="kpi-grid" id="kpiForn"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">SLA por fornecedor</div><div class="chart-h220"><canvas id="cSla"></canvas></div></div>
+    <div class="card"><div class="card-title">NPS interno</div><div class="chart-h220"><canvas id="cNps"></canvas></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Painel de fornecedores · clique para detalhes</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblForn"></table></div>
+  </div>
+</div>
+
+<!-- ===== ITSM ===== -->
+<div class="tab-panel" id="panel-itsm">
+  <div class="kpi-grid" id="kpiItsm"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Incidentes por prioridade</div><div class="chart-h200"><canvas id="cPrio"></canvas></div></div>
+    <div class="card"><div class="card-title">Tendência 6 meses</div><div class="chart-h200"><canvas id="cTend"></canvas></div></div>
+  </div>
+  <div class="card" style="margin-bottom:12px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <div class="card-title" style="margin:0;">Classificação por cores</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+      <div style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:16px;margin-bottom:4px;">🟢</div>
+        <div style="font-size:10px;font-weight:700;color:#22c55e;">VERDE</div>
+        <div style="font-size:9px;color:var(--text2);margin-top:2px;">Baixa · 8h úteis</div>
+      </div>
+      <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:16px;margin-bottom:4px;">🟡</div>
+        <div style="font-size:10px;font-weight:700;color:#f59e0b;">AMARELO</div>
+        <div style="font-size:9px;color:var(--text2);margin-top:2px;">Média · 4h</div>
+      </div>
+      <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:16px;margin-bottom:4px;">🔴</div>
+        <div style="font-size:10px;font-weight:700;color:#ef4444;">VERMELHO</div>
+        <div style="font-size:9px;color:var(--text2);margin-top:2px;">Alta · 2h · CM 30min</div>
+      </div>
+      <div style="background:rgba(17,24,39,0.8);border:1px solid rgba(156,163,175,0.3);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:16px;margin-bottom:4px;">⚫</div>
+        <div style="font-size:10px;font-weight:700;color:#9ca3af;">CRÍTICO P1</div>
+        <div style="font-size:9px;color:var(--text2);margin-top:2px;">P1 · 1h · CM 15min</div>
+      </div>
+      <div style="background:rgba(107,114,128,0.1);border:1px solid rgba(107,114,128,0.3);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:16px;margin-bottom:4px;">⬜</div>
+        <div style="font-size:10px;font-weight:700;color:#6b7280;">CINZA/RCA</div>
+        <div style="font-size:9px;color:var(--text2);margin-top:2px;">Problema · CM 48h</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Incidentes em aberto · clique para detalhes completos</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblItsm"></table></div>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <div class="card-title">Problemas e RCA em andamento</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblProblemas"></table></div>
+  </div>
+</div>
+
+<!-- ===== PROJETOS ===== -->
+<div class="tab-panel" id="panel-projetos">
+  <div class="kpi-grid" id="kpiProj"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Status do portfólio</div><div class="chart-h200"><canvas id="cProjStatus"></canvas></div></div>
+    <div class="card"><div class="card-title">Budget por projeto</div><div class="chart-h200"><canvas id="cProjBudget"></canvas></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Portfólio de projetos · clique para detalhes</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblProj"></table></div>
+  </div>
+</div>
+
+<!-- ===== CONFORMIDADE ===== -->
+<div class="tab-panel" id="panel-conformidade">
+  <div class="kpi-grid" id="kpiConf"></div>
+  <div class="g3">
+    <div class="card"><div class="card-title">Maturidade COBIT 2019</div><div class="chart-h200"><canvas id="cCobit"></canvas></div></div>
+    <div class="card"><div class="card-title">Controles ISO 27001</div><div class="chart-h200"><canvas id="cIso"></canvas></div></div>
+    <div class="card"><div class="card-title">Conformidade LGPD</div><div class="chart-h200"><canvas id="cLgpd"></canvas></div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Políticas · status e validade · clique para detalhes</div><div class="tbl-wrap"><table class="tbl" id="tblPoliticas"></table></div></div>
+    <div class="card"><div class="card-title">Riscos identificados · clique para detalhes</div><div class="tbl-wrap"><table class="tbl" id="tblRiscos"></table></div></div>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <div class="card-title">Auditorias e prazos · clique para detalhes</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblAud"></table></div>
+  </div>
+</div>
+
+<!-- ===== SEGURANÇA & IAM ===== -->
+<div class="tab-panel" id="panel-seguranca">
+  <div class="kpi-grid" id="kpiSeg"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Vulnerabilidades por severidade</div><div class="chart-h200"><canvas id="cVuln"></canvas></div></div>
+    <div class="card"><div class="card-title">Status IAM · Usuários e acessos</div><div class="chart-h200"><canvas id="cIam"></canvas></div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Vulnerabilidades abertas · clique para detalhes</div><div class="tbl-wrap"><table class="tbl" id="tblVuln"></table></div></div>
+    <div class="card"><div class="card-title">Usuários com acesso privilegiado · clique para detalhes</div><div class="tbl-wrap"><table class="tbl" id="tblIam"></table></div></div>
+  </div>
+</div>
+
+<!-- ===== GOV IA ===== -->
+<div class="tab-panel" id="panel-ia">
+  <div class="kpi-grid" id="kpiIa"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Modelos por classificação de risco</div><div class="chart-h200"><canvas id="cIaRisco"></canvas></div></div>
+    <div class="card"><div class="card-title">Controles ISO 42001 por domínio</div><div class="chart-h200"><canvas id="cIa42001"></canvas></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Inventário de modelos de IA · clique para detalhes</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblIa"></table></div>
+  </div>
+</div>
+
+<!-- ===== BUDGET ===== -->
+<div class="tab-panel" id="panel-budget">
+  <div class="kpi-grid" id="kpiBudget"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Distribuição por verba</div><div class="chart-h220"><canvas id="cBudgetDist"></canvas></div></div>
+    <div class="card"><div class="card-title">Realizado vs Previsto mensal</div><div class="chart-h220"><canvas id="cBudgetMensal"></canvas></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Detalhamento por centro de custo</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblBudget"></table></div>
+  </div>
+</div>
+
+<!-- ===== MUDANÇAS ===== -->
+<div class="tab-panel" id="panel-mudancas">
+  <div class="kpi-grid" id="kpiMud"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">RFCs por tipo</div><div class="chart-h200"><canvas id="cMudTipo"></canvas></div></div>
+    <div class="card"><div class="card-title">Status das mudanças</div><div class="chart-h200"><canvas id="cMudStatus"></canvas></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Registro de mudanças · clique para detalhes</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblMud"></table></div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Detalhes</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:10px 24px 16px;font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;position:relative;z-index:1;">
+  Portal Governança TI · Enterprise · COBIT · ITIL · ISO 27001 · ISO 42001 · NIST · LGPD · TBM · IA powered by Claude
+</div>
+
+<script>
+// =====================================================================
+// DADOS
+// =====================================================================
+const BUDGET_TOTAL = 6500000;
+
+const contratos = [
+  {id:'CTR-001',nome:'Microsoft Brasil',cat:'Software',tipo:'OPEX',verba:'Sustentação',valor:480000,consumido:400000,fim:'31/12/2026',dias:596,status:'Vigente',gestor:'Carlos Mendes',area:'Infraestrutura',descricao:'Licenças Microsoft 365 E3 para 200 usuários. Inclui Exchange, Teams, SharePoint e OneDrive.',renovacao:'Automática',contato:'vendas@microsoft.com.br'},
+  {id:'CTR-002',nome:'AWS Amazon',cat:'Cloud',tipo:'OPEX',verba:'Sustentação',valor:960000,consumido:720000,fim:'28/02/2026',dias:291,status:'Próximo',gestor:'Carlos Mendes',area:'Infraestrutura',descricao:'Serviços de Cloud Computing — instâncias EC2, S3, RDS e CloudFront.',renovacao:'Manual — avaliar mercado',contato:'aws-support@amazon.com'},
+  {id:'CTR-003',nome:'Oracle Brasil',cat:'Software',tipo:'CAPEX',verba:'Sustentação',valor:350000,consumido:350000,fim:'14/06/2025',dias:-334,status:'Vencido',gestor:'Ana Lima',area:'Banco de Dados',descricao:'Licença Oracle Database Enterprise Edition. Contrato vencido — regularização urgente.',renovacao:'Urgente — risco de autuação',contato:'oracle-brasil@oracle.com'},
+  {id:'CTR-004',nome:'Dell Technologies',cat:'Hardware',tipo:'CAPEX',verba:'Melhoria',valor:280000,consumido:280000,fim:'09/02/2026',dias:272,status:'Próximo',gestor:'Roberto Silva',area:'Infraestrutura',descricao:'3 servidores PowerEdge R750 com suporte ProSupport Plus.',renovacao:'Avaliar renovação ou substituição',contato:'dell-enterprise@dell.com'},
+  {id:'CTR-005',nome:'Cisco Systems',cat:'Hardware',tipo:'CAPEX',verba:'Melhoria',valor:195000,consumido:130000,fim:'30/06/2027',dias:778,status:'Vigente',gestor:'Roberto Silva',area:'Redes',descricao:'Equipamentos de rede — switches Catalyst 9300 e firewall Firepower.',renovacao:'Automática em 2027',contato:'cisco-br@cisco.com'},
+  {id:'CTR-006',nome:'ServiceNow',cat:'Software',tipo:'OPEX',verba:'Sustentação',valor:360000,consumido:270000,fim:'31/03/2026',dias:322,status:'Próximo',gestor:'Patrícia Costa',area:'Governança TI',descricao:'Plataforma ITSM — 75 licenças de usuário. Módulos ITSM, GRC e HRSD.',renovacao:'Negociar desconto — 3 anos',contato:'servicenow-br@servicenow.com'},
+  {id:'CTR-007',nome:'Accenture',cat:'Serviços',tipo:'OPEX',verba:'Inovação',valor:520000,consumido:468000,fim:'31/08/2025',dias:-255,status:'Vencido',gestor:'Fernanda Rocha',area:'Projetos',descricao:'Consultoria em transformação digital — projeto em fase final de entrega.',renovacao:'Encerrado — aguardando fechamento',contato:'accenture-br@accenture.com'},
+  {id:'CTR-008',nome:'Fortinet',cat:'Segurança',tipo:'CAPEX',verba:'Sustentação',valor:175000,consumido:175000,fim:'19/11/2025',dias:-175,status:'Vencido',gestor:'Marcos Oliveira',area:'Segurança',descricao:'Solução de segurança perimetral — FortiGate firewall e FortiAnalyzer.',renovacao:'Urgente — sem suporte ativo',contato:'fortinet-br@fortinet.com'},
+  {id:'CTR-009',nome:'SAP Brasil',cat:'Software',tipo:'OPEX',verba:'Sustentação',valor:1200000,consumido:600000,fim:'31/12/2027',dias:962,status:'Vigente',gestor:'Ana Lima',area:'Sistemas',descricao:'ERP SAP S/4HANA Cloud — módulos FI, CO, MM, SD e HCM. 150 usuários.',renovacao:'Automática — contrato plurianual',contato:'sap-brasil@sap.com'},
+  {id:'CTR-010',nome:'Claro Empresas',cat:'Conectividade',tipo:'OPEX',verba:'Sustentação',valor:144000,consumido:108000,fim:'31/05/2026',dias:383,status:'Vigente',gestor:'Roberto Silva',area:'Redes',descricao:'Link dedicado 1Gbps — R$12.000/mês. SLA 99,5% de disponibilidade.',renovacao:'Negociar upgrade para 10Gbps',contato:'claro-empresas@claro.com.br'},
+  {id:'CTR-011',nome:'Totvs',cat:'Software',tipo:'OPEX',verba:'Sustentação',valor:96000,consumido:80000,fim:'31/01/2026',dias:263,status:'Próximo',gestor:'Patrícia Costa',area:'RH/Sistemas',descricao:'Sistema de RH e Folha de Pagamento — manutenção e suporte técnico.',renovacao:'Avaliar migração para SAP HCM',contato:'totvs-suporte@totvs.com'},
+  {id:'CTR-012',nome:'IBM Brasil',cat:'Serviços',tipo:'OPEX',verba:'Sustentação',valor:228000,consumido:57000,fim:'31/10/2027',dias:901,status:'Vigente',gestor:'Carlos Mendes',area:'Infraestrutura',descricao:'Serviços gerenciados de backup e recuperação de desastres. SLA 99,9%.',renovacao:'Automática em 2027',contato:'ibm-services-br@ibm.com'},
+  {id:'CTR-013',nome:'Lenovo Brasil',cat:'Hardware',tipo:'CAPEX',verba:'Melhoria',valor:312000,consumido:312000,fim:'04/03/2026',dias:295,status:'Próximo',gestor:'Marcos Oliveira',area:'Suporte TI',descricao:'60 notebooks ThinkPad X1 Carbon — renovação do parque de usuários VIP.',renovacao:'Novo processo — avaliar Dell e HP',contato:'lenovo-br@lenovo.com'},
+  {id:'CTR-014',nome:'Datadog',cat:'Software',tipo:'OPEX',verba:'Sustentação',valor:84000,consumido:28000,fim:'31/01/2028',dias:1358,status:'Vigente',gestor:'Carlos Mendes',area:'Infraestrutura',descricao:'Plataforma de observabilidade — APM, logs e monitoramento de infraestrutura.',renovacao:'Automática — contrato 3 anos',contato:'datadog-br@datadog.com'},
+  {id:'CTR-015',nome:'Stefanini',cat:'Serviços',tipo:'OPEX',verba:'Sustentação',valor:432000,consumido:324000,fim:'31/12/2025',dias:232,status:'Atenção',gestor:'Marcos Oliveira',area:'Suporte TI',descricao:'Suporte técnico N1/N2 — help desk com 8 técnicos alocados. SLA abaixo do esperado.',renovacao:'Revisar SLA antes de renovar',contato:'stefanini-suporte@stefanini.com'},
+];
+
+const fornecedores = [
+  {id:'FOR-001',nome:'Microsoft Brasil',cat:'Software',cnpj:'60.316.817/0001-44',status:'Estratégico',contratos:2,valor:480000,sla:98.5,slaContratado:99.0,nps:87,chamados:12,gestor:'Carlos Mendes',contato:'Ana Souza',email:'ana.souza@microsoft.com.br',telefone:'(11) 3054-7000',ultimaAval:'Mar/2025',proxAval:'Jun/2025',obs:'Parceiro estratégico Microsoft Gold. Renovar com desconto de volume.'},
+  {id:'FOR-002',nome:'AWS Amazon',cat:'Cloud',cnpj:'02.012.862/0001-60',status:'Estratégico',contratos:1,valor:960000,sla:99.9,slaContratado:99.9,nps:92,chamados:3,gestor:'Carlos Mendes',contato:'Pedro Lima',email:'pedro.lima@amazon.com',telefone:'0800-881-1880',ultimaAval:'Abr/2025',proxAval:'Jul/2025',obs:'SLA excelente. Avaliar Reserved Instances para redução de custo.'},
+  {id:'FOR-003',nome:'SAP Brasil',cat:'Software',cnpj:'57.014.161/0001-30',status:'Estratégico',contratos:1,valor:1200000,sla:97.2,slaContratado:98.0,nps:79,chamados:18,gestor:'Ana Lima',contato:'Carla Nunes',email:'carla.nunes@sap.com',telefone:'(11) 3952-0000',ultimaAval:'Fev/2025',proxAval:'Mai/2025',obs:'SLA abaixo do contratado — reunião de alinhamento agendada para junho.'},
+  {id:'FOR-004',nome:'Accenture',cat:'Serviços',cnpj:'07.336.597/0001-00',status:'Em revisão',contratos:1,valor:520000,sla:91.0,slaContratado:95.0,nps:72,chamados:24,gestor:'Fernanda Rocha',contato:'Ricardo Melo',email:'ricardo.melo@accenture.com',telefone:'(11) 5188-3000',ultimaAval:'Jan/2025',proxAval:'Encerrado',obs:'Contrato encerrado. SLA muito abaixo — não renovar sem renegociação total.'},
+  {id:'FOR-005',nome:'Cisco Systems',cat:'Hardware',cnpj:'08.401.849/0001-10',status:'Tático',contratos:1,valor:195000,sla:99.5,slaContratado:99.0,nps:88,chamados:5,gestor:'Roberto Silva',contato:'Marcos Teixeira',email:'marcos.teixeira@cisco.com',telefone:'(11) 5188-7000',ultimaAval:'Mar/2025',proxAval:'Set/2025',obs:'Desempenho acima do contratado. Considerar para próxima expansão de rede.'},
+  {id:'FOR-006',nome:'Stefanini',cat:'Serviços',cnpj:'01.315.862/0001-71',status:'Crítico',contratos:1,valor:432000,sla:88.3,slaContratado:95.0,nps:65,chamados:47,gestor:'Marcos Oliveira',contato:'Juliana Ferreira',email:'juliana.ferreira@stefanini.com',telefone:'(11) 3093-6000',ultimaAval:'Mai/2025',proxAval:'Jun/2025',obs:'SLA muito abaixo — 47 chamados no período. Reunião de crise convocada.'},
+  {id:'FOR-007',nome:'ServiceNow',cat:'Software',cnpj:'21.556.854/0001-01',status:'Estratégico',contratos:1,valor:360000,sla:99.1,slaContratado:99.0,nps:90,chamados:6,gestor:'Patrícia Costa',contato:'Bruno Castro',email:'bruno.castro@servicenow.com',telefone:'(11) 4040-7099',ultimaAval:'Abr/2025',proxAval:'Out/2025',obs:'Excelente parceiro. Avaliar expansão para módulo de GRC.'},
+  {id:'FOR-008',nome:'IBM Brasil',cat:'Serviços',cnpj:'33.372.251/0010-52',status:'Tático',contratos:1,valor:228000,sla:97.5,slaContratado:99.9,nps:78,chamados:9,gestor:'Carlos Mendes',contato:'Paulo Vieira',email:'paulo.vieira@ibm.com',telefone:'0800-7014-262',ultimaAval:'Mar/2025',proxAval:'Set/2025',obs:'SLA abaixo — 2 falhas de backup no semestre. Plano de melhoria em andamento.'},
+];
+
+const incidentes = [
+  {id:'INC-1042',titulo:'Servidor de banco de dados Oracle fora do ar',prio:'Crítico',cor:'⚫',area:'Infraestrutura',setor:'Financeiro',status:'Em andamento',abertura:'10/05/2025 08:32',usuario:'sistema.monitoramento',responsavel:'Carlos Mendes',sla:'1h',slaPct:85,progresso:65,fornecedor:'Oracle Brasil',descricao:'Servidor ORADB01 parou de responder às 08:32. Impacto total no módulo financeiro. War Room ativado.',timeline:[{time:'08:32',txt:'Incidente detectado pelo Zabbix',cor:'#ef4444'},{time:'08:35',txt:'War Room ativado — N3 acionado',cor:'#ef4444'},{time:'08:50',txt:'Causa identificada: falha de storage',cor:'#f59e0b'},{time:'09:10',txt:'Contramédida aplicada — DB em standby',cor:'#22c55e'},{time:'09:45',txt:'Investigação da causa raiz em andamento',cor:'#6b7280'}],contramedida:'Ativação do servidor standby ORADB02',rca:'Pendente — falha no storage array NetApp',projetoCorretivo:'PRJ-004 (em análise)'},
+  {id:'INC-1041',titulo:'Falha no acesso VPN corporativa — usuários remotos',prio:'Alto',cor:'🔴',area:'Redes',setor:'Todos os setores',status:'Em andamento',abertura:'11/05/2025 07:15',usuario:'helpdesk@empresa.com',responsavel:'Roberto Silva',sla:'2h',slaPct:70,progresso:40,fornecedor:'Cisco Systems',descricao:'VPN concentrator com sobrecarga — 60% dos usuários remotos sem acesso. Afeta 120 colaboradores.',timeline:[{time:'07:15',txt:'Chamado aberto pelo help desk',cor:'#f59e0b'},{time:'07:30',txt:'N2 assume o chamado',cor:'#f59e0b'},{time:'08:00',txt:'Reinicialização do concentrador VPN',cor:'#22c55e'}],contramedida:'Reinicialização parcial do Cisco ASA',rca:'Em análise — possível atualização de firmware necessária',projetoCorretivo:'Não aberto'},
+  {id:'INC-1040',titulo:'E-mail corporativo lento — setor financeiro',prio:'Médio',cor:'🟡',area:'Sistemas',setor:'Financeiro',status:'Aguardando',abertura:'12/05/2025 09:00',usuario:'joao.silva@empresa.com',responsavel:'Ana Lima',sla:'4h',slaPct:50,progresso:20,fornecedor:'Microsoft Brasil',descricao:'Exchange Online com latência elevada para usuários do setor financeiro. Impacto moderado.',timeline:[{time:'09:00',txt:'Chamado aberto por João Silva',cor:'#f59e0b'},{time:'09:20',txt:'N1 encaminha para N2',cor:'#f59e0b'}],contramedida:'Aguardando análise do Exchange Admin Center',rca:'Não iniciado',projetoCorretivo:'Não aplicável'},
+  {id:'INC-1039',titulo:'Impressora de rede setor faturamento inoperante',prio:'Baixo',cor:'🟢',area:'Suporte',setor:'Faturamento',status:'Em andamento',abertura:'12/05/2025 10:30',usuario:'maria.santos@empresa.com',responsavel:'Marcos Oliveira',sla:'8h úteis',slaPct:30,progresso:80,fornecedor:'N/A',descricao:'Impressora HP LaserJet M506 sem comunicação na rede. 12 usuários afetados.',timeline:[{time:'10:30',txt:'Chamado aberto por Maria Santos',cor:'#22c55e'},{time:'11:00',txt:'Técnico deslocado para atendimento',cor:'#22c55e'},{time:'11:30',txt:'Problema identificado: cabo de rede',cor:'#22c55e'}],contramedida:'Substituição do cabo de rede',rca:'Não aplicável — problema físico simples',projetoCorretivo:'Não aplicável'},
+  {id:'INC-1038',titulo:'Erro crítico integração SAP módulo financeiro FI',prio:'Crítico',cor:'⚫',area:'Sistemas',setor:'Financeiro',status:'Escalado',abertura:'09/05/2025 14:00',usuario:'integracao.erp@empresa.com',responsavel:'Fernanda Rocha',sla:'1h',slaPct:100,progresso:90,fornecedor:'SAP Brasil',descricao:'Job de integração SAP-FI falhando há 3 dias. Conciliações bancárias pendentes. Risco regulatório.',timeline:[{time:'14:00',txt:'Erro detectado no monitoramento',cor:'#ef4444'},{time:'14:30',txt:'SAP Brasil acionado',cor:'#ef4444'},{time:'16:00',txt:'Patch emergencial aplicado',cor:'#f59e0b'},{time:'09/05 18:00',txt:'Falha persiste — escalado para SAP R&D',cor:'#ef4444'}],contramedida:'Processamento manual das conciliações',rca:'Bug no patch SP24 do SAP — aguardando hotfix',projetoCorretivo:'PRJ-006 (aprovado)'},
+  {id:'INC-1037',titulo:'Acesso negado SharePoint — equipe de RH',prio:'Médio',cor:'🟡',area:'Segurança',setor:'RH',status:'Em andamento',abertura:'12/05/2025 08:00',usuario:'rh@empresa.com',responsavel:'Patrícia Costa',sla:'4h',slaPct:60,progresso:50,fornecedor:'Microsoft Brasil',descricao:'8 usuários do RH sem acesso ao SharePoint após mudança de grupo no AD.',timeline:[{time:'08:00',txt:'Chamado aberto pelo RH',cor:'#f59e0b'},{time:'08:30',txt:'IAM analisando permissões no Azure AD',cor:'#f59e0b'}],contramedida:'Recriação manual dos grupos no Azure AD',rca:'Política de acesso condicional mal configurada',projetoCorretivo:'Não aplicável'},
+  {id:'INC-1036',titulo:'Notebook da diretoria não inicializa',prio:'Alto',cor:'🔴',area:'Suporte',setor:'Diretoria',status:'Resolvido',abertura:'11/05/2025 07:00',usuario:'diretoria@empresa.com',responsavel:'Marcos Oliveira',sla:'2h',slaPct:100,progresso:100,fornecedor:'Lenovo Brasil',descricao:'ThinkPad X1 do Diretor Financeiro não inicializa após atualização do Windows.',timeline:[{time:'07:00',txt:'Chamado aberto — prioridade alta',cor:'#f59e0b'},{time:'07:30',txt:'Técnico sênior deslocado',cor:'#22c55e'},{time:'08:15',txt:'Rollback do Windows Update realizado',cor:'#22c55e'},{time:'08:30',txt:'Notebook normalizado — chamado encerrado',cor:'#22c55e'}],contramedida:'Rollback do Windows Update KB5034441',rca:'Incompatibilidade do KB5034441 com driver de bitlocker',projetoCorretivo:'Não aplicável'},
+  {id:'INC-1035',titulo:'Falha no backup noturno — servidor de arquivos',prio:'Alto',cor:'🔴',area:'Infraestrutura',setor:'TI',status:'Em andamento',abertura:'10/05/2025 06:00',usuario:'backup.monitor@empresa.com',responsavel:'Carlos Mendes',sla:'2h',slaPct:90,progresso:30,fornecedor:'IBM Brasil',descricao:'Job de backup do servidor FS01 falhou por 3 noites consecutivas. 2,4TB sem backup.',timeline:[{time:'06:00',txt:'Alerta automático do Veeam',cor:'#ef4444'},{time:'06:30',txt:'IBM Brasil acionado',cor:'#f59e0b'},{time:'08:00',txt:'Análise em andamento — possível falha no tape',cor:'#f59e0b'}],contramedida:'Backup manual para cloud S3 iniciado',rca:'Possível falha na tape library — aguardando IBM',projetoCorretivo:'Em análise — PRB-008 aberto'},
+];
+
+const problemas = [
+  {id:'PRB-001',titulo:'Instabilidade recorrente banco Oracle',origem:'INC-1042',area:'Infraestrutura',status:'Em análise',abertura:'10/05/2025',prazoRca:'20/05/2025',responsavel:'Carlos Mendes',contramedida:'Servidor standby ativo',descricao:'5 ocorrências em 30 dias. RCA em andamento com Oracle Brasil.',projetoGerado:'PRJ-004'},
+  {id:'PRB-002',titulo:'Lentidão recorrente SAP FI em fechamentos',origem:'INC-1038',area:'Sistemas',status:'RCA concluída',abertura:'09/05/2025',prazoRca:'19/05/2025',responsavel:'Fernanda Rocha',contramedida:'Processamento manual',descricao:'Bug no patch SP24 confirmado pela SAP. Hotfix em homologação.',projetoGerado:'PRJ-006'},
+  {id:'PRB-003',titulo:'Falhas de backup tape library',origem:'INC-1035',area:'Infraestrutura',status:'Em análise',abertura:'10/05/2025',prazoRca:'20/05/2025',responsavel:'Carlos Mendes',contramedida:'Backup cloud S3',descricao:'Tape library com erro físico. IBM agendou visita técnica.',projetoGerado:'Em análise'},
+];
+
+const projetos = [
+  {id:'PRJ-001',nome:'Implantação SAP S/4HANA',tipo:'Inovação',area:'Sistemas',origem:'Demanda estratégica',status:'Em andamento',prio:'Alto',inicio:'01/01/2025',fim:'31/12/2025',budget:1200000,gasto:600000,progresso:48,gestor:'Ana Lima',setor:'TI/Financeiro',descricao:'Implantação do ERP SAP S/4HANA em substituição ao sistema legado. Módulos FI, CO, MM e SD.',marcos:'Go-live FI: Jul/25 | Go-live MM: Out/25 | Go-live total: Dez/25',fornecedores:'SAP Brasil + Deloitte',risco:'Médio — cronograma apertado'},
+  {id:'PRJ-002',nome:'Migração Cloud AWS',tipo:'Inovação',area:'Infraestrutura',origem:'Planejamento estratégico',status:'Em andamento',prio:'Alto',inicio:'01/03/2025',fim:'30/09/2025',budget:480000,gasto:320000,progresso:67,gestor:'Carlos Mendes',setor:'Infraestrutura',descricao:'Migração de 40 workloads on-premise para AWS. Estratégia lift-and-shift com otimização posterior.',marcos:'Fase 1 concluída: ambientes dev/test | Fase 2: produção em andamento',fornecedores:'AWS + Accenture',risco:'Baixo — dentro do prazo e orçamento'},
+  {id:'PRJ-003',nome:'Implantação ITSM ServiceNow',tipo:'Melhoria',area:'Governança',origem:'Demanda Gov TI',status:'Planejamento',prio:'Médio',inicio:'01/06/2025',fim:'30/11/2025',budget:360000,gasto:45000,progresso:12,gestor:'Patrícia Costa',setor:'TI',descricao:'Implementação da plataforma ServiceNow para ITSM, GRC e gestão de ativos.',marcos:'Kickoff: Jun/25 | UAT: Set/25 | Go-live: Nov/25',fornecedores:'ServiceNow + Parceiro implementador',risco:'Médio — dependência de recursos internos'},
+  {id:'PRJ-004',nome:'Redundância servidor Oracle',tipo:'Corretivo',area:'Infraestrutura',origem:'PRB-001 / INC-1042',status:'Em análise',prio:'Crítico',inicio:'Em definição',fim:'Em definição',budget:0,gasto:0,progresso:5,gestor:'Carlos Mendes',setor:'Infraestrutura',descricao:'Projeto para eliminar ponto único de falha no banco Oracle. RCA em andamento.',marcos:'RCA: Mai/25 | Aprovação budget: Jun/25 | Execução: Jul/25',fornecedores:'Oracle Brasil + Dell',risco:'Alto — sistema crítico sem redundância'},
+  {id:'PRJ-005',nome:'Renovação infraestrutura de rede',tipo:'Melhoria',area:'Redes',origem:'Planejamento estratégico',status:'Concluído',prio:'Médio',inicio:'01/11/2024',fim:'28/02/2025',budget:195000,gasto:188000,progresso:100,gestor:'Roberto Silva',setor:'Infraestrutura',descricao:'Renovação completa do core de rede — switches Cisco Catalyst 9300 e novos APs WiFi 6.',marcos:'Concluído dentro do prazo e abaixo do orçamento',fornecedores:'Cisco Systems',risco:'Concluído com sucesso'},
+  {id:'PRJ-006',nome:'Hotfix SAP FI — bug SP24',tipo:'Corretivo',area:'Sistemas',origem:'PRB-002 / INC-1038',status:'Em andamento',prio:'Crítico',inicio:'09/05/2025',fim:'23/05/2025',budget:45000,gasto:12000,progresso:26,gestor:'Fernanda Rocha',setor:'Financeiro',descricao:'Aplicação do hotfix SAP para correção do bug no módulo FI que causa falhas na integração bancária.',marcos:'Homologação: 20/Mai | Produção: 23/Mai',fornecedores:'SAP Brasil',risco:'Alto — impacto regulatório'},
+];
+
+const politicas = [
+  {id:'POL-001',nome:'Política de Segurança da Informação',versao:'v2.1',aprovada:'Jan/2025',proxRevisao:'Jan/2026',responsavel:'CISO / Marcos Oliveira',status:'Vigente',escopo:'Toda a organização',frameworks:'ISO 27001, NIST CSF',descricao:'Define as diretrizes gerais de segurança da informação, incluindo classificação de dados, controles de acesso e gestão de incidentes.'},
+  {id:'POL-002',nome:'Política de Gestão de Identidade e Acesso',versao:'v1.3',aprovada:'Mar/2025',proxRevisao:'Mar/2026',responsavel:'TI / Patrícia Costa',status:'Vigente',escopo:'Todos os sistemas e usuários',frameworks:'ISO 27001 A.9, NIST PR.AC',descricao:'Regulamenta a criação, manutenção e revogação de acessos. Define padrões de senha, MFA e revisão periódica.'},
+  {id:'POL-003',nome:'Política de Uso Aceitável de Recursos',versao:'v3.0',aprovada:'Fev/2025',proxRevisao:'Fev/2026',responsavel:'TI/RH / Fernanda Rocha',status:'Vigente',escopo:'Todos os colaboradores',frameworks:'ISO 27001 A.6, LGPD',descricao:'Define as regras de uso dos recursos de TI — internet, e-mail, dispositivos e sistemas corporativos.'},
+  {id:'POL-004',nome:'Política de Backup e Recuperação',versao:'v1.1',aprovada:'Nov/2024',proxRevisao:'Nov/2025',responsavel:'Infraestrutura / Carlos Mendes',status:'Revisar',escopo:'Sistemas e dados críticos',frameworks:'ISO 27001 A.12, ITIL 4',descricao:'Define frequência, retenção e testes de backup. Inclui RTO e RPO por sistema.'},
+  {id:'POL-005',nome:'Política de Gestão de Fornecedores',versao:'v1.0',aprovada:'Abr/2025',proxRevisao:'Abr/2026',responsavel:'Gov TI / Patrícia Costa',status:'Vigente',escopo:'Todos os fornecedores TI',frameworks:'COBIT APO10, ISO 27001 A.15',descricao:'Regulamenta o ciclo de vida de fornecedores — homologação, avaliação de SLA, conformidade e encerramento.'},
+  {id:'POL-006',nome:'Política de Governança de IA',versao:'v1.0',aprovada:'Mai/2025',proxRevisao:'Mai/2026',responsavel:'Gov TI / Patrícia Costa',status:'Nova',escopo:'Sistemas com IA/ML',frameworks:'ISO 42001, NIST AI RMF, EU AI Act',descricao:'Define controles éticos, transparência e gestão de riscos para modelos de Inteligência Artificial.'},
+  {id:'POL-007',nome:'Política de Gestão de Mudanças',versao:'v2.0',aprovada:'Jan/2025',proxRevisao:'Jan/2026',responsavel:'TI / Roberto Silva',status:'Vigente',escopo:'Ambiente de produção',frameworks:'ITIL 4 Change Management, COBIT BAI06',descricao:'Define o processo de aprovação e implementação de mudanças no ambiente de TI. Inclui CAB e janelas de manutenção.'},
+];
+
+const riscos = [
+  {id:'RSK-001',desc:'Contratos vencidos sem renovação — Oracle e Fortinet',impacto:'Alto',prob:'Alta',nivel:'Crítico',area:'Contratos',responsavel:'Patrícia Costa',prazo:'31/05/2025',acao:'Acionar jurídico e fornecedor urgente',status:'Aberto',descricao:'Oracle (CTR-003) e Fortinet (CTR-008) vencidos há mais de 6 meses. Risco de autuação e perda de suporte.'},
+  {id:'RSK-002',desc:'Dependência excessiva AWS — concentração em single cloud',impacto:'Alto',prob:'Média',nivel:'Alto',area:'Infraestrutura',responsavel:'Carlos Mendes',prazo:'30/06/2025',acao:'Desenvolver plano multi-cloud ou contingência',status:'Em mitigação',descricao:'97% da infraestrutura cloud em AWS. Indisponibilidade do provedor impacta toda a operação.'},
+  {id:'RSK-003',desc:'Stefanini com SLA 6,7% abaixo do contratado',impacto:'Médio',prob:'Alta',nivel:'Alto',area:'Fornecedores',responsavel:'Marcos Oliveira',prazo:'15/06/2025',acao:'Reunião de crise e plano de melhoria formal',status:'Aberto',descricao:'SLA realizado 88,3% vs 95% contratado. 47 chamados no período. Risco de continuidade do suporte.'},
+  {id:'RSK-004',desc:'LGPD — inventário de dados pessoais incompleto',impacto:'Alto',prob:'Média',nivel:'Alto',area:'Conformidade',responsavel:'Fernanda Rocha',prazo:'30/06/2025',acao:'Mapear bases de dados com PII até junho',status:'Em mitigação',descricao:'ANPD pode exigir relatório de impacto. Apenas 60% dos sistemas com dados pessoais mapeados.'},
+  {id:'RSK-005',desc:'Backup sem teste de restore há 60 dias',impacto:'Crítico',prob:'Baixa',nivel:'Médio',area:'Infraestrutura',responsavel:'Carlos Mendes',prazo:'20/05/2025',acao:'Agendar DR test completo urgente',status:'Aberto',descricao:'Política exige teste mensal. Último teste: março/2025. Falhas recentes no backup aumentam a urgência.'},
+  {id:'RSK-006',desc:'Licenças Oracle sem contrato de suporte ativo',impacto:'Alto',prob:'Alta',nivel:'Crítico',area:'Software',responsavel:'Ana Lima',prazo:'31/05/2025',acao:'Regularizar contrato ou migrar para alternativa',status:'Aberto',descricao:'Oracle Database em produção sem suporte ativo. Vulnerabilidades sem patch e risco de autuação.'},
+];
+
+const auditorias = [
+  {id:'AUD-001',nome:'Auditoria ISO 27001 — externa',prazo:'30/06/2025',status:'Pendente',responsavel:'Marcos Oliveira',progresso:45,escopo:'SGSI completo',auditor:'BSI Group',obs:'Pré-auditoria interna concluída. 12 não conformidades menores identificadas.'},
+  {id:'AUD-002',nome:'Revisão LGPD — bases legais e consentimento',prazo:'15/06/2025',status:'Em andamento',responsavel:'Patrícia Costa',progresso:70,escopo:'Sistemas com dados pessoais',auditor:'DPO Interno',obs:'Revisão de 8 sistemas concluída. Faltam 3 sistemas legados.'},
+  {id:'AUD-003',nome:'COBIT Assessment anual 2025',prazo:'31/07/2025',status:'Planejado',responsavel:'Patrícia Costa',progresso:10,escopo:'Todos os domínios COBIT',auditor:'Consultoria externa',obs:'RFP para contratação de consultoria enviada. Aguardando propostas.'},
+  {id:'AUD-004',nome:'Pentest infraestrutura e aplicações',prazo:'30/05/2025',status:'Em andamento',responsavel:'Marcos Oliveira',progresso:85,escopo:'Infraestrutura, APIs e web apps',auditor:'Tempest Security',obs:'Fase de exploração concluída. Relatório preliminar: 3 críticas, 8 altas.'},
+  {id:'AUD-005',nome:'Revisão de controles de acesso (Access Review)',prazo:'20/06/2025',status:'Pendente',responsavel:'Carlos Mendes',progresso:30,escopo:'AD, SAP, AWS e sistemas críticos',auditor:'TI Interno',obs:'Iniciada revisão do AD. Encontrados 45 usuários inativos com acesso ativo.'},
+];
+
+const vulnerabilidades = [
+  {id:'VUL-001',titulo:'CVE-2024-21413 — Microsoft Outlook RCE',severidade:'Crítica',sistema:'Microsoft Outlook',status:'Em tratamento',descoberta:'05/05/2025',prazo:'12/05/2025',responsavel:'Marcos Oliveira',descricao:'Vulnerabilidade crítica de execução remota de código no Outlook. CVSS 9.8.',acao:'Patch KB5035784 em homologação'},
+  {id:'VUL-002',titulo:'CVE-2024-1234 — Apache Log4j desatualizado',severidade:'Alta',sistema:'Servidor de Aplicação',status:'Aberta',descoberta:'10/05/2025',prazo:'17/05/2025',responsavel:'Carlos Mendes',descricao:'Versão antiga do Log4j detectada. Risco de Log4Shell exploitation.',acao:'Atualizar para Log4j 2.21.0'},
+  {id:'VUL-003',titulo:'Configuração SSL/TLS fraca — portal web',severidade:'Alta',sistema:'Portal Corporativo',status:'Em tratamento',descoberta:'08/05/2025',prazo:'22/05/2025',responsavel:'Marcos Oliveira',descricao:'TLS 1.0 e 1.1 ainda habilitados no portal. Risco de ataques POODLE e BEAST.',acao:'Desabilitar TLS 1.0/1.1 e habilitar TLS 1.3'},
+  {id:'VUL-004',titulo:'Conta admin padrão ativa no ESXi',severidade:'Crítica',sistema:'VMware ESXi',status:'Aberta',descoberta:'12/05/2025',prazo:'13/05/2025',responsavel:'Carlos Mendes',descricao:'Conta root com senha padrão encontrada em 2 hosts ESXi. Risco crítico de comprometimento.',acao:'Alterar senha e desabilitar acesso root direto'},
+  {id:'VUL-005',titulo:'Injeção SQL — sistema de RH legado',severidade:'Alta',sistema:'Sistema RH Legado',status:'Aberta',descoberta:'04/05/2025',prazo:'18/05/2025',responsavel:'Patrícia Costa',descricao:'Parâmetros de URL vulneráveis a SQL injection. Risco de exposição de dados de colaboradores.',acao:'WAF ativado como mitigação — refatoração em andamento'},
+];
+
+const usuariosIam = [
+  {id:'IAM-001',usuario:'admin.sistemas',nome:'Conta Genérica',perfil:'Administrador Global',sistemas:'SAP + AD + AWS',ultimoAcesso:'10/05/2025',mfa:'Não',status:'Crítico',responsavel:'Indefinido',obs:'Conta compartilhada entre 3 analistas. Eliminar urgente.'},
+  {id:'IAM-002',usuario:'carlos.mendes',nome:'Carlos Mendes',perfil:'Admin de Infraestrutura',sistemas:'AWS + VMware + Zabbix',ultimoAcesso:'12/05/2025',mfa:'Sim',status:'Regular',responsavel:'Carlos Mendes',obs:'Acesso justificado — gestor de infraestrutura.'},
+  {id:'IAM-003',usuario:'joao.ex-funcionario',nome:'João Oliveira (desligado)',perfil:'Analista de Sistemas',sistemas:'SAP + SharePoint',ultimoAcesso:'28/02/2025',mfa:'Não',status:'Crítico',responsavel:'RH',obs:'Colaborador desligado em março. Conta ainda ativa no AD.'},
+  {id:'IAM-004',nome:'Maria Santos',usuario:'maria.santos',perfil:'Admin local Windows',sistemas:'Todos os desktops',ultimoAcesso:'11/05/2025',mfa:'Não',status:'Atenção',responsavel:'Suporte TI',obs:'Acesso admin local sem justificativa documentada.'},
+  {id:'IAM-005',usuario:'svc.backup',nome:'Conta de Serviço Backup',perfil:'Admin de Backup',sistemas:'Veeam + IBM Backup',ultimoAcesso:'12/05/2025',mfa:'N/A',status:'Regular',responsavel:'Carlos Mendes',obs:'Conta de serviço — senha rotacionada mensalmente.'},
+];
+
+const modelosIa = [
+  {id:'IA-001',nome:'ChatBot de Atendimento',fornecedor:'OpenAI (GPT-4)',area:'Atendimento ao Cliente',risco:'Médio',status:'Em produção',aprovacao:'Aprovado',dados:'Dados de clientes (anonimizados)',transparencia:'Sim',fairness:'Testado',lgpd:'Conforme',responsavel:'Fernanda Rocha',descricao:'Chatbot para primeiro atendimento. Utiliza dados de clientes anonimizados. DPIA realizado.',iso42001:'70%'},
+  {id:'IA-002',nome:'Análise de Risco de Crédito',fornecedor:'Modelo interno (Python/Sklearn)',area:'Financeiro',risco:'Alto',status:'Em homologação',aprovacao:'Pendente CAB',dados:'Dados financeiros de clientes',transparencia:'Parcial',fairness:'Em teste',lgpd:'Em revisão',responsavel:'Ana Lima',descricao:'Modelo ML para score de crédito. Alto impacto em decisões — requer aprovação especial.',iso42001:'45%'},
+  {id:'IA-003',nome:'Detecção de Anomalias SIEM',fornecedor:'IBM QRadar ML',area:'Segurança',risco:'Baixo',status:'Em produção',aprovacao:'Aprovado',dados:'Logs de sistemas (sem PII)',transparencia:'Sim',fairness:'N/A',lgpd:'Conforme',responsavel:'Marcos Oliveira',descricao:'Detecção automática de comportamentos anômalos nos logs de segurança.',iso42001:'85%'},
+  {id:'IA-004',nome:'Assistente de Governança TI',fornecedor:'Anthropic (Claude)',area:'Governança TI',risco:'Baixo',status:'Em produção',aprovacao:'Aprovado',dados:'Dados de contratos e indicadores',transparencia:'Sim',fairness:'N/A',lgpd:'Conforme',responsavel:'Patrícia Costa',descricao:'Assistente de IA para análise de dados de governança e resposta a perguntas dos gestores.',iso42001:'90%'},
+];
+
+const centrosCusto = [
+  {id:'CC-001',nome:'Infraestrutura',verba:'Sustentação',budget:2100000,gasto:1580000,previsto:2050000,tipo:'OPEX'},
+  {id:'CC-002',nome:'Segurança da Informação',verba:'Sustentação',budget:420000,gasto:285000,previsto:380000,tipo:'OPEX'},
+  {id:'CC-003',nome:'Desenvolvimento e Sistemas',verba:'Melhoria',budget:650000,gasto:320000,previsto:590000,tipo:'CAPEX'},
+  {id:'CC-004',nome:'Suporte e Help Desk',verba:'Sustentação',budget:510000,gasto:392000,previsto:498000,tipo:'OPEX'},
+  {id:'CC-005',nome:'Projetos de Inovação',verba:'Inovação',budget:980000,gasto:445000,previsto:920000,tipo:'CAPEX'},
+  {id:'CC-006',nome:'Governança de TI',verba:'Melhoria',budget:280000,gasto:95000,previsto:260000,tipo:'OPEX'},
+  {id:'CC-007',nome:'Treinamento e Capacitação',verba:'Melhoria',budget:180000,gasto:68000,previsto:175000,tipo:'OPEX'},
+  {id:'CC-008',nome:'Reserva / Contingência',verba:'Inovação',budget:380000,gasto:0,previsto:0,tipo:'CAPEX'},
+];
+
+const mudancas = [
+  {id:'RFC-001',titulo:'Atualização patch Windows Server 2022',tipo:'Padrão',area:'Infraestrutura',solicitante:'Carlos Mendes',status:'Aprovada',abertura:'08/05/2025',execucao:'15/05/2025',janela:'Quinta-feira 22h-02h',risco:'Baixo',impacto:'Reinicialização de 12 servidores',cab:'Automática',descricao:'Aplicação do patch cumulativo maio/2025 em todos os servidores Windows.'},
+  {id:'RFC-002',titulo:'Migração banco de dados Oracle para AWS RDS',tipo:'Normal',area:'Infraestrutura',solicitante:'Ana Lima',status:'Em análise CAB',abertura:'10/05/2025',execucao:'25/05/2025',janela:'Domingo 00h-06h',risco:'Alto',impacto:'Indisponibilidade de 4h no sistema financeiro',cab:'Pendente aprovação',descricao:'Migração do Oracle on-premise para AWS RDS Oracle. Pré-requisito para descomissionamento do servidor.'},
+  {id:'RFC-003',titulo:'Deploy nova versão portal corporativo v3.2',tipo:'Normal',area:'Sistemas',solicitante:'Patrícia Costa',status:'Aprovada',abertura:'05/05/2025',execucao:'17/05/2025',janela:'Sábado 14h-18h',risco:'Médio',impacto:'Portal indisponível por até 2h',cab:'Aprovada em 12/05',descricao:'Nova versão com melhorias de performance e correções de segurança.'},
+  {id:'RFC-004',titulo:'Desabilitar TLS 1.0 e 1.1 — VUL-003',tipo:'Normal',area:'Segurança',solicitante:'Marcos Oliveira',status:'Aprovada',abertura:'08/05/2025',execucao:'14/05/2025',janela:'Quarta-feira 20h-22h',risco:'Médio',impacto:'Possível incompatibilidade com browsers legados',cab:'Aprovada em emergência',descricao:'Remediação da vulnerabilidade VUL-003. Desabilitação de protocolos TLS inseguros.'},
+  {id:'RFC-005',titulo:'Expansão cluster VMware — adição de 2 hosts',tipo:'Normal',area:'Infraestrutura',solicitante:'Carlos Mendes',status:'Pendente',abertura:'12/05/2025',execucao:'Em definição',janela:'A definir',risco:'Baixo',impacto:'Sem impacto em produção',cab:'Aguardando aprovação do budget',descricao:'Adição de 2 hosts Dell PowerEdge R750 ao cluster VMware para suportar crescimento.'},
+];
+
+// =====================================================================
+// UTILS
+// =====================================================================
+const fmt = v => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+const fmtM = v => 'R$ ' + (v/1e6).toFixed(2).replace('.',',') + 'M';
+const gV = c => typeof c.valor === 'number' ? c.valor : parseFloat(String(c.valor||0).replace(/[^0-9.]/g,''))||0;
+const gC = c => typeof c.consumido === 'number' ? c.consumido : parseFloat(String(c.consumido||0).replace(/[^0-9.]/g,''))||0;
+
+let charts = {};
+function mkChart(id, cfg) {
+  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+  const el = document.getElementById(id);
+  if (!el) return;
+  charts[id] = new Chart(el, cfg);
+  return charts[id];
+}
+
+const CHART_DEFAULTS = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { display: false } }
+};
+
+function axisStyle(opts = {}) {
+  return {
+    ticks: { color: '#8888bb', font: { size: 10 }, ...opts.ticks },
+    grid: { color: 'rgba(255,255,255,0.04)', ...opts.grid },
+    border: { color: 'transparent', ...opts.border }
+  };
+}
+
+function badgeCls(s) {
+  const m = {
+    'Vigente':'b-green','Próximo':'b-blue','Atenção':'b-amber','Vencido':'b-red',
+    'Crítico':'b-red','Alto':'b-amber','Médio':'b-blue','Baixo':'b-green',
+    'Em andamento':'b-blue','Planejamento':'b-purple','Concluído':'b-green','Suspenso':'b-amber',
+    'Escalado':'b-red','Aguardando':'b-amber','Resolvido':'b-green','Em análise CAB':'b-amber',
+    'Estratégico':'b-blue','Em revisão':'b-amber','Tático':'b-green','Crítico (forn)':'b-red',
+    'Vigente (pol)':'b-green','Revisar':'b-amber','Nova':'b-purple',
+    'Em produção':'b-green','Em homologação':'b-amber','Aprovado':'b-green','Pendente CAB':'b-amber',
+    'Aprovada':'b-green','Pendente':'b-amber','Em análise':'b-blue',
+    'Regular':'b-green','Atenção (iam)':'b-amber',
+    'Em tratamento':'b-amber','Aberta':'b-red','Mitigada':'b-green',
+    'Pendente (aud)':'b-amber','Em andamento (aud)':'b-blue','Planejado (aud)':'b-purple',
+  };
+  return m[s] || 'b-gray';
+}
+
+// Clock
+function updateClock() { document.getElementById('clock').textContent = new Date().toLocaleTimeString('pt-BR'); }
+setInterval(updateClock, 1000); updateClock();
+
+// =====================================================================
+// TICKER
+// =====================================================================
+function buildTicker() {
+  const tv = contratos.reduce((a,c) => a+gV(c), 0);
+  const tc = contratos.reduce((a,c) => a+gC(c), 0);
+  const cap = contratos.filter(c=>c.tipo==='CAPEX').reduce((a,c)=>a+gV(c),0);
+  const opex = contratos.filter(c=>c.tipo==='OPEX').reduce((a,c)=>a+gV(c),0);
+  const vencidos = contratos.filter(c=>c.status==='Vencido').length;
+  const incAbertos = incidentes.filter(i=>i.status!=='Resolvido').length;
+  const incCrit = incidentes.filter(i=>i.prio==='Crítico').length;
+  const riscCrit = riscos.filter(r=>r.nivel==='Crítico').length;
+  const projAtivos = projetos.filter(p=>p.status==='Em andamento').length;
+  const items = [
+    `📋 Contratos <b class="vb">${contratos.length}</b>`,
+    `💼 Carteira <b class="vb">${fmtM(tv)}</b>`,
+    `📊 Budget TI <b class="vp">${fmtM(BUDGET_TOTAL)}</b>`,
+    `🔵 CAPEX <b class="vb">${fmtM(cap)}</b>`,
+    `🟢 OPEX <b class="vg">${fmtM(opex)}</b>`,
+    `💰 Consumido <b class="va">${fmtM(tc)}</b>`,
+    `✅ Saldo <b class="vg">${fmtM(BUDGET_TOTAL-tv)}</b>`,
+    `⚠️ Contratos vencidos <b class="vr">${vencidos}</b>`,
+    `🚨 Incidentes abertos <b class="vr">${incAbertos}</b>`,
+    `🔴 P1 Críticos <b class="vr">${incCrit}</b>`,
+    `🛡️ Riscos críticos <b class="vr">${riscCrit}</b>`,
+    `📁 Projetos ativos <b class="vp">${projAtivos}</b>`,
+    `📐 COBIT maturidade <b class="vb">3.2/5</b>`,
+    `🛡️ ISO 27001 <b class="vg">78%</b>`,
+    `⚖️ LGPD <b class="va">71%</b>`,
+  ];
+  const html = items.map(i => `<span class="ti">${i}<span style="color:var(--text3);padding:0 4px;">·</span></span>`).join('');
+  document.getElementById('tickerEl').innerHTML = html + html;
+}
+
+// =====================================================================
+// MODAL
+// =====================================================================
+function openModal(title, bodyHtml) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = bodyHtml;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+
+function modalField(label, value, mono = false) {
+  return `<div class="modal-field"><div class="modal-field-label">${label}</div><div class="modal-field-val ${mono?'mono':''}">${value || '—'}</div></div>`;
+}
+
+// =====================================================================
+// VISÃO GERAL
+// =====================================================================
+function renderGeral() {
+  const tv = contratos.reduce((a,c)=>a+gV(c),0);
+  const tc = contratos.reduce((a,c)=>a+gC(c),0);
+  const pct = Math.round(tv/BUDGET_TOTAL*100);
+
+  const modulos = [
+    {tab:'contratos',icon:'📋',name:'Contratos',color:'var(--blue)',
+      status: contratos.filter(c=>c.status==='Vencido').length > 0 ? 'Vencidos: '+contratos.filter(c=>c.status==='Vencido').length : 'OK',
+      dot: contratos.filter(c=>c.status==='Vencido').length > 0 ? '#ef4444' : '#2dd4a0',
+      kpis:[`${contratos.length} contratos`,fmtM(tv)]},
+    {tab:'fornecedores',icon:'🤝',name:'Fornecedores',color:'var(--green)',
+      status: fornecedores.filter(f=>f.sla<90).length > 0 ? 'SLA crítico: '+fornecedores.filter(f=>f.sla<90).length : 'OK',
+      dot: fornecedores.filter(f=>f.sla<90).length > 0 ? '#ef4444' : '#2dd4a0',
+      kpis:[`${fornecedores.length} ativos`,`SLA med: ${(fornecedores.reduce((a,f)=>a+f.sla,0)/fornecedores.length).toFixed(1)}%`]},
+    {tab:'itsm',icon:'🚨',name:'ITSM',color:'var(--red)',
+      status: incidentes.filter(i=>i.prio==='Crítico'&&i.status!=='Resolvido').length > 0 ? 'P1 abertos: '+incidentes.filter(i=>i.prio==='Crítico'&&i.status!=='Resolvido').length : 'Estável',
+      dot: incidentes.filter(i=>i.prio==='Crítico'&&i.status!=='Resolvido').length > 0 ? '#ef4444' : '#f5a623',
+      kpis:[`${incidentes.filter(i=>i.status!=='Resolvido').length} abertos`,`${problemas.length} RCAs`]},
+    {tab:'projetos',icon:'📁',name:'Projetos',color:'var(--purple)',
+      status: projetos.filter(p=>p.status==='Em andamento').length + ' ativos',
+      dot:'#a78bfa',
+      kpis:[`${projetos.length} portfólio`,fmtM(projetos.reduce((a,p)=>a+p.budget,0))]},
+    {tab:'conformidade',icon:'✅',name:'Conformidade',color:'var(--teal)',
+      status: riscos.filter(r=>r.nivel==='Crítico').length > 0 ? 'Riscos críticos: '+riscos.filter(r=>r.nivel==='Crítico').length : 'OK',
+      dot: riscos.filter(r=>r.nivel==='Crítico').length > 0 ? '#ef4444' : '#2dd4a0',
+      kpis:['COBIT: 3.2/5','ISO: 78%']},
+    {tab:'seguranca',icon:'🔐',name:'Segurança & IAM',color:'var(--amber)',
+      status: vulnerabilidades.filter(v=>v.severidade==='Crítica'&&v.status!=='Resolvida').length > 0 ? 'Vulns críticas: '+vulnerabilidades.filter(v=>v.severidade==='Crítica').length : 'Monitorando',
+      dot:'#f5a623',
+      kpis:[`${vulnerabilidades.filter(v=>v.status!=='Mitigada').length} vulns abertas`,`${usuariosIam.filter(u=>u.status==='Crítico').length} IAM críticos`]},
+    {tab:'ia',icon:'🤖',name:'Gov. IA',color:'var(--purple)',
+      status:'ISO 42001 ativo',dot:'#a78bfa',
+      kpis:[`${modelosIa.length} modelos`,`ISO 42001: ${Math.round(modelosIa.reduce((a,m)=>a+parseInt(m.iso42001),0)/modelosIa.length)}%`]},
+    {tab:'budget',icon:'💰',name:'Budget',color:'var(--green)',
+      status: pct > 85 ? 'Atenção: '+pct+'% usado' : pct+'% usado',
+      dot: pct > 85 ? '#f5a623' : '#2dd4a0',
+      kpis:[fmtM(BUDGET_TOTAL),`Saldo: ${fmtM(BUDGET_TOTAL-tv)}`]},
+    {tab:'mudancas',icon:'🔄',name:'Mudanças',color:'var(--blue)',
+      status: mudancas.filter(m=>m.status==='Em análise CAB').length + ' pendentes CAB',
+      dot:'#4f8ef7',
+      kpis:[`${mudancas.length} RFCs`,`${mudancas.filter(m=>m.status==='Aprovada').length} aprovadas`]},
+  ];
+
+  document.getElementById('dashGeral').innerHTML = modulos.map(m => `
+    <div class="dash-card-mod" style="--mc:${m.color};" onclick="switchTab('${m.tab}',document.querySelector('[data-tab=\\'${m.tab}\\']'))">
+      <div class="dash-card-mod-icon">${m.icon}</div>
+      <div class="dash-card-mod-name">${m.name}</div>
+      <div class="dash-card-mod-status"><span style="width:8px;height:8px;border-radius:50%;background:${m.dot};flex-shrink:0;display:inline-block;"></span>${m.status}</div>
+      <div class="dash-card-mod-kpis">${m.kpis.map(k=>`<span class="dash-kpi-mini" style="color:${m.color};">${k}</span>`).join('<span style="color:var(--text3);">·</span>')}</div>
+    </div>`).join('');
+
+  // Alertas críticos
+  const alertas = [
+    ...contratos.filter(c=>c.status==='Vencido').map(c=>({icon:'📋',txt:`Contrato vencido: ${c.nome} (${c.id})`,cor:'var(--red)',tab:'contratos'})),
+    ...incidentes.filter(i=>i.prio==='Crítico'&&i.status!=='Resolvido').map(i=>({icon:'🚨',txt:`P1 Crítico: ${i.titulo.substring(0,40)}...`,cor:'var(--red)',tab:'itsm'})),
+    ...riscos.filter(r=>r.nivel==='Crítico').map(r=>({icon:'⚠️',txt:`Risco crítico: ${r.desc.substring(0,40)}...`,cor:'var(--red)',tab:'conformidade'})),
+    ...vulnerabilidades.filter(v=>v.severidade==='Crítica'&&v.status!=='Mitigada').map(v=>({icon:'🔐',txt:`Vuln crítica: ${v.titulo.substring(0,40)}...`,cor:'var(--amber)',tab:'seguranca'})),
+    ...usuariosIam.filter(u=>u.status==='Crítico').map(u=>({icon:'👤',txt:`IAM crítico: ${u.usuario} — ${u.obs.substring(0,35)}...`,cor:'var(--amber)',tab:'seguranca'})),
+  ];
+
+  document.getElementById('alertasCriticos').innerHTML = alertas.slice(0,8).map(a=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);cursor:pointer;" onclick="switchTab('${a.tab}',document.querySelector('[data-tab=\\'${a.tab}\\']'))">
+      <span>${a.icon}</span>
+      <span style="font-size:11px;color:${a.cor};flex:1;">${a.txt}</span>
+      <span style="font-size:10px;color:var(--text3);">→</span>
+    </div>`).join('');
+
+  // Budget geral
+  const libre = BUDGET_TOTAL - tv;
+  document.getElementById('budgetGeral').innerHTML = `
+    <div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px;"><span>Comprometido ${pct}%</span><span style="font-family:'JetBrains Mono',monospace;color:var(--blue);">${fmtM(tv)} / ${fmtM(BUDGET_TOTAL)}</span></div>
+      <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:linear-gradient(90deg,var(--blue),var(--purple));"></div></div>
+    </div>
+    ${[['Budget anual',fmtM(BUDGET_TOTAL),'var(--text)'],['Comprometido',fmtM(tv),'var(--blue)'],['Consumido',fmtM(tc),'var(--amber)'],['Saldo livre',fmtM(libre),'var(--green)']].map(([l,v,c])=>`
+      <div class="row-item"><span style="font-size:11px;color:var(--text2);">${l}</span><span style="font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;color:${c};">${v}</span></div>`).join('')}`;
+
+  // Mini charts
+  const statusCounts = ['Vigente','Próximo','Atenção','Vencido'].map(s=>contratos.filter(c=>c.status===s).length);
+  mkChart('gChartContratos',{type:'doughnut',data:{labels:['Vigente','Próximo','Atenção','Vencido'],datasets:[{data:statusCounts,backgroundColor:['#2dd4a0','#4f8ef7','#f5a623','#f75f5f'],borderWidth:0,hoverOffset:4}]},options:{...CHART_DEFAULTS,cutout:'65%',plugins:{legend:{display:true,position:'bottom',labels:{color:'#8888bb',font:{size:9},boxWidth:8,padding:6}}}}});
+
+  const prioCounts = ['Crítico','Alto','Médio','Baixo'].map(p=>incidentes.filter(i=>i.prio===p).length);
+  mkChart('gChartItsm',{type:'doughnut',data:{labels:['Crítico','Alto','Médio','Baixo'],datasets:[{data:prioCounts,backgroundColor:['#1a1a1a','#f75f5f','#f5a623','#2dd4a0'],borderWidth:0,hoverOffset:4}]},options:{...CHART_DEFAULTS,cutout:'65%',plugins:{legend:{display:true,position:'bottom',labels:{color:'#8888bb',font:{size:9},boxWidth:8,padding:6}}}}});
+
+  mkChart('gChartCobit',{type:'radar',data:{labels:['EDM','APO','BAI','DSS','MEA'],datasets:[{label:'Atual',data:[2.8,3.5,3.0,3.8,3.2],borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,0.1)',borderWidth:2,pointBackgroundColor:'#22d3ee',pointRadius:3},{label:'Meta',data:[4,4,4,4,4],borderColor:'rgba(255,255,255,0.15)',backgroundColor:'transparent',borderWidth:1,borderDash:[3,3],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8888bb',font:{size:9},boxWidth:8}}},scales:{r:{min:0,max:5,ticks:{color:'#8888bb',font:{size:8},stepSize:1},grid:{color:'rgba(255,255,255,0.06)'},pointLabels:{color:'#8888bb',font:{size:9}},angleLines:{color:'rgba(255,255,255,0.06)'}}}}});
+}
+
+// =====================================================================
+// CONTRATOS
+// =====================================================================
+function renderContratos() {
+  const tv=contratos.reduce((a,c)=>a+gV(c),0);
+  const tc=contratos.reduce((a,c)=>a+gC(c),0);
+  const cap=contratos.filter(c=>c.tipo==='CAPEX').reduce((a,c)=>a+gV(c),0);
+  const opex=contratos.filter(c=>c.tipo==='OPEX').reduce((a,c)=>a+gV(c),0);
+  const venc=contratos.filter(c=>c.status==='Vencido').length;
+  const prox=contratos.filter(c=>c.status==='Próximo'||c.status==='Atenção').length;
+  const pct=Math.round(tv/BUDGET_TOTAL*100);
+
+  document.getElementById('kpiContratos').innerHTML=[
+    {l:'Total',v:contratos.length,s:'contratos',i:'📋',a:'var(--blue)'},
+    {l:'Valor total',v:fmtM(tv),s:'carteira',i:'💼',a:'var(--purple)'},
+    {l:'Consumido',v:fmtM(tc),s:Math.round(tc/tv*100)+'% do total',i:'📉',a:'var(--amber)'},
+    {l:'Saldo budget',v:fmtM(BUDGET_TOTAL-tv),s:(100-pct)+'% livre',i:'💰',a:'var(--green)'},
+    {l:'Vencidos',v:venc,s:'ação urgente',i:'⚠️',a:'var(--red)'},
+    {l:'Atenção',v:prox,s:'próximos',i:'🔔',a:'var(--amber)'},
+    {l:'Vigentes',v:contratos.filter(c=>c.status==='Vigente').length,s:'ativos',i:'✅',a:'var(--green)'},
+    {l:'Budget usado',v:pct+'%',s:'comprometido',i:'📊',a:'var(--teal)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.a};"><div class="kpi-icon">${k.i}</div><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  mkChart('cTipo',{type:'doughnut',data:{labels:['CAPEX','OPEX'],datasets:[{data:[cap,opex],backgroundColor:['#4f8ef7','#2dd4a0'],borderWidth:0,hoverOffset:5}]},options:{...CHART_DEFAULTS,cutout:'70%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmtM(ctx.raw)}}}}});
+  document.getElementById('legCv').innerHTML=`<div class="leg"><span class="leg-d" style="background:#4f8ef7"></span>CAPEX ${fmtM(cap)}</div><div class="leg"><span class="leg-d" style="background:#2dd4a0"></span>OPEX ${fmtM(opex)}</div>`;
+
+  const cats=[...new Set(contratos.map(c=>c.cat))];
+  const catC=['#4f8ef7','#2dd4a0','#f5a623','#a78bfa','#f472b6','#22d3ee','#f75f5f'];
+  mkChart('cCat',{type:'bar',data:{labels:cats,datasets:[{data:cats.map(cat=>contratos.filter(c=>c.cat===cat).reduce((a,c)=>a+gV(c),0)),backgroundColor:catC,borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>fmtM(ctx.raw)}}},scales:{x:axisStyle({grid:{display:false}}),y:{...axisStyle(),ticks:{...axisStyle().ticks,callback:v=>fmtM(v)}}}}});
+
+  const sorted=[...contratos].sort((a,b)=>(gC(b)/gV(b))-(gC(a)/gV(a)));
+  mkChart('cConsumo',{type:'bar',data:{labels:sorted.map(c=>c.nome.split(' ')[0]),datasets:[{data:sorted.map(c=>Math.round(gC(c)/gV(c)*100)),backgroundColor:sorted.map(c=>{const p=gC(c)/gV(c)*100;return p>=90?'#f75f5f':p>=75?'#f5a623':'#4f8ef7';}),borderRadius:5,borderWidth:0}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+'%'}}},scales:{x:{max:100,...axisStyle(),ticks:{...axisStyle().ticks,callback:v=>v+'%'}},y:axisStyle({grid:{display:false}})}}});
+
+  // Budget verba
+  const verbas = {Sustentação:0,Melhoria:0,Inovação:0};
+  contratos.forEach(c=>{ if(verbas[c.verba]!==undefined) verbas[c.verba]+=gV(c); });
+  const budgetTotal = Object.values(verbas).reduce((a,b)=>a+b,0);
+  document.getElementById('budgetContratos').innerHTML = Object.entries(verbas).map(([k,v])=>{
+    const pct = Math.round(v/BUDGET_TOTAL*100);
+    const cor = k==='Sustentação'?'var(--blue)':k==='Melhoria'?'var(--amber)':'var(--purple)';
+    return `<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:var(--text2);">${k}</span><span style="font-family:'JetBrains Mono',monospace;color:${cor};">${fmtM(v)} · ${pct}%</span></div><div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:${cor};"></div></div></div>`;
+  }).join('') + `<div class="row-item" style="margin-top:8px;"><span style="font-size:11px;color:var(--text2);">Saldo livre</span><span style="font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace;color:var(--green);">${fmtM(BUDGET_TOTAL-budgetTotal)}</span></div>`;
+
+  // Tabela
+  document.getElementById('tblContratos').innerHTML=`<thead><tr><th>ID</th><th>Fornecedor</th><th>Cat.</th><th>Tipo</th><th>Verba</th><th>Valor</th><th>Consumido</th><th>%</th><th>Vencimento</th><th>Status</th></tr></thead><tbody>${contratos.map(c=>`
+    <tr class="clickable" onclick="openModalContrato('${c.id}')">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${c.id}</td>
+      <td style="font-weight:500;">${c.nome}</td>
+      <td style="font-size:10px;color:var(--text2);">${c.cat}</td>
+      <td><span class="badge ${c.tipo==='CAPEX'?'b-blue':'b-green'}">${c.tipo}</span></td>
+      <td style="font-size:10px;color:var(--text2);">${c.verba}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${fmtM(gV(c))}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${fmtM(gC(c))}</td>
+      <td><div style="display:flex;align-items:center;gap:4px;"><div class="prog-wrap" style="width:50px;"><div class="prog-bar" style="width:${Math.round(gC(c)/gV(c)*100)}%;background:${gC(c)/gV(c)>=0.9?'#f75f5f':gC(c)/gV(c)>=0.75?'#f5a623':'#4f8ef7'};"></div></div><span style="font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--text2);">${Math.round(gC(c)/gV(c)*100)}%</span></div></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${c.fim}</td>
+      <td><span class="badge ${badgeCls(c.status)}">${c.status}</span></td>
+    </tr>`).join('')}</tbody>`;
+}
+
+function openModalContrato(id) {
+  const c = contratos.find(x=>x.id===id);
+  if(!c) return;
+  const pct = Math.round(gC(c)/gV(c)*100);
+  openModal(`📋 ${c.id} — ${c.nome}`, `
+    <div class="modal-section">
+      <div class="modal-section-title">Identificação</div>
+      <div class="modal-grid">
+        ${modalField('ID do Contrato', c.id, true)}
+        ${modalField('Fornecedor', c.nome)}
+        ${modalField('Categoria', c.cat)}
+        ${modalField('Tipo', c.tipo)}
+        ${modalField('Verba de Budget', c.verba)}
+        ${modalField('Status', `<span class="badge ${badgeCls(c.status)}">${c.status}</span>`)}
+        ${modalField('Gestor', c.gestor)}
+        ${modalField('Área Responsável', c.area)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Financeiro</div>
+      <div class="modal-grid">
+        ${modalField('Valor Total', fmt(gV(c)), true)}
+        ${modalField('Valor Consumido', fmt(gC(c)), true)}
+        ${modalField('% Consumido', pct+'%', true)}
+        ${modalField('Saldo Restante', fmt(gV(c)-gC(c)), true)}
+      </div>
+      <div style="margin-top:10px;"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-bottom:5px;"><span>Consumo</span><span>${pct}%</span></div><div class="prog-wrap" style="height:8px;"><div class="prog-bar" style="width:${pct}%;background:${pct>=90?'#f75f5f':pct>=75?'#f5a623':'#4f8ef7'};border-radius:4px;"></div></div></div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Vigência</div>
+      <div class="modal-grid">
+        ${modalField('Data de Vencimento', c.fim)}
+        ${modalField('Dias Restantes', c.dias < 0 ? `Vencido há ${Math.abs(c.dias)} dias` : `${c.dias} dias`, true)}
+        ${modalField('Renovação', c.renovacao)}
+        ${modalField('Contato Fornecedor', c.contato)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Descrição</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;font-size:12px;color:var(--text2);line-height:1.6;">${c.descricao}</div>
+    </div>`);
+}
+
+// =====================================================================
+// FORNECEDORES
+// =====================================================================
+function renderFornecedores() {
+  const estrategicos=fornecedores.filter(f=>f.status==='Estratégico').length;
+  const criticos=fornecedores.filter(f=>f.status==='Crítico'||f.sla<90).length;
+  const slaMedia=(fornecedores.reduce((a,f)=>a+f.sla,0)/fornecedores.length).toFixed(1);
+  const npsMedia=Math.round(fornecedores.reduce((a,f)=>a+f.nps,0)/fornecedores.length);
+
+  document.getElementById('kpiForn').innerHTML=[
+    {l:'Total',v:fornecedores.length,s:'ativos',i:'🏢',a:'var(--blue)'},
+    {l:'Estratégicos',v:estrategicos,s:'alta criticidade',i:'⭐',a:'var(--purple)'},
+    {l:'Em atenção',v:criticos,s:'requer ação',i:'⚠️',a:'var(--red)'},
+    {l:'SLA médio',v:slaMedia+'%',s:'disponibilidade',i:'📊',a:'var(--green)'},
+    {l:'NPS médio',v:npsMedia,s:'satisfação interna',i:'😊',a:'var(--teal)'},
+    {l:'Total chamados',v:fornecedores.reduce((a,f)=>a+f.chamados,0),s:'no período',i:'📞',a:'var(--amber)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.a};"><div class="kpi-icon">${k.i}</div><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  mkChart('cSla',{type:'bar',data:{labels:fornecedores.map(f=>f.nome.split(' ')[0]),datasets:[{data:fornecedores.map(f=>f.sla),backgroundColor:fornecedores.map(f=>f.sla>=99?'#2dd4a0':f.sla>=95?'#4f8ef7':f.sla>=90?'#f5a623':'#f75f5f'),borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+'%'}}},scales:{x:axisStyle({grid:{display:false}}),y:{min:80,max:100,...axisStyle(),ticks:{...axisStyle().ticks,callback:v=>v+'%'}}}}});
+
+  mkChart('cNps',{type:'bar',data:{labels:fornecedores.map(f=>f.nome.split(' ')[0]),datasets:[{data:fornecedores.map(f=>f.nps),backgroundColor:fornecedores.map(f=>f.nps>=85?'#2dd4a0':f.nps>=70?'#4f8ef7':'#f75f5f'),borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:axisStyle({grid:{display:false}}),y:{min:0,max:100,...axisStyle()}}}});
+
+  document.getElementById('tblForn').innerHTML=`<thead><tr><th>ID</th><th>Fornecedor</th><th>Cat.</th><th>SLA Contrat.</th><th>SLA Real</th><th>NPS</th><th>Chamados</th><th>Status</th><th>Próx. Aval.</th></tr></thead><tbody>${fornecedores.map(f=>`
+    <tr class="clickable" onclick="openModalForn('${f.id}')">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${f.id}</td>
+      <td style="font-weight:500;">${f.nome}</td>
+      <td style="font-size:10px;color:var(--text2);">${f.cat}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${f.slaContratado}%</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${f.sla>=99?'#2dd4a0':f.sla>=95?'#4f8ef7':f.sla>=90?'#f5a623':'#f75f5f'};">${f.sla}%</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${f.nps>=85?'#2dd4a0':f.nps>=70?'#4f8ef7':'#f75f5f'};">${f.nps}</td>
+      <td style="font-size:10px;color:${f.chamados>20?'#f75f5f':f.chamados>10?'#f5a623':'var(--text2)'};">${f.chamados}</td>
+      <td><span class="badge ${badgeCls(f.status)}">${f.status}</span></td>
+      <td style="font-size:10px;color:var(--text2);">${f.proxAval}</td>
+    </tr>`).join('')}</tbody>`;
+}
+
+function openModalForn(id) {
+  const f = fornecedores.find(x=>x.id===id);
+  if(!f) return;
+  const slaDesvio = (f.sla - f.slaContratado).toFixed(1);
+  openModal(`🤝 ${f.id} — ${f.nome}`, `
+    <div class="modal-section">
+      <div class="modal-section-title">Dados Cadastrais</div>
+      <div class="modal-grid">
+        ${modalField('ID', f.id, true)}
+        ${modalField('Razão Social', f.nome)}
+        ${modalField('CNPJ', f.cnpj, true)}
+        ${modalField('Categoria', f.cat)}
+        ${modalField('Status', `<span class="badge ${badgeCls(f.status)}">${f.status}</span>`)}
+        ${modalField('Qtd. Contratos', f.contratos)}
+        ${modalField('Valor Total', fmt(f.valor), true)}
+        ${modalField('Gestor Interno', f.gestor)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Performance</div>
+      <div class="modal-grid">
+        ${modalField('SLA Contratado', f.slaContratado+'%', true)}
+        ${modalField('SLA Realizado', `<span style="color:${f.sla>=f.slaContratado?'#2dd4a0':'#f75f5f'};">${f.sla}%</span>`, false)}
+        ${modalField('Desvio SLA', `<span style="color:${slaDesvio>=0?'#2dd4a0':'#f75f5f'};">${slaDesvio>=0?'+':''}${slaDesvio}%</span>`, false)}
+        ${modalField('NPS Interno', `<span style="color:${f.nps>=85?'#2dd4a0':f.nps>=70?'#4f8ef7':'#f75f5f'};">${f.nps}/100</span>`, false)}
+        ${modalField('Chamados no período', f.chamados)}
+        ${modalField('Última Avaliação', f.ultimaAval)}
+        ${modalField('Próxima Avaliação', f.proxAval)}
+        ${modalField('Contato', f.contato)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Contato</div>
+      <div class="modal-grid">
+        ${modalField('E-mail', f.email)}
+        ${modalField('Telefone', f.telefone, true)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Observações</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;font-size:12px;color:var(--text2);line-height:1.6;">${f.obs}</div>
+    </div>`);
+}
+
+// =====================================================================
+// ITSM
+// =====================================================================
+function renderItsm() {
+  const abertos=incidentes.filter(i=>i.status!=='Resolvido').length;
+  const criticos=incidentes.filter(i=>i.prio==='Crítico').length;
+  const escalados=incidentes.filter(i=>i.status==='Escalado').length;
+  const resolvidos=incidentes.filter(i=>i.status==='Resolvido').length;
+
+  document.getElementById('kpiItsm').innerHTML=[
+    {l:'Abertos',v:abertos,s:'aguardando',i:'🚨',a:'var(--red)'},
+    {l:'Críticos P1',v:criticos,s:'SLA 1h',i:'⚫',a:'var(--red)'},
+    {l:'Escalados',v:escalados,s:'nível 2/3',i:'⬆️',a:'var(--amber)'},
+    {l:'Resolvidos',v:resolvidos,s:'encerrados',i:'✅',a:'var(--green)'},
+    {l:'Problemas/RCA',v:problemas.length,s:'em análise',i:'⬜',a:'var(--gray-500)'},
+    {l:'SLA médio',v:'94.2%',s:'dentro do prazo',i:'⏱️',a:'var(--blue)'},
+    {l:'MTTR médio',v:'3.2h',s:'tempo resolução',i:'🔧',a:'var(--purple)'},
+    {l:'Escalada auto',v:'Ativa',s:'monitorando',i:'🤖',a:'var(--teal)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.a};"><div class="kpi-icon">${k.i}</div><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  const prios=['Crítico','Alto','Médio','Baixo'];
+  mkChart('cPrio',{type:'doughnut',data:{labels:prios,datasets:[{data:prios.map(p=>incidentes.filter(i=>i.prio===p).length),backgroundColor:['#111827','#f75f5f','#f5a623','#2dd4a0'],borderWidth:0,hoverOffset:5}]},options:{...CHART_DEFAULTS,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#8888bb',font:{size:9},boxWidth:8,padding:6}}}}});
+  mkChart('cTend',{type:'line',data:{labels:['Dez','Jan','Fev','Mar','Abr','Mai'],datasets:[{label:'Incidentes',data:[28,34,22,31,27,incidentes.length],borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,0.08)',borderWidth:2,tension:0.4,fill:true,pointBackgroundColor:'#4f8ef7',pointRadius:4},{label:'Críticos',data:[4,6,3,5,4,criticos],borderColor:'#f75f5f',backgroundColor:'transparent',borderWidth:2,tension:0.4,pointBackgroundColor:'#f75f5f',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8888bb',font:{size:9},boxWidth:8}}},scales:{x:axisStyle({grid:{display:false}}),y:axisStyle()}}});
+
+  const prioColor={'Crítico':'#1a1a1a','Alto':'#f75f5f','Médio':'#f5a623','Baixo':'#22c55e'};
+  const prioText={'Crítico':'#9ca3af','Alto':'#f75f5f','Médio':'#f5a623','Baixo':'#22c55e'};
+  document.getElementById('tblItsm').innerHTML=`<thead><tr><th>ID</th><th>Título</th><th>Prioridade</th><th>Setor</th><th>Status</th><th>Abertura</th><th>Usuário</th><th>Responsável</th><th>SLA</th><th>Progresso</th></tr></thead><tbody>${incidentes.map(i=>`
+    <tr class="clickable" onclick="openModalIncidente('${i.id}')">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${i.id}</td>
+      <td style="font-size:11px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.titulo}</td>
+      <td><span style="font-size:10px;font-weight:700;color:${prioText[i.prio]};">${i.cor} ${i.prio}</span></td>
+      <td style="font-size:10px;color:var(--text2);">${i.setor}</td>
+      <td><span class="badge ${badgeCls(i.status)}">${i.status}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text2);">${i.abertura}</td>
+      <td style="font-size:10px;color:var(--text2);">${i.usuario}</td>
+      <td style="font-size:10px;color:var(--text2);">${i.responsavel}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${i.sla}</td>
+      <td><div style="display:flex;align-items:center;gap:4px;"><div class="prog-wrap" style="width:50px;"><div class="prog-bar" style="width:${i.progresso}%;background:${i.progresso===100?'#2dd4a0':i.progresso>60?'#4f8ef7':'#f5a623'};"></div></div><span style="font-size:9px;color:var(--text2);">${i.progresso}%</span></div></td>
+    </tr>`).join('')}</tbody>`;
+
+  document.getElementById('tblProblemas').innerHTML=`<thead><tr><th>ID</th><th>Título</th><th>Origem</th><th>Área</th><th>Status</th><th>Abertura</th><th>Prazo RCA</th><th>Responsável</th><th>Projeto Gerado</th></tr></thead><tbody>${problemas.map(p=>`
+    <tr class="clickable" onclick="openModalProblema('${p.id}')">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${p.id}</td>
+      <td style="font-size:11px;">${p.titulo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${p.origem}</td>
+      <td style="font-size:10px;color:var(--text2);">${p.area}</td>
+      <td><span class="badge b-amber">${p.status}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${p.abertura}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${p.prazoRca}</td>
+      <td style="font-size:10px;color:var(--text2);">${p.responsavel}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--purple);">${p.projetoGerado}</td>
+    </tr>`).join('')}</tbody>`;
+}
+
+function openModalIncidente(id) {
+  const i = incidentes.find(x=>x.id===id);
+  if(!i) return;
+  const timelineHtml = i.timeline.map(t=>`
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background:${t.cor};border-color:${t.cor};"></div>
+      <div class="timeline-content">
+        <div class="timeline-time">${t.time}</div>
+        <div class="timeline-text">${t.txt}</div>
+      </div>
+    </div>`).join('');
+
+  openModal(`${i.cor} ${i.id} — ${i.prio}`, `
+    <div class="modal-section">
+      <div class="modal-section-title">Identificação do Incidente</div>
+      <div class="modal-grid">
+        ${modalField('ID', i.id, true)}
+        ${modalField('Prioridade', `<span style="font-weight:700;">${i.cor} ${i.prio}</span>`)}
+        ${modalField('Status', `<span class="badge ${badgeCls(i.status)}">${i.status}</span>`)}
+        ${modalField('SLA', i.sla, true)}
+        ${modalField('Área', i.area)}
+        ${modalField('Setor Afetado', i.setor)}
+        ${modalField('Data/Hora Abertura', i.abertura, true)}
+        ${modalField('Usuário/Origem', i.usuario, true)}
+        ${modalField('Responsável', i.responsavel)}
+        ${modalField('Fornecedor Relacionado', i.fornecedor)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Descrição</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;font-size:12px;color:var(--text2);line-height:1.6;">${i.descricao}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Linha do Tempo</div>
+      <div class="timeline">${timelineHtml}</div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Resolução e RCA</div>
+      <div class="modal-grid">
+        ${modalField('Contramédida', i.contramedida)}
+        ${modalField('RCA', i.rca)}
+        ${modalField('Projeto Corretivo', i.projetoCorretivo)}
+        ${modalField('Progresso', i.progresso+'%', true)}
+      </div>
+    </div>`);
+}
+
+function openModalProblema(id) {
+  const p = problemas.find(x=>x.id===id);
+  if(!p) return;
+  openModal(`⬜ ${p.id} — Problema/RCA`, `
+    <div class="modal-section">
+      <div class="modal-section-title">Identificação</div>
+      <div class="modal-grid">
+        ${modalField('ID Problema', p.id, true)}
+        ${modalField('Incidente Origem', p.origem, true)}
+        ${modalField('Área', p.area)}
+        ${modalField('Status', `<span class="badge b-amber">${p.status}</span>`)}
+        ${modalField('Data Abertura', p.abertura, true)}
+        ${modalField('Prazo RCA', p.prazoRca, true)}
+        ${modalField('Responsável', p.responsavel)}
+        ${modalField('Projeto Gerado', p.projetoGerado, true)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Descrição e Contramédida</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;">${p.descricao}</div>
+      <div style="background:var(--amber3);border:1px solid rgba(245,166,35,0.2);border-radius:8px;padding:12px;font-size:12px;color:var(--amber);line-height:1.6;"><strong>Contramédida:</strong> ${p.contramedida}</div>
+    </div>`);
+}
+
+// =====================================================================
+// PROJETOS
+// =====================================================================
+function renderProjetos() {
+  const ativos=projetos.filter(p=>p.status==='Em andamento').length;
+  const concluidos=projetos.filter(p=>p.status==='Concluído').length;
+  const tv=projetos.reduce((a,p)=>a+p.budget,0);
+  const tg=projetos.reduce((a,p)=>a+p.gasto,0);
+
+  document.getElementById('kpiProj').innerHTML=[
+    {l:'Total',v:projetos.length,s:'portfólio',i:'📁',a:'var(--purple)'},
+    {l:'Em andamento',v:ativos,s:'ativos',i:'🔄',a:'var(--blue)'},
+    {l:'Concluídos',v:concluidos,s:'entregues',i:'✅',a:'var(--green)'},
+    {l:'Budget total',v:fmtM(tv),s:'alocado',i:'💰',a:'var(--amber)'},
+    {l:'Gasto atual',v:fmtM(tg),s:Math.round(tg/tv*100)+'% do budget',i:'📉',a:'var(--red)'},
+    {l:'Corretivos',v:projetos.filter(p=>p.tipo==='Corretivo').length,s:'de RCA',i:'🔧',a:'var(--red)'},
+    {l:'Inovação',v:projetos.filter(p=>p.tipo==='Inovação').length,s:'estratégicos',i:'🚀',a:'var(--purple)'},
+    {l:'Prog. médio',v:Math.round(projetos.reduce((a,p)=>a+p.progresso,0)/projetos.length)+'%',s:'conclusão',i:'📈',a:'var(--teal)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.a};"><div class="kpi-icon">${k.i}</div><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  const statuses=['Em andamento','Planejamento','Concluído','Suspenso','Em análise'];
+  mkChart('cProjStatus',{type:'doughnut',data:{labels:statuses,datasets:[{data:statuses.map(s=>projetos.filter(p=>p.status===s).length),backgroundColor:['#4f8ef7','#a78bfa','#2dd4a0','#f5a623','#f75f5f'],borderWidth:0,hoverOffset:5}]},options:{...CHART_DEFAULTS,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#8888bb',font:{size:9},boxWidth:8,padding:6}}}}});
+  mkChart('cProjBudget',{type:'bar',data:{labels:projetos.map(p=>p.id),datasets:[{label:'Budget',data:projetos.map(p=>p.budget),backgroundColor:'rgba(79,142,247,0.25)',borderRadius:5,borderWidth:0},{label:'Gasto',data:projetos.map(p=>p.gasto),backgroundColor:'#4f8ef7',borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8888bb',font:{size:9},boxWidth:8}}},scales:{x:axisStyle({grid:{display:false}}),y:{...axisStyle(),ticks:{...axisStyle().ticks,callback:v=>fmtM(v)}}}}});
+
+  const tipoColor={Corretivo:'b-red',Inovação:'b-purple',Melhoria:'b-amber',Estratégico:'b-blue'};
+  document.getElementById('tblProj').innerHTML=`<thead><tr><th>ID</th><th>Projeto</th><th>Tipo</th><th>Origem</th><th>Status</th><th>Início</th><th>Prazo</th><th>Budget</th><th>Gasto</th><th>Progresso</th><th>Gestor</th></tr></thead><tbody>${projetos.map(p=>`
+    <tr class="clickable" onclick="openModalProjeto('${p.id}')">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${p.id}</td>
+      <td style="font-size:11px;font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.nome}</td>
+      <td><span class="badge ${tipoColor[p.tipo]||'b-blue'}">${p.tipo}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${p.origem}</td>
+      <td><span class="badge ${badgeCls(p.status)}">${p.status}</span></td>
+      <td style="font-size:10px;color:var(--text2);">${p.inicio}</td>
+      <td style="font-size:10px;color:var(--text2);">${p.fim}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${fmtM(p.budget)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${p.gasto/p.budget>0.9?'#f75f5f':'var(--text2)'};">${fmtM(p.gasto)}</td>
+      <td><div style="display:flex;align-items:center;gap:4px;"><div class="prog-wrap" style="width:50px;"><div class="prog-bar" style="width:${p.progresso}%;background:${p.progresso===100?'#2dd4a0':p.progresso>60?'#4f8ef7':'#f5a623'};"></div></div><span style="font-size:9px;color:var(--text2);">${p.progresso}%</span></div></td>
+      <td style="font-size:10px;color:var(--text2);">${p.gestor}</td>
+    </tr>`).join('')}</tbody>`;
+}
+
+function openModalProjeto(id) {
+  const p = projetos.find(x=>x.id===id);
+  if(!p) return;
+  openModal(`📁 ${p.id} — ${p.nome}`, `
+    <div class="modal-section">
+      <div class="modal-section-title">Identificação</div>
+      <div class="modal-grid">
+        ${modalField('ID', p.id, true)}
+        ${modalField('Tipo', p.tipo)}
+        ${modalField('Origem / Rastreabilidade', p.origem, true)}
+        ${modalField('Status', `<span class="badge ${badgeCls(p.status)}">${p.status}</span>`)}
+        ${modalField('Prioridade', p.prio)}
+        ${modalField('Área', p.area)}
+        ${modalField('Setor', p.setor)}
+        ${modalField('Gestor', p.gestor)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Cronograma e Budget</div>
+      <div class="modal-grid">
+        ${modalField('Data Início', p.inicio, true)}
+        ${modalField('Prazo Final (SLA)', p.fim, true)}
+        ${modalField('Budget Aprovado', fmt(p.budget), true)}
+        ${modalField('Gasto Atual', fmt(p.gasto), true)}
+        ${modalField('% Budget Gasto', Math.round(p.gasto/(p.budget||1)*100)+'%', true)}
+        ${modalField('Progresso Geral', p.progresso+'%', true)}
+      </div>
+      <div style="margin-top:10px;"><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-bottom:5px;"><span>Progresso</span><span>${p.progresso}%</span></div><div class="prog-wrap" style="height:8px;"><div class="prog-bar" style="width:${p.progresso}%;background:${p.progresso===100?'#2dd4a0':p.progresso>60?'#4f8ef7':'#f5a623'};border-radius:4px;"></div></div></div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Detalhes</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;">${p.descricao}</div>
+      ${modalField('Marcos', p.marcos)}
+      ${modalField('Fornecedores', p.fornecedores)}
+      ${modalField('Nível de Risco', p.risco)}
+    </div>`);
+}
+
+// =====================================================================
+// CONFORMIDADE
+// =====================================================================
+function renderConformidade() {
+  const rCrit=riscos.filter(r=>r.nivel==='Crítico').length;
+  const rAlto=riscos.filter(r=>r.nivel==='Alto').length;
+  const audPend=auditorias.filter(a=>a.status==='Pendente').length;
+
+  document.getElementById('kpiConf').innerHTML=[
+    {l:'Maturidade COBIT',v:'3.2/5',s:'escala 1-5',i:'📐',a:'var(--teal)'},
+    {l:'ISO 27001',v:'78%',s:'controles impl.',i:'🛡️',a:'var(--blue)'},
+    {l:'LGPD',v:'71%',s:'conformidade',i:'⚖️',a:'var(--purple)'},
+    {l:'Riscos críticos',v:rCrit,s:'ação imediata',i:'🔴',a:'var(--red)'},
+    {l:'Riscos altos',v:rAlto,s:'monitorando',i:'🟡',a:'var(--amber)'},
+    {l:'Políticas',v:politicas.length,s:`${politicas.filter(p=>p.status==='Vigente').length} vigentes`,i:'📜',a:'var(--green)'},
+    {l:'Auditorias',v:auditorias.length,s:`${audPend} pendentes`,i:'🔍',a:'var(--amber)'},
+    {l:'ISO 42001',v:'67%',s:'Gov. IA',i:'🤖',a:'var(--purple)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.a};"><div class="kpi-icon">${k.i}</div><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  mkChart('cCobit',{type:'radar',data:{labels:['EDM','APO','BAI','DSS','MEA'],datasets:[{label:'Atual',data:[2.8,3.5,3.0,3.8,3.2],borderColor:'#22d3ee',backgroundColor:'rgba(34,211,238,0.1)',borderWidth:2,pointBackgroundColor:'#22d3ee',pointRadius:4},{label:'Meta',data:[4,4,4,4,4],borderColor:'rgba(255,255,255,0.15)',backgroundColor:'transparent',borderWidth:1,borderDash:[3,3],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8888bb',font:{size:9},boxWidth:8}}},scales:{r:{min:0,max:5,ticks:{color:'#8888bb',font:{size:8},stepSize:1},grid:{color:'rgba(255,255,255,0.06)'},pointLabels:{color:'#8888bb',font:{size:9}},angleLines:{color:'rgba(255,255,255,0.06)'}}}}});
+
+  const isoC=['A.5 Políticas','A.6 Org.','A.8 Ativos','A.9 Acesso','A.12 Ops','A.16 Inc.'];
+  const isoV=[85,72,68,80,75,60];
+  mkChart('cIso',{type:'bar',data:{labels:isoC,datasets:[{data:isoV,backgroundColor:isoV.map(v=>v>=80?'#2dd4a0':v>=70?'#4f8ef7':'#f5a623'),borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:axisStyle({grid:{display:false}}),y:{max:100,...axisStyle(),ticks:{...axisStyle().ticks,callback:v=>v+'%'}}}}});
+
+  const lgpdC=['Mapeamento','Bases legais','Privacidade','DPO','Consentimento','Incidentes'];
+  const lgpdV=[80,75,90,100,55,60];
+  mkChart('cLgpd',{type:'bar',data:{labels:lgpdC,datasets:[{data:lgpdV,backgroundColor:lgpdV.map(v=>v>=80?'#2dd4a0':v>=60?'#4f8ef7':'#f5a623'),borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:axisStyle({grid:{display:false}}),y:{max:100,...axisStyle(),ticks:{...axisStyle().ticks,callback:v=>v+'%'}}}}});
+
+  const polStatus={Vigente:'b-green',Revisar:'b-amber',Nova:'b-purple'};
+  document.getElementById('tblPoliticas').innerHTML=`<thead><tr><th>ID</th><th>Política</th><th>Versão</th><th>Aprovada</th><th>Próx. Revisão</th><th>Responsável</th><th>Frameworks</th><th>Status</th></tr></thead><tbody>${politicas.map(p=>`
+    <tr class="clickable" onclick="openModalPolitica('${p.id}')">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${p.id}</td>
+      <td style="font-size:11px;font-weight:500;">${p.nome}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${p.versao}</td>
+      <td style="font-size:10px;color:var(--text2);">${p.aprovada}</td>
+      <td style="font-size:10px;color:var(--text2);">${p.proxRevisao}</td>
+      <td style="font-size:10px;color:var(--text2);">${p.responsavel}</td>
+      <td style="font-size:9px;color:var(--text3);">${p.frameworks}</td>
+      <td><span class="badge ${polStatus[p.status]||'b-gray'}">${p.status}</span></td>
+    </tr>`).join('')}</tbody>`;
+
+  const nivelCls={Crítico:'b-red',Alto:'b-amber',Médio:'b-blue'};
+  document.getElementById('tblRiscos').innerHTML=`<thead><tr><th>ID</th><th>Risco</th><th>Impacto</th><th>Nível</th><th>Área</th><th>Prazo</th><th>Status</th><th>Responsável</th></tr></thead><tbody>${riscos.map(r=>`
+    <tr class="clickable" onclick="openModalRisco('${r.id}')">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${r.id}</td>
+      <td style="font-size:11px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.desc}</td>
+      <td style="font-size:10px;color:var(--text2);">${r.impacto}</td>
+      <td><span class="badge ${nivelCls[r.nivel]||'b-blue'}">${r.nivel}</span></td>
+      <td style="font-size:10px;color:var(--text2);">${r.area}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${r.prazo}</td>
+      <td><span class="badge ${r.status==='Aberto'?'b-red':r.status==='Em mitigação'?'b-amber':'b-green'}">${r.status}</span></td>
+      <td style="font-size:10px;color:var(--text2);">${r.responsavel}</td>
+    </tr>`).join('')}</tbody>`;
+
+  document.getElementById('tblAud').innerHTML=`<thead><tr><th>ID</th><th>Auditoria</th><th>Prazo</th><th>Status</th><th>Progresso</th><th>Responsável</th><th>Auditor</th></tr></thead><tbody>${auditorias.map(a=>`
+    <tr class="clickable" onclick="openModalAuditoria('${a.id}')">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${a.id}</td>
+      <td style="font-size:11px;font-weight:500;">${a.nome}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${a.prazo}</td>
+      <td><span class="badge ${a.status==='Pendente'?'b-amber':a.status==='Em andamento'?'b-blue':'b-purple'}">${a.status}</span></td>
+      <td><div style="display:flex;align-items:center;gap:4px;"><div class="prog-wrap" style="width:60px;"><div class="prog-bar" style="width:${a.progresso}%;background:${a.progresso>=80?'#2dd4a0':a.progresso>=50?'#4f8ef7':'#f5a623'};"></div></div><span style="font-size:9px;color:var(--text2);">${a.progresso}%</span></div></td>
+      <td style="font-size:10px;color:var(--text2);">${a.responsavel}</td>
+      <td style="font-size:10px;color:var(--text2);">${a.auditor}</td>
+    </tr>`).join('')}</tbody>`;
+}
+
+function openModalPolitica(id) {
+  const p = politicas.find(x=>x.id===id);
+  if(!p) return;
+  openModal(`📜 ${p.id} — ${p.nome}`, `
+    <div class="modal-section">
+      <div class="modal-section-title">Identificação</div>
+      <div class="modal-grid">
+        ${modalField('ID', p.id, true)}
+        ${modalField('Versão', p.versao, true)}
+        ${modalField('Status', `<span class="badge ${p.status==='Vigente'?'b-green':p.status==='Revisar'?'b-amber':'b-purple'}">${p.status}</span>`)}
+        ${modalField('Escopo', p.escopo)}
+        ${modalField('Data Aprovação', p.aprovada)}
+        ${modalField('Próxima Revisão', p.proxRevisao)}
+        ${modalField('Responsável', p.responsavel)}
+        ${modalField('Frameworks', p.frameworks)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Descrição</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;font-size:12px;color:var(--text2);line-height:1.6;">${p.descricao}</div>
+    </div>`);
+}
+
+function openModalRisco(id) {
+  const r = riscos.find(x=>x.id===id);
+  if(!r) return;
+  openModal(`⚠️ ${r.id} — Risco ${r.nivel}`, `
+    <div class="modal-section">
+      <div class="modal-section-title">Identificação do Risco</div>
+      <div class="modal-grid">
+        ${modalField('ID', r.id, true)}
+        ${modalField('Nível', `<span class="badge ${r.nivel==='Crítico'?'b-red':r.nivel==='Alto'?'b-amber':'b-blue'}">${r.nivel}</span>`)}
+        ${modalField('Impacto', r.impacto)}
+        ${modalField('Probabilidade', r.prob)}
+        ${modalField('Área', r.area)}
+        ${modalField('Prazo Mitigação', r.prazo, true)}
+        ${modalField('Status', `<span class="badge ${r.status==='Aberto'?'b-red':r.status==='Em mitigação'?'b-amber':'b-green'}">${r.status}</span>`)}
+        ${modalField('Responsável', r.responsavel)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Descrição e Plano de Ação</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;">${r.descricao}</div>
+      <div style="background:var(--green3);border:1px solid rgba(45,212,160,0.2);border-radius:8px;padding:12px;font-size:12px;color:var(--green);"><strong>Ação:</strong> ${r.acao}</div>
+    </div>`);
+}
+
+function openModalAuditoria(id) {
+  const a = auditorias.find(x=>x.id===id);
+  if(!a) return;
+  openModal(`🔍 ${a.id} — ${a.nome}`, `
+    <div class="modal-section">
+      <div class="modal-section-title">Identificação</div>
+      <div class="modal-grid">
+        ${modalField('ID', a.id, true)}
+        ${modalField('Status', `<span class="badge ${a.status==='Pendente'?'b-amber':a.status==='Em andamento'?'b-blue':'b-purple'}">${a.status}</span>`)}
+        ${modalField('Prazo', a.prazo, true)}
+        ${modalField('Progresso', a.progresso+'%', true)}
+        ${modalField('Escopo', a.escopo)}
+        ${modalField('Responsável', a.responsavel)}
+        ${modalField('Auditor', a.auditor)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Observações</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;font-size:12px;color:var(--text2);line-height:1.6;">${a.obs}</div>
+    </div>`);
+}
+
+// =====================================================================
+// SEGURANÇA & IAM
+// =====================================================================
+function renderSeguranca() {
+  const vulnCrit=vulnerabilidades.filter(v=>v.severidade==='Crítica').length;
+  const vulnAlta=vulnerabilidades.filter(v=>v.severidade==='Alta').length;
+  const iamCrit=usuariosIam.filter(u=>u.status==='Crítico').length;
+
+  document.getElementById('kpiSeg').innerHTML=[
+    {l:'Vulns críticas',v:vulnCrit,s:'ação imediata',i:'🔴',a:'var(--red)'},
+    {l:'Vulns altas',v:vulnAlta,s:'urgente',i:'🟡',a:'var(--amber)'},
+    {l:'Total vulns',v:vulnerabilidades.length,s:'identificadas',i:'🔐',a:'var(--blue)'},
+    {l:'IAM críticos',v:iamCrit,s:'revisar acesso',i:'👤',a:'var(--red)'},
+    {l:'Usuários priv.',v:usuariosIam.length,s:'com acesso adm.',i:'🔑',a:'var(--amber)'},
+    {l:'Sem MFA',v:usuariosIam.filter(u=>u.mfa==='Não').length,s:'usuários críticos',i:'⚠️',a:'var(--red)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.a};"><div class="kpi-icon">${k.i}</div><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  const sevs=['Crítica','Alta','Média','Baixa'];
+  mkChart('cVuln',{type:'doughnut',data:{labels:sevs,datasets:[{data:sevs.map(s=>vulnerabilidades.filter(v=>v.severidade===s).length),backgroundColor:['#1a1a1a','#f75f5f','#f5a623','#2dd4a0'],borderWidth:0,hoverOffset:5}]},options:{...CHART_DEFAULTS,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#8888bb',font:{size:9},boxWidth:8,padding:6}}}}});
+  mkChart('cIam',{type:'bar',data:{labels:['Total','Regular','Atenção','Crítico'],datasets:[{data:[usuariosIam.length,usuariosIam.filter(u=>u.status==='Regular').length,usuariosIam.filter(u=>u.status==='Atenção').length,usuariosIam.filter(u=>u.status==='Crítico').length],backgroundColor:['#4f8ef7','#2dd4a0','#f5a623','#f75f5f'],borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:axisStyle({grid:{display:false}}),y:axisStyle()}}});
+
+  const sevCls={Crítica:'b-red',Alta:'b-amber',Média:'b-blue',Baixa:'b-green'};
+  document.getElementById('tblVuln').innerHTML=`<thead><tr><th>ID</th><th>Vulnerabilidade</th><th>Severidade</th><th>Sistema</th><th>Status</th><th>Descoberta</th><th>Prazo</th><th>Responsável</th></tr></thead><tbody>${vulnerabilidades.map(v=>`
+    <tr class="clickable" onclick="openModalVuln('${v.id}')">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${v.id}</td>
+      <td style="font-size:11px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${v.titulo}</td>
+      <td><span class="badge ${sevCls[v.severidade]||'b-blue'}">${v.severidade}</span></td>
+      <td style="font-size:10px;color:var(--text2);">${v.sistema}</td>
+      <td><span class="badge ${v.status==='Aberta'?'b-red':v.status==='Em tratamento'?'b-amber':'b-green'}">${v.status}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${v.descoberta}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${v.prazo}</td>
+      <td style="font-size:10px;color:var(--text2);">${v.responsavel}</td>
+    </tr>`).join('')}</tbody>`;
+
+  document.getElementById('tblIam').innerHTML=`<thead><tr><th>ID</th><th>Usuário</th><th>Nome</th><th>Perfil</th><th>Sistemas</th><th>Último Acesso</th><th>MFA</th><th>Status</th></tr></thead><tbody>${usuariosIam.map(u=>`
+    <tr class="clickable" onclick="openModalIam('${u.id}')">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${u.id}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${u.usuario}</td>
+      <td style="font-size:11px;">${u.nome}</td>
+      <td style="font-size:10px;color:var(--text2);">${u.perfil}</td>
+      <td style="font-size:10px;color:var(--text2);">${u.sistemas}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${u.ultimoAcesso}</td>
+      <td><span class="badge ${u.mfa==='Sim'?'b-green':u.mfa==='N/A'?'b-gray':'b-red'}">${u.mfa}</span></td>
+      <td><span class="badge ${u.status==='Regular'?'b-green':u.status==='Atenção'?'b-amber':'b-red'}">${u.status}</span></td>
+    </tr>`).join('')}</tbody>`;
+}
+
+function openModalVuln(id) {
+  const v = vulnerabilidades.find(x=>x.id===id);
+  if(!v) return;
+  openModal(`🔐 ${v.id} — ${v.severidade}`, `
+    <div class="modal-section">
+      <div class="modal-section-title">Identificação</div>
+      <div class="modal-grid">
+        ${modalField('ID', v.id, true)}
+        ${modalField('Severidade', `<span class="badge ${v.severidade==='Crítica'?'b-red':v.severidade==='Alta'?'b-amber':'b-blue'}">${v.severidade}</span>`)}
+        ${modalField('Sistema Afetado', v.sistema)}
+        ${modalField('Status', `<span class="badge ${v.status==='Aberta'?'b-red':v.status==='Em tratamento'?'b-amber':'b-green'}">${v.status}</span>`)}
+        ${modalField('Data Descoberta', v.descoberta, true)}
+        ${modalField('Prazo Correção', v.prazo, true)}
+        ${modalField('Responsável', v.responsavel)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Descrição</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;">${v.descricao}</div>
+      <div style="background:var(--green3);border:1px solid rgba(45,212,160,0.2);border-radius:8px;padding:12px;font-size:12px;color:var(--green);"><strong>Ação:</strong> ${v.acao}</div>
+    </div>`);
+}
+
+function openModalIam(id) {
+  const u = usuariosIam.find(x=>x.id===id);
+  if(!u) return;
+  openModal(`👤 ${u.id} — ${u.usuario}`, `
+    <div class="modal-section">
+      <div class="modal-section-title">Dados do Usuário</div>
+      <div class="modal-grid">
+        ${modalField('ID', u.id, true)}
+        ${modalField('Usuário', u.usuario, true)}
+        ${modalField('Nome', u.nome)}
+        ${modalField('Perfil de Acesso', u.perfil)}
+        ${modalField('Sistemas', u.sistemas)}
+        ${modalField('Último Acesso', u.ultimoAcesso, true)}
+        ${modalField('MFA', `<span class="badge ${u.mfa==='Sim'?'b-green':u.mfa==='N/A'?'b-gray':'b-red'}">${u.mfa}</span>`)}
+        ${modalField('Status', `<span class="badge ${u.status==='Regular'?'b-green':u.status==='Atenção'?'b-amber':'b-red'}">${u.status}</span>`)}
+        ${modalField('Responsável', u.responsavel)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Observação</div>
+      <div style="background:${u.status==='Crítico'?'var(--red3)':'var(--bg3)'};border:1px solid ${u.status==='Crítico'?'rgba(247,95,95,0.2)':'var(--border)'};border-radius:8px;padding:12px;font-size:12px;color:${u.status==='Crítico'?'var(--red)':'var(--text2)'};line-height:1.6;">${u.obs}</div>
+    </div>`);
+}
+
+// =====================================================================
+// GOV IA
+// =====================================================================
+function renderIa() {
+  document.getElementById('kpiIa').innerHTML=[
+    {l:'Modelos em uso',v:modelosIa.length,s:'inventário',i:'🤖',a:'var(--purple)'},
+    {l:'Em produção',v:modelosIa.filter(m=>m.status==='Em produção').length,s:'ativos',i:'✅',a:'var(--green)'},
+    {l:'Em homologação',v:modelosIa.filter(m=>m.status==='Em homologação').length,s:'aguardando',i:'⏳',a:'var(--amber)'},
+    {l:'Risco alto',v:modelosIa.filter(m=>m.risco==='Alto').length,s:'requer aprovação',i:'⚠️',a:'var(--red)'},
+    {l:'ISO 42001 médio',v:Math.round(modelosIa.reduce((a,m)=>a+parseInt(m.iso42001),0)/modelosIa.length)+'%',s:'conformidade',i:'📐',a:'var(--teal)'},
+    {l:'Conformes LGPD',v:modelosIa.filter(m=>m.lgpd==='Conforme').length,s:'de '+modelosIa.length,i:'⚖️',a:'var(--blue)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.a};"><div class="kpi-icon">${k.i}</div><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  mkChart('cIaRisco',{type:'doughnut',data:{labels:['Baixo','Médio','Alto'],datasets:[{data:['Baixo','Médio','Alto'].map(r=>modelosIa.filter(m=>m.risco===r).length),backgroundColor:['#2dd4a0','#f5a623','#f75f5f'],borderWidth:0,hoverOffset:5}]},options:{...CHART_DEFAULTS,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#8888bb',font:{size:9},boxWidth:8,padding:6}}}}});
+
+  const controles42001=['Responsabilidade','Transparência','Fairness','Privacidade','Segurança','Robustez'];
+  const vals42001=[85,72,68,90,75,60];
+  mkChart('cIa42001',{type:'bar',data:{labels:controles42001,datasets:[{data:vals42001,backgroundColor:vals42001.map(v=>v>=80?'#2dd4a0':v>=60?'#4f8ef7':'#f5a623'),borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:axisStyle({grid:{display:false}}),y:{max:100,...axisStyle(),ticks:{...axisStyle().ticks,callback:v=>v+'%'}}}}});
+
+  document.getElementById('tblIa').innerHTML=`<thead><tr><th>ID</th><th>Modelo</th><th>Fornecedor</th><th>Área</th><th>Risco</th><th>Status</th><th>LGPD</th><th>ISO 42001</th><th>Responsável</th></tr></thead><tbody>${modelosIa.map(m=>`
+    <tr class="clickable" onclick="openModalIaModelo('${m.id}')">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${m.id}</td>
+      <td style="font-size:11px;font-weight:500;">${m.nome}</td>
+      <td style="font-size:10px;color:var(--text2);">${m.fornecedor}</td>
+      <td style="font-size:10px;color:var(--text2);">${m.area}</td>
+      <td><span class="badge ${m.risco==='Alto'?'b-red':m.risco==='Médio'?'b-amber':'b-green'}">${m.risco}</span></td>
+      <td><span class="badge ${m.status==='Em produção'?'b-green':'b-amber'}">${m.status}</span></td>
+      <td><span class="badge ${m.lgpd==='Conforme'?'b-green':'b-amber'}">${m.lgpd}</span></td>
+      <td><div style="display:flex;align-items:center;gap:4px;"><div class="prog-wrap" style="width:50px;"><div class="prog-bar" style="width:${m.iso42001};background:${parseInt(m.iso42001)>=80?'#2dd4a0':parseInt(m.iso42001)>=60?'#4f8ef7':'#f5a623'};"></div></div><span style="font-size:9px;color:var(--text2);">${m.iso42001}</span></div></td>
+      <td style="font-size:10px;color:var(--text2);">${m.responsavel}</td>
+    </tr>`).join('')}</tbody>`;
+}
+
+function openModalIaModelo(id) {
+  const m = modelosIa.find(x=>x.id===id);
+  if(!m) return;
+  openModal(`🤖 ${m.id} — ${m.nome}`, `
+    <div class="modal-section">
+      <div class="modal-section-title">Identificação</div>
+      <div class="modal-grid">
+        ${modalField('ID', m.id, true)}
+        ${modalField('Fornecedor', m.fornecedor)}
+        ${modalField('Área', m.area)}
+        ${modalField('Classificação de Risco', `<span class="badge ${m.risco==='Alto'?'b-red':m.risco==='Médio'?'b-amber':'b-green'}">${m.risco}</span>`)}
+        ${modalField('Status', `<span class="badge ${m.status==='Em produção'?'b-green':'b-amber'}">${m.status}</span>`)}
+        ${modalField('Aprovação', m.aprovacao)}
+        ${modalField('Dados Utilizados', m.dados)}
+        ${modalField('Responsável', m.responsavel)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Controles ISO 42001</div>
+      <div class="modal-grid">
+        ${modalField('Transparência', m.transparencia)}
+        ${modalField('Fairness', m.fairness)}
+        ${modalField('LGPD', `<span class="badge ${m.lgpd==='Conforme'?'b-green':'b-amber'}">${m.lgpd}</span>`)}
+        ${modalField('ISO 42001', m.iso42001)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Descrição</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;font-size:12px;color:var(--text2);line-height:1.6;">${m.descricao}</div>
+    </div>`);
+}
+
+// =====================================================================
+// BUDGET
+// =====================================================================
+function renderBudget() {
+  const tv=centrosCusto.reduce((a,c)=>a+c.budget,0);
+  const tg=centrosCusto.reduce((a,c)=>a+c.gasto,0);
+  const tp=centrosCusto.reduce((a,c)=>a+c.previsto,0);
+
+  document.getElementById('kpiBudget').innerHTML=[
+    {l:'Budget total',v:fmtM(BUDGET_TOTAL),s:'aprovado',i:'📊',a:'var(--blue)'},
+    {l:'Comprometido',v:fmtM(contratos.reduce((a,c)=>a+gV(c),0)),s:'em contratos',i:'📋',a:'var(--purple)'},
+    {l:'Realizado',v:fmtM(tg),s:Math.round(tg/BUDGET_TOTAL*100)+'% do total',i:'💰',a:'var(--amber)'},
+    {l:'Saldo livre',v:fmtM(BUDGET_TOTAL-contratos.reduce((a,c)=>a+gV(c),0)),s:'disponível',i:'✅',a:'var(--green)'},
+    {l:'Sustentação',v:fmtM(centrosCusto.filter(c=>c.verba==='Sustentação').reduce((a,c)=>a+c.budget,0)),s:'OPEX fixo',i:'🔄',a:'var(--blue)'},
+    {l:'Melhoria',v:fmtM(centrosCusto.filter(c=>c.verba==='Melhoria').reduce((a,c)=>a+c.budget,0)),s:'OPEX/CAPEX',i:'⬆️',a:'var(--amber)'},
+    {l:'Inovação',v:fmtM(centrosCusto.filter(c=>c.verba==='Inovação').reduce((a,c)=>a+c.budget,0)),s:'CAPEX',i:'🚀',a:'var(--purple)'},
+    {l:'Previsto ano',v:fmtM(tp),s:'projeção',i:'📈',a:'var(--teal)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.a};"><div class="kpi-icon">${k.i}</div><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  const verbas={Sustentação:0,Melhoria:0,Inovação:0};
+  centrosCusto.forEach(c=>{if(verbas[c.verba]!==undefined)verbas[c.verba]+=c.budget;});
+  mkChart('cBudgetDist',{type:'doughnut',data:{labels:Object.keys(verbas),datasets:[{data:Object.values(verbas),backgroundColor:['#4f8ef7','#f5a623','#a78bfa'],borderWidth:0,hoverOffset:5}]},options:{...CHART_DEFAULTS,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#8888bb',font:{size:9},boxWidth:8,padding:6}},tooltip:{callbacks:{label:ctx=>fmtM(ctx.raw)}}}}});
+
+  const meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const realizado=[380000,420000,395000,450000,410000,0,0,0,0,0,0,0];
+  const previsto=[450000,450000,450000,450000,450000,450000,450000,450000,450000,450000,450000,450000];
+  mkChart('cBudgetMensal',{type:'line',data:{labels:meses,datasets:[{label:'Realizado',data:realizado,borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,0.08)',borderWidth:2,tension:0.4,fill:true,pointBackgroundColor:'#4f8ef7',pointRadius:4},{label:'Previsto',data:previsto,borderColor:'rgba(255,255,255,0.2)',backgroundColor:'transparent',borderWidth:1,borderDash:[4,4],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8888bb',font:{size:9},boxWidth:8}}},scales:{x:axisStyle({grid:{display:false}}),y:{...axisStyle(),ticks:{...axisStyle().ticks,callback:v=>fmtM(v)}}}}});
+
+  document.getElementById('tblBudget').innerHTML=`<thead><tr><th>ID</th><th>Centro de Custo</th><th>Verba</th><th>Tipo</th><th>Budget</th><th>Gasto</th><th>% Gasto</th><th>Previsto</th><th>Desvio</th></tr></thead><tbody>${centrosCusto.map(c=>{const pct=Math.round(c.gasto/c.budget*100);const desvio=c.previsto-c.budget;return`<tr>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${c.id}</td>
+      <td style="font-size:11px;font-weight:500;">${c.nome}</td>
+      <td><span class="badge ${c.verba==='Sustentação'?'b-blue':c.verba==='Melhoria'?'b-amber':'b-purple'}">${c.verba}</span></td>
+      <td><span class="badge ${c.tipo==='OPEX'?'b-green':'b-blue'}">${c.tipo}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${fmtM(c.budget)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${fmtM(c.gasto)}</td>
+      <td><div style="display:flex;align-items:center;gap:4px;"><div class="prog-wrap" style="width:50px;"><div class="prog-bar" style="width:${pct}%;background:${pct>=90?'#f75f5f':pct>=70?'#f5a623':'#4f8ef7'};"></div></div><span style="font-size:9px;color:var(--text2);">${pct}%</span></div></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${fmtM(c.previsto)}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:${desvio<0?'#f75f5f':'#2dd4a0'};">${desvio<0?'-':''}${fmtM(Math.abs(desvio))}</td>
+    </tr>`}).join('')}</tbody>`;
+}
+
+// =====================================================================
+// MUDANÇAS
+// =====================================================================
+function renderMudancas() {
+  const pendentes=mudancas.filter(m=>m.status==='Em análise CAB'||m.status==='Pendente').length;
+  const aprovadas=mudancas.filter(m=>m.status==='Aprovada').length;
+
+  document.getElementById('kpiMud').innerHTML=[
+    {l:'Total RFCs',v:mudancas.length,s:'registradas',i:'📋',a:'var(--blue)'},
+    {l:'Aprovadas',v:aprovadas,s:'para execução',i:'✅',a:'var(--green)'},
+    {l:'Pendentes CAB',v:pendentes,s:'aguardando',i:'⏳',a:'var(--amber)'},
+    {l:'Risco alto',v:mudancas.filter(m=>m.risco==='Alto').length,s:'requer atenção',i:'⚠️',a:'var(--red)'},
+    {l:'Esta semana',v:mudancas.filter(m=>m.execucao.includes('2025')).length,s:'agendadas',i:'📅',a:'var(--purple)'},
+    {l:'CAB próximo',v:'15/Mai',s:'reunião mensal',i:'👥',a:'var(--teal)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.a};"><div class="kpi-icon">${k.i}</div><div class="kpi-label">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  const tipos=['Padrão','Normal','Emergencial'];
+  mkChart('cMudTipo',{type:'doughnut',data:{labels:tipos,datasets:[{data:tipos.map(t=>mudancas.filter(m=>m.tipo===t).length),backgroundColor:['#2dd4a0','#4f8ef7','#f75f5f'],borderWidth:0,hoverOffset:5}]},options:{...CHART_DEFAULTS,cutout:'65%',plugins:{legend:{position:'bottom',labels:{color:'#8888bb',font:{size:9},boxWidth:8,padding:6}}}}});
+  const statuses=['Aprovada','Em análise CAB','Pendente'];
+  mkChart('cMudStatus',{type:'bar',data:{labels:statuses,datasets:[{data:statuses.map(s=>mudancas.filter(m=>m.status===s).length),backgroundColor:['#2dd4a0','#f5a623','#4f8ef7'],borderRadius:5,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:axisStyle({grid:{display:false}}),y:axisStyle()}}});
+
+  document.getElementById('tblMud').innerHTML=`<thead><tr><th>ID</th><th>Título</th><th>Tipo</th><th>Área</th><th>Status</th><th>Execução</th><th>Risco</th><th>Janela</th><th>Solicitante</th></tr></thead><tbody>${mudancas.map(m=>`
+    <tr class="clickable" onclick="openModalMudanca('${m.id}')">
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${m.id}</td>
+      <td style="font-size:11px;font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.titulo}</td>
+      <td><span class="badge ${m.tipo==='Padrão'?'b-green':m.tipo==='Normal'?'b-blue':'b-red'}">${m.tipo}</span></td>
+      <td style="font-size:10px;color:var(--text2);">${m.area}</td>
+      <td><span class="badge ${m.status==='Aprovada'?'b-green':m.status==='Em análise CAB'?'b-amber':'b-blue'}">${m.status}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${m.execucao}</td>
+      <td><span class="badge ${m.risco==='Alto'?'b-red':m.risco==='Médio'?'b-amber':'b-green'}">${m.risco}</span></td>
+      <td style="font-size:10px;color:var(--text2);">${m.janela}</td>
+      <td style="font-size:10px;color:var(--text2);">${m.solicitante}</td>
+    </tr>`).join('')}</tbody>`;
+}
+
+function openModalMudanca(id) {
+  const m = mudancas.find(x=>x.id===id);
+  if(!m) return;
+  openModal(`🔄 ${m.id} — ${m.titulo}`, `
+    <div class="modal-section">
+      <div class="modal-section-title">Identificação</div>
+      <div class="modal-grid">
+        ${modalField('ID RFC', m.id, true)}
+        ${modalField('Tipo', `<span class="badge ${m.tipo==='Padrão'?'b-green':m.tipo==='Normal'?'b-blue':'b-red'}">${m.tipo}</span>`)}
+        ${modalField('Área', m.area)}
+        ${modalField('Status', `<span class="badge ${m.status==='Aprovada'?'b-green':m.status==='Em análise CAB'?'b-amber':'b-blue'}">${m.status}</span>`)}
+        ${modalField('Solicitante', m.solicitante)}
+        ${modalField('Data Abertura', m.abertura, true)}
+        ${modalField('Data Execução', m.execucao, true)}
+        ${modalField('Janela de Manutenção', m.janela)}
+        ${modalField('Nível de Risco', m.risco)}
+        ${modalField('Aprovação CAB', m.cab)}
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">Detalhes</div>
+      <div style="background:var(--bg3);border-radius:8px;padding:12px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;">${m.descricao}</div>
+      <div style="background:var(--amber3);border:1px solid rgba(245,166,35,0.2);border-radius:8px;padding:12px;font-size:12px;color:var(--amber);"><strong>Impacto:</strong> ${m.impacto}</div>
+    </div>`);
+}
+
+// =====================================================================
+// IA ASSISTENTE
+// =====================================================================
+function contextoIA() {
+  const tv=contratos.reduce((a,c)=>a+gV(c),0);
+  const tc=contratos.reduce((a,c)=>a+gC(c),0);
+  return `Você é um especialista em Governança de TI. Responda em português, de forma objetiva e profissional.
+
+CONTRATOS: ${contratos.length} | Total: ${fmtM(tv)} | Consumido: ${fmtM(tc)} | Vencidos: ${contratos.filter(c=>c.status==='Vencido').length} | Budget: ${fmtM(BUDGET_TOTAL)}
+FORNECEDORES: ${fornecedores.length} | SLA médio: ${(fornecedores.reduce((a,f)=>a+f.sla,0)/fornecedores.length).toFixed(1)}% | Críticos SLA: ${fornecedores.filter(f=>f.sla<90).length}
+ITSM: ${incidentes.filter(i=>i.status!=='Resolvido').length} abertos | ${incidentes.filter(i=>i.prio==='Crítico').length} críticos | ${problemas.length} RCAs
+PROJETOS: ${projetos.filter(p=>p.status==='Em andamento').length} ativos | Budget: ${fmtM(projetos.reduce((a,p)=>a+p.budget,0))}
+CONFORMIDADE: COBIT 3.2/5 | ISO 27001: 78% | LGPD: 71% | Riscos críticos: ${riscos.filter(r=>r.nivel==='Crítico').length}
+SEGURANÇA: ${vulnerabilidades.filter(v=>v.severidade==='Crítica').length} vulns críticas | IAM críticos: ${usuariosIam.filter(u=>u.status==='Crítico').length}
+GOV IA: ${modelosIa.length} modelos | ISO 42001 médio: ${Math.round(modelosIa.reduce((a,m)=>a+parseInt(m.iso42001),0)/modelosIa.length)}%
+MUDANÇAS: ${mudancas.length} RFCs | ${mudancas.filter(m=>m.status==='Aprovada').length} aprovadas
+
+CONTRATOS DETALHADOS:
+${contratos.map(c=>`${c.id}|${c.nome}|${c.tipo}|${fmtM(gV(c))}|${c.status}|${c.fim}|${c.area}`).join('\n')}
+
+INCIDENTES ABERTOS:
+${incidentes.filter(i=>i.status!=='Resolvido').map(i=>`${i.id}|${i.prio}|${i.titulo}|${i.setor}|${i.status}`).join('\n')}
+
+RISCOS CRÍTICOS:
+${riscos.filter(r=>r.nivel==='Crítico').map(r=>`${r.id}|${r.desc}|${r.status}|${r.prazo}`).join('\n')}`;
+}
+
+async function sendAI() {
+  const inp = document.getElementById('aiInp');
+  const q = inp.value.trim();
+  if(!q) return;
+  ask(q);
+  inp.value = '';
+}
+
+async function ask(q) {
+  const msgs = document.getElementById('aiMsgs');
+  const btn = document.getElementById('btnSend');
+  msgs.innerHTML += `<div class="msg msg-u">${q}</div>`;
+  const lid = 'l' + Date.now();
+  msgs.innerHTML += `<div class="msg msg-a loading" id="${lid}">Analisando dados...</div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  btn.disabled = true;
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: contextoIA(), messages: [{ role: 'user', content: q }] })
+    });
+    const d = await r.json();
+    const txt = d.content?.map(i=>i.text||'').join('') || 'Não consegui processar.';
+    document.getElementById(lid).textContent = txt;
+    document.getElementById(lid).classList.remove('loading');
+  } catch(e) {
+    document.getElementById(lid).textContent = 'Erro de conexão. Tente novamente.';
+    document.getElementById(lid).classList.remove('loading');
+  }
+  btn.disabled = false;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// =====================================================================
+// TAB SWITCH
+// =====================================================================
+const tabOrder = ['geral','contratos','fornecedores','itsm','projetos','conformidade','seguranca','ia','budget','mudancas'];
+let currentTab = 'geral';
+let autoMode = false;
+let autoTimer = null;
+let progressTimer = null;
+let progressPct = 0;
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  if(el) el.classList.add('active');
+  else { const btn = document.querySelector(`[data-tab="${tab}"]`); if(btn) btn.classList.add('active'); }
+  currentTab = tab;
+  const renders = {geral:renderGeral,contratos:renderContratos,fornecedores:renderFornecedores,itsm:renderItsm,projetos:renderProjetos,conformidade:renderConformidade,seguranca:renderSeguranca,ia:renderIa,budget:renderBudget,mudancas:renderMudancas};
+  if(renders[tab]) renders[tab]();
+  if(autoMode) resetAutoProgress();
+}
+
+function toggleAuto() {
+  autoMode = !autoMode;
+  const btn = document.getElementById('btnAuto');
+  if(autoMode) { btn.textContent='⏸ Auto'; btn.classList.add('active-auto'); startAutoRotation(); }
+  else { btn.textContent='▶ Auto 5min'; btn.classList.remove('active-auto'); stopAutoRotation(); document.getElementById('tabProgress').style.width='0%'; }
+}
+
+function startAutoRotation() { resetAutoProgress(); }
+function stopAutoRotation() { if(autoTimer) clearTimeout(autoTimer); if(progressTimer) clearInterval(progressTimer); }
+function resetAutoProgress() {
+  if(autoTimer) clearTimeout(autoTimer);
+  if(progressTimer) clearInterval(progressTimer);
+  progressPct = 0;
+  document.getElementById('tabProgress').style.width='0%';
+  const totalMs = 5*60*1000;
+  const step = 100;
+  const inc = 100/(totalMs/step);
+  progressTimer = setInterval(()=>{ progressPct+=inc; document.getElementById('tabProgress').style.width=Math.min(progressPct,100)+'%'; }, step);
+  autoTimer = setTimeout(()=>{ const idx=tabOrder.indexOf(currentTab); switchTab(tabOrder[(idx+1)%tabOrder.length],null); }, totalMs);
+}
+
+// INIT
+buildTicker();
+renderGeral();
+</script>
+</body>
+</html>

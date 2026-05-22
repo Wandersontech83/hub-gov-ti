@@ -1,0 +1,2286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub de Integração · Governança de TI</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070f;--bg2:#0e0e1a;--bg3:#141422;--card:#18182a;--card2:#1e1e30;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);--border3:rgba(255,255,255,0.18);
+  --text:#eeeef8;--text2:#8888bb;--text3:#44445a;
+  --blue:#4f8ef7;--blue2:#1a3a6e;--blue3:#0d1f3c;
+  --green:#2dd4a0;--green2:#0d3d2e;--green3:#062018;
+  --amber:#f5a623;--amber2:#3d2800;--amber3:#1f1400;
+  --red:#f75f5f;--red2:#3d1010;--red3:#1f0808;
+  --purple:#a78bfa;--purple2:#2d1f4e;--purple3:#180f2a;
+  --teal:#22d3ee;--teal2:#0d3040;
+  --pink:#f472b6;--pink2:#3d1030;
+  --gray-500:#6b7280;--gray-400:#9ca3af;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(79,142,247,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(79,142,247,0.02) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+
+/* TICKER */
+.ticker-wrap{background:var(--bg2);border-bottom:1px solid var(--border2);overflow:hidden;height:32px;display:flex;align-items:center;position:sticky;top:0;z-index:100;}
+.ticker-label{background:linear-gradient(90deg,var(--teal),var(--blue));color:#fff;font-size:9px;font-weight:700;letter-spacing:0.12em;padding:0 12px;height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;text-transform:uppercase;}
+.ticker-track{overflow:hidden;flex:1;}
+.ticker-inner{display:flex;align-items:center;white-space:nowrap;animation:ticker 40s linear infinite;}
+.ticker-inner:hover{animation-play-state:paused;}
+@keyframes ticker{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+.ti{display:inline-flex;align-items:center;gap:4px;padding:0 20px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text2);}
+.ti b{font-weight:600;}.vb{color:var(--blue);}.vg{color:var(--green);}.va{color:var(--amber);}.vr{color:var(--red);}.vt{color:var(--teal);}
+
+/* HEADER */
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;position:relative;z-index:1;border-bottom:1px solid var(--border);background:rgba(7,7,15,0.95);backdrop-filter:blur(20px);}
+.header-left{display:flex;align-items:center;gap:12px;}
+.logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--teal),var(--blue));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.header h1{font-size:17px;font-weight:600;letter-spacing:-0.3px;}
+.header p{font-size:10px;color:var(--text2);margin-top:1px;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.badge-live{display:flex;align-items:center;gap:5px;background:var(--teal2);color:var(--teal);font-size:10px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid rgba(34,211,238,0.2);}
+.dot-live{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.btn-sm{background:var(--card);border:1px solid var(--border2);color:var(--text2);font-size:11px;font-family:inherit;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all 0.2s;}
+.btn-sm:hover{background:var(--card2);color:var(--text);}
+.btn-primary{background:linear-gradient(135deg,var(--teal),var(--blue));color:#fff;border:none;font-size:11px;font-family:inherit;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:500;transition:all 0.2s;}
+.btn-primary:hover{opacity:0.85;}
+.btn-danger{background:var(--red2);color:var(--red);border:1px solid rgba(247,95,95,0.2);font-size:11px;font-family:inherit;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all 0.2s;}
+.btn-danger:hover{background:var(--red3);border-color:rgba(247,95,95,0.4);}
+#clock{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+
+/* TABS */
+.tabs-wrap{background:rgba(7,7,15,0.9);border-bottom:1px solid var(--border);position:sticky;top:32px;z-index:99;padding:0 24px;backdrop-filter:blur(20px);}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{display:flex;align-items:center;gap:6px;padding:10px 16px;font-size:11px;font-weight:500;color:var(--text2);border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;flex-shrink:0;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--text);border-bottom-color:var(--tab-color,var(--teal));}
+.tab-icon{font-size:14px;}
+
+/* CONTENT */
+.content{padding:20px 24px;position:relative;z-index:1;min-height:calc(100vh - 130px);}
+.tab-panel{display:none;}.tab-panel.active{display:block;}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:12px;}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.card-sm{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;}
+.card-title{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;}
+
+/* KPI */
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;position:relative;overflow:hidden;transition:transform 0.2s,border-color 0.2s;cursor:default;}
+.kpi:hover{transform:translateY(-1px);border-color:var(--border2);}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent,var(--teal));}
+.kpi-icon{font-size:16px;margin-bottom:6px;}
+.kpi-label{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}
+.kpi-val{font-size:20px;font-weight:700;letter-spacing:-0.4px;}
+.kpi-sub{font-size:9px;color:var(--text3);margin-top:2px;font-family:'JetBrains Mono',monospace;}
+
+/* BADGES */
+.badge{font-size:9px;font-weight:600;padding:2px 7px;border-radius:99px;white-space:nowrap;}
+.b-red{background:var(--red2);color:var(--red);border:1px solid rgba(247,95,95,0.2);}
+.b-amber{background:var(--amber2);color:var(--amber);border:1px solid rgba(245,166,35,0.2);}
+.b-blue{background:var(--blue2);color:var(--blue);border:1px solid rgba(79,142,247,0.2);}
+.b-green{background:var(--green2);color:var(--green);border:1px solid rgba(45,212,160,0.2);}
+.b-purple{background:var(--purple2);color:var(--purple);border:1px solid rgba(167,139,250,0.2);}
+.b-teal{background:var(--teal2);color:var(--teal);border:1px solid rgba(34,211,238,0.2);}
+.b-gray{background:var(--bg3);color:var(--text2);border:1px solid var(--border2);}
+
+/* TABLES */
+.tbl-wrap{overflow-x:auto;max-height:360px;overflow-y:auto;}
+.tbl-wrap::-webkit-scrollbar{width:3px;height:3px;}
+.tbl-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.tbl{width:100%;border-collapse:collapse;font-size:11px;}
+.tbl th{text-align:left;padding:8px 10px;font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);font-weight:500;white-space:nowrap;background:var(--bg2);}
+.tbl td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--bg3);cursor:pointer;}
+
+/* PROGRESS */
+.prog-wrap{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-top:4px;}
+.prog-bar{height:100%;border-radius:3px;transition:width 1s ease;}
+
+/* SEC DIVIDER */
+.sec-div{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.1em;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+
+/* PLATFORM CARD */
+.plat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:12px;}
+.plat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;position:relative;overflow:hidden;transition:all 0.2s;}
+.plat-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.plat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--pc,var(--teal));}
+.plat-card.inactive::before{background:var(--gray-500);}
+.plat-card.error::before{background:var(--red);}
+.plat-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.plat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:var(--bg3);border:1px solid var(--border2);}
+.plat-info{flex:1;margin-left:10px;}
+.plat-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+.plat-type{font-size:10px;color:var(--text2);}
+.plat-actions{display:flex;gap:4px;}
+.icon-btn{width:26px;height:26px;border-radius:7px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.icon-btn:hover{background:var(--card2);color:var(--text);}
+.icon-btn.del:hover{background:var(--red2);color:var(--red);border-color:rgba(247,95,95,0.3);}
+.plat-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.plat-stat{background:var(--bg3);border-radius:8px;padding:8px;}
+.plat-stat-label{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:2px;}
+.plat-stat-val{font-size:13px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.plat-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);}
+.plat-last{font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.plat-modules{display:flex;gap:4px;flex-wrap:wrap;}
+.mod-tag{font-size:9px;padding:2px 6px;border-radius:5px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
+
+/* SYNC BTN */
+.btn-sync{background:var(--teal2);color:var(--teal);border:1px solid rgba(34,211,238,0.2);font-size:10px;font-family:inherit;padding:4px 10px;border-radius:7px;cursor:pointer;transition:all 0.2s;font-weight:500;}
+.btn-sync:hover{background:rgba(34,211,238,0.15);}
+.btn-sync:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-sync.syncing{animation:blink 0.8s ease infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.5;}}
+
+/* ADD CARD */
+.plat-add{background:var(--bg2);border:2px dashed var(--border2);border-radius:14px;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;cursor:pointer;transition:all 0.2s;gap:8px;}
+.plat-add:hover{border-color:var(--teal);background:var(--teal2);}
+.plat-add-icon{font-size:28px;opacity:0.5;}
+.plat-add-text{font-size:11px;color:var(--text2);font-weight:500;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:640px;max-height:88vh;overflow-y:auto;position:relative;}
+.modal::-webkit-scrollbar{width:3px;}
+.modal::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--card);z-index:1;border-radius:16px 16px 0 0;}
+.modal-title{font-size:15px;font-weight:600;}
+.modal-close{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.modal-close:hover{background:var(--red2);color:var(--red);}
+.modal-body{padding:20px;}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
+
+/* FORM */
+.form-group{margin-bottom:14px;}
+.form-label{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;display:block;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;padding:8px 12px;border-radius:9px;outline:none;transition:border-color 0.2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:rgba(34,211,238,0.4);}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text3);}
+.form-select{appearance:none;cursor:pointer;}
+.form-select option{background:var(--bg2);}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.5;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.form-hint{font-size:9px;color:var(--text3);margin-top:4px;}
+.form-section{font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin:16px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.form-toggle{display:flex;align-items:center;gap:8px;font-size:12px;}
+.toggle{width:36px;height:20px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;cursor:pointer;position:relative;transition:all 0.2s;flex-shrink:0;}
+.toggle.on{background:var(--teal2);border-color:rgba(34,211,238,0.4);}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--text3);transition:all 0.2s;}
+.toggle.on::after{left:18px;background:var(--teal);}
+
+/* MAPPING TABLE */
+.map-row{display:grid;grid-template-columns:1fr 24px 1fr 80px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);}
+.map-row:last-child{border-bottom:none;}
+.map-row-header{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;}
+.map-arrow{color:var(--teal);text-align:center;font-size:14px;}
+.map-del{color:var(--text3);cursor:pointer;font-size:14px;text-align:center;transition:color 0.2s;}
+.map-del:hover{color:var(--red);}
+.map-src{font-size:11px;color:var(--blue);font-family:'JetBrains Mono',monospace;background:var(--blue3);padding:3px 7px;border-radius:5px;}
+.map-dst{font-size:11px;color:var(--teal);font-family:'JetBrains Mono',monospace;background:var(--teal2);padding:3px 7px;border-radius:5px;}
+
+/* N8N SECTION */
+.n8n-node{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;transition:all 0.2s;}
+.n8n-node:hover{border-color:var(--border2);}
+.n8n-node-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.n8n-node-info{flex:1;}
+.n8n-node-name{font-size:12px;font-weight:600;margin-bottom:2px;}
+.n8n-node-url{font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.n8n-node-status{font-size:9px;font-weight:600;}
+
+/* LOG */
+.log-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.log-row:last-child{border-bottom:none;}
+.log-time{font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;white-space:nowrap;padding-top:2px;min-width:120px;}
+.log-icon{font-size:14px;flex-shrink:0;padding-top:1px;}
+.log-text{font-size:11px;color:var(--text2);flex:1;}
+.log-text b{color:var(--text);}
+.log-count{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--teal);background:var(--teal2);padding:1px 6px;border-radius:5px;white-space:nowrap;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.toast{background:var(--card2);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;font-size:11px;display:flex;align-items:center;gap:8px;pointer-events:all;animation:slideIn 0.25s ease;max-width:320px;}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.toast.success{border-color:rgba(45,212,160,0.3);background:var(--green3);}
+.toast.error{border-color:rgba(247,95,95,0.3);background:var(--red3);}
+.toast.info{border-color:rgba(79,142,247,0.3);background:var(--blue3);}
+
+/* STATUS DOT */
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sd-green{background:var(--green);}
+.sd-red{background:var(--red);}
+.sd-amber{background:var(--amber);}
+.sd-gray{background:var(--gray-500);}
+.sd-teal{background:var(--teal);animation:pulse 2s infinite;}
+
+/* RESPONSIVE */
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}.plat-grid{grid-template-columns:1fr;}}
+
+/* ===== ADMIN AUTH ===== */
+.btn-adm-lock{display:flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all 0.2s;font-weight:600;}
+.btn-adm-lock.locked{background:var(--bg3);border:1px solid var(--border2);color:var(--text3);}
+.btn-adm-lock.locked:hover{border-color:var(--amber);color:var(--amber);}
+.btn-adm-lock.unlocked{background:var(--amber2);border:1px solid rgba(245,166,35,0.35);color:var(--amber);animation:admGlow 3s ease infinite;}
+@keyframes admGlow{0%,100%{box-shadow:0 0 0 0 rgba(245,166,35,0);}50%{box-shadow:0 0 8px 2px rgba(245,166,35,0.2);}}
+
+.adm-banner{display:none;position:sticky;top:80px;z-index:98;background:linear-gradient(90deg,var(--amber3),var(--bg2));border-bottom:1px solid rgba(245,166,35,0.25);padding:5px 24px;font-size:10px;font-weight:600;color:var(--amber);letter-spacing:0.08em;align-items:center;justify-content:space-between;}
+.adm-banner.show{display:flex;}
+.adm-timer{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--amber);opacity:0.7;}
+
+/* Modal ADM */
+.adm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:3000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.adm-overlay.open{display:flex;}
+.adm-box{background:var(--card);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:400px;padding:32px;position:relative;animation:admIn 0.25s ease;}
+@keyframes admIn{from{opacity:0;transform:scale(0.94) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.adm-logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--amber2),var(--amber3));border:2px solid rgba(245,166,35,0.3);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 16px;}
+.adm-title{font-size:18px;font-weight:700;text-align:center;margin-bottom:4px;}
+.adm-sub{font-size:11px;color:var(--text2);text-align:center;margin-bottom:24px;}
+.adm-inp-wrap{position:relative;margin-bottom:14px;}
+.adm-inp{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;padding:12px 44px 12px 14px;border-radius:10px;outline:none;transition:border-color 0.2s;letter-spacing:0.08em;}
+.adm-inp:focus{border-color:rgba(245,166,35,0.5);}
+.adm-eye{position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:var(--text3);transition:color 0.2s;background:none;border:none;}
+.adm-eye:hover{color:var(--text2);}
+.adm-btn{width:100%;background:linear-gradient(135deg,var(--amber),#e09010);color:#000;border:none;font-family:inherit;font-size:13px;font-weight:700;padding:12px;border-radius:10px;cursor:pointer;transition:all 0.2s;letter-spacing:0.04em;}
+.adm-btn:hover{opacity:0.9;transform:translateY(-1px);}
+.adm-btn:active{transform:translateY(0);}
+.adm-error{font-size:11px;color:var(--red);text-align:center;margin-top:8px;min-height:16px;}
+.adm-attempts{font-size:10px;color:var(--text3);text-align:center;margin-top:10px;}
+.adm-close{position:absolute;top:14px;right:14px;background:var(--bg3);border:1px solid var(--border2);color:var(--text2);width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.adm-close:hover{background:var(--red2);color:var(--red);}
+
+/* Locked overlay para elementos protegidos */
+.locked-overlay{position:relative;}
+.locked-overlay::after{content:'🔒 Modo Admin necessário';position:absolute;inset:0;background:rgba(7,7,15,0.7);border-radius:inherit;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);cursor:not-allowed;backdrop-filter:blur(2px);}
+.adm-protected{opacity:0.4;pointer-events:none;cursor:not-allowed;filter:grayscale(0.5);}
+@keyframes adm-shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-6px);}40%,80%{transform:translateX(6px);}}
+.adm-shake{animation:adm-shake 0.35s ease;}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-label">⚡ hub·int</div>
+  <div class="ticker-track"><div class="ticker-inner" id="tickerEl"></div></div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">🔌</div>
+    <div>
+      <h1>Hub de Integração · Governança de TI</h1>
+      <p>SAP · Oracle · ServiceNow · Jira · GLPI · Planilhas · N8N</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="badge-live"><div class="dot-live"></div>Conectado</div>
+    <span id="clock"></span>
+    <button class="btn-primary adm-protected" id="btnNovaFonte" onclick="openModal('modalAddPlat')">+ Nova Fonte</button>
+    <button class="btn-sm adm-protected" id="btnSyncAll" onclick="syncAll()">⟳ Sync All</button>
+    <button class="btn-adm-lock locked" id="btnAdm" onclick="toggleAdm()">🔒 Admin</button>
+  </div>
+</div>
+
+<!-- BANNER ADMIN MODE -->
+<div class="adm-banner" id="admBanner">
+  <span>⚡ MODO ADMINISTRADOR ATIVO — todas as edições estão liberadas</span>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span class="adm-timer" id="admTimer"></span>
+    <button class="btn-sm" style="padding:3px 10px;font-size:10px;" onclick="lockAdm()">🔒 Bloquear</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" data-tab="geral" style="--tab-color:var(--teal);" onclick="switchTab('geral',this)"><span class="tab-icon">📊</span> Visão Geral</button>
+    <button class="tab" data-tab="fontes" style="--tab-color:var(--blue);" onclick="switchTab('fontes',this)"><span class="tab-icon">🔌</span> Fontes de Dados</button>
+    <button class="tab" data-tab="mapeamento" style="--tab-color:var(--purple);" onclick="switchTab('mapeamento',this)"><span class="tab-icon">🗺️</span> Mapeamento</button>
+    <button class="tab" data-tab="n8n" style="--tab-color:var(--amber);" onclick="switchTab('n8n',this)"><span class="tab-icon">⚡</span> N8N Workflows</button>
+    <button class="tab" data-tab="itom" style="--tab-color:var(--teal);" onclick="switchTab('itom',this)"><span class="tab-icon">🛰️</span> ITOM</button>
+    <button class="tab" data-tab="govai" style="--tab-color:var(--purple);" onclick="switchTab('govai',this)"><span class="tab-icon">🤖</span> Gov. IA</button>
+    <button class="tab" data-tab="seguranca" style="--tab-color:var(--amber);" onclick="switchTab('seguranca',this)"><span class="tab-icon">🔐</span> Segurança & IAM</button>
+    <button class="tab" data-tab="compliance" style="--tab-color:var(--green);" onclick="switchTab('compliance',this)"><span class="tab-icon">✅</span> Compliance</button>
+    <button class="tab" data-tab="pmo" style="--tab-color:var(--blue);" onclick="switchTab('pmo',this)"><span class="tab-icon">🚀</span> PMO</button>
+    <button class="tab" data-tab="cmdb" style="--tab-color:var(--teal);" onclick="switchTab('cmdb',this)"><span class="tab-icon">🧩</span> CMDB</button>
+    <button class="tab" data-tab="riscos" style="--tab-color:var(--red);" onclick="switchTab('riscos',this)"><span class="tab-icon">🔥</span> Riscos</button>
+    <button class="tab" data-tab="finops" style="--tab-color:var(--green);" onclick="switchTab('finops',this)"><span class="tab-icon">💰</span> FinOps</button>
+    <button class="tab" data-tab="mudancas" style="--tab-color:var(--blue);" onclick="switchTab('mudancas',this)"><span class="tab-icon">🔄</span> Mudanças & CAB</button>
+    <button class="tab" data-tab="continuidade" style="--tab-color:var(--purple);" onclick="switchTab('continuidade',this)"><span class="tab-icon">🛡️</span> Continuidade</button>
+    <button class="tab" data-tab="historico" style="--tab-color:var(--green);" onclick="switchTab('historico',this)"><span class="tab-icon">📜</span> Histórico</button>
+    <button class="tab" data-tab="config" style="--tab-color:var(--gray-400);" onclick="switchTab('config',this)"><span class="tab-icon">⚙️</span> Configurações</button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- ===== VISÃO GERAL ===== -->
+<div class="tab-panel active" id="panel-geral">
+  <div class="kpi-grid" id="kpiGeral"></div>
+  <div class="sec-div">Status das Fontes · Resumo em tempo real</div>
+  <div id="resumoFontes" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:16px;"></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Últimas sincronizações</div>
+      <div id="ultimasSyncs" style="max-height:260px;overflow-y:auto;"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Módulos de destino · Registros alimentados</div>
+      <div id="modulosDestino"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:0;">
+    <div class="card-title">Alertas e avisos do hub</div>
+    <div id="alertasHub"></div>
+  </div>
+</div>
+
+<!-- ===== FONTES DE DADOS ===== -->
+<div class="tab-panel" id="panel-fontes">
+  <div class="sec-div">Fontes cadastradas · Clique nos ícones para editar ou remover</div>
+  <div class="plat-grid" id="platGrid"></div>
+</div>
+
+<!-- ===== MAPEAMENTO ===== -->
+<div class="tab-panel" id="panel-mapeamento">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:2px;">Mapeamento de campos</div>
+      <div style="font-size:10px;color:var(--text2);">Configure como os campos de cada fonte são mapeados para os módulos de Governança</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <select class="form-select" id="mapFonteSel" style="width:180px;" onchange="renderMapping()">
+        <option value="">Selecione a fonte...</option>
+      </select>
+      <button class="btn-primary" onclick="addMappingRow()">+ Campo</button>
+    </div>
+  </div>
+  <div class="card" id="mappingCard">
+    <div style="text-align:center;padding:40px;color:var(--text3);">
+      <div style="font-size:28px;margin-bottom:8px;">🗺️</div>
+      <div style="font-size:12px;">Selecione uma fonte para ver ou editar o mapeamento de campos</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== N8N WORKFLOWS ===== -->
+<div class="tab-panel" id="panel-n8n">
+  <div class="kpi-grid" id="kpiN8n"></div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Webhooks de entrada · N8N → Hub</div>
+      <div id="n8nWebhooksIn"></div>
+      <button class="btn-sm" style="margin-top:10px;width:100%;" onclick="copyWebhook()">📋 Copiar URL do receptor</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Webhooks de saída · Hub → Governança TI</div>
+      <div id="n8nWebhooksOut"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Workflows registrados</div>
+    <div id="n8nWorkflows"></div>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <div class="card-title" style="margin-bottom:8px;">Configuração do servidor N8N</div>
+    <div class="form-row">
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">URL base do N8N</label>
+        <input class="form-input" id="n8nBaseUrl" placeholder="https://n8n.suaempresa.com" value="https://n8n.empresa.com.br"/>
+      </div>
+      <div class="form-group" style="margin:0;">
+        <label class="form-label">API Key</label>
+        <input class="form-input" id="n8nApiKey" type="password" placeholder="n8n_api_..." value="n8n_api_••••••••••••"/>
+      </div>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px;">
+      <button class="btn-primary" onclick="saveN8nConfig()">Salvar configuração</button>
+      <button class="btn-sm" onclick="testN8n()">Testar conexão</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HISTÓRICO ===== -->
+<div class="tab-panel" id="panel-historico">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div class="kpi-grid" id="kpiHistorico" style="flex:1;margin:0;margin-right:12px;"></div>
+    <div style="display:flex;gap:8px;">
+      <select class="form-select" style="width:160px;" id="filtroFonteHist" onchange="renderHistorico()">
+        <option value="">Todas as fontes</option>
+      </select>
+      <select class="form-select" style="width:130px;" id="filtroStatusHist" onchange="renderHistorico()">
+        <option value="">Todos os status</option>
+        <option value="Sucesso">Sucesso</option>
+        <option value="Erro">Erro</option>
+        <option value="Parcial">Parcial</option>
+      </select>
+      <button class="btn-sm" onclick="clearHistorico()">🗑 Limpar</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Log de execuções</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblHistorico"></table></div>
+  </div>
+</div>
+
+<!-- ===== CONFIGURAÇÕES ===== -->
+<div class="tab-panel" id="panel-config">
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Portal de destino · Governança TI</div>
+      <div class="form-group">
+        <label class="form-label">URL do Portal de Governança</label>
+        <input class="form-input" id="cfgPortalUrl" placeholder="https://portal-gov-ti.empresa.com.br" value="https://portal-gov-ti.empresa.com.br"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">API Key do Portal</label>
+        <input class="form-input" type="password" id="cfgPortalKey" placeholder="govti_api_..." value="govti_api_••••••••••••"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ambiente</label>
+        <select class="form-select" id="cfgAmbiente">
+          <option value="producao">Produção</option>
+          <option value="homologacao">Homologação</option>
+          <option value="dev">Desenvolvimento</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="savePortalConfig()">Salvar</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Sincronização automática</div>
+      <div class="form-group">
+        <label class="form-label">Frequência padrão</label>
+        <select class="form-select" id="cfgFreq">
+          <option value="15">A cada 15 minutos</option>
+          <option value="30">A cada 30 minutos</option>
+          <option value="60" selected>A cada 1 hora</option>
+          <option value="360">A cada 6 horas</option>
+          <option value="1440">Diariamente</option>
+          <option value="0">Somente manual</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Horário de bloqueio (sem sync)</label>
+        <div class="form-row">
+          <input class="form-input" type="time" value="23:00"/>
+          <input class="form-input" type="time" value="05:00"/>
+        </div>
+        <div class="form-hint">Das 23h às 05h não serão executadas sincronizações automáticas</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notificações</label>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label class="form-toggle"><span class="toggle on" onclick="this.classList.toggle('on')"></span> Notificar em erros de sincronização</label>
+          <label class="form-toggle"><span class="toggle on" onclick="this.classList.toggle('on')"></span> Notificar quando registros acima de 1000</label>
+          <label class="form-toggle"><span class="toggle" onclick="this.classList.toggle('on')"></span> Notificar cada execução bem-sucedida</label>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="saveAutoConfig()">Salvar</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Módulos de destino · Governança de TI</div>
+    <div style="font-size:10px;color:var(--text2);margin-bottom:12px;">Configure para quais módulos do portal cada tipo de dado será enviado</div>
+    <div id="modulosConfig"></div>
+  </div>
+</div>
+
+
+<!-- ===== ITOM ===== -->
+<div class="tab-panel" id="panel-itom">
+  <div class="kpi-grid" id="kpiItom"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Saúde dos servidores · Top 10</div><div class="tbl-wrap"><table class="tbl" id="tblServidores"></table></div></div>
+    <div class="card"><div class="card-title">Eventos correlacionados · Em aberto</div><div class="tbl-wrap"><table class="tbl" id="tblEventos"></table></div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Capacidade · Storage & CPU</div><div id="itomCapacidade"></div></div>
+    <div class="card"><div class="card-title">Cloud Health Score</div><div id="itomCloud"></div></div>
+  </div>
+</div>
+
+<!-- ===== GOV IA ===== -->
+<div class="tab-panel" id="panel-govai">
+  <div class="kpi-grid" id="kpiGovai"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Inventário de modelos de IA</div><div class="tbl-wrap"><table class="tbl" id="tblModelos"></table></div></div>
+    <div class="card"><div class="card-title">Conformidade ISO 42001 por domínio</div><div id="ia42001"></div></div>
+  </div>
+  <div class="card"><div class="card-title">Consumo de tokens · Últimos 30 dias</div><div id="iaTokens"></div></div>
+</div>
+
+<!-- ===== SEGURANÇA & IAM ===== -->
+<div class="tab-panel" id="panel-seguranca">
+  <div class="kpi-grid" id="kpiSeg"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Vulnerabilidades abertas · CVEs críticos</div><div class="tbl-wrap"><table class="tbl" id="tblVulns"></table></div></div>
+    <div class="card"><div class="card-title">Usuários privilegiados · PAM</div><div class="tbl-wrap"><table class="tbl" id="tblPam"></table></div></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-title">MFA & Zero Trust · Status</div><div id="segMfa"></div></div>
+    <div class="card"><div class="card-title">Incidentes de segurança · 6 meses</div><div id="segIncidentes"></div></div>
+  </div>
+</div>
+
+<!-- ===== COMPLIANCE ===== -->
+<div class="tab-panel" id="panel-compliance">
+  <div class="kpi-grid" id="kpiComp"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Frameworks · Aderência por domínio</div><div id="compFrameworks"></div></div>
+    <div class="card"><div class="card-title">Evidências · Vencimento e status</div><div class="tbl-wrap"><table class="tbl" id="tblEvidencias"></table></div></div>
+  </div>
+  <div class="card"><div class="card-title">Controles por framework · Detalhamento</div><div class="tbl-wrap"><table class="tbl" id="tblControles"></table></div></div>
+</div>
+
+<!-- ===== PMO ===== -->
+<div class="tab-panel" id="panel-pmo">
+  <div class="kpi-grid" id="kpiPmo"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Portfólio de projetos</div><div class="tbl-wrap"><table class="tbl" id="tblProjetos"></table></div></div>
+    <div class="card"><div class="card-title">Marcos críticos · Próximos 90 dias</div><div id="pmoMarcos"></div></div>
+  </div>
+  <div class="card"><div class="card-title">Épicos e entregáveis · Status detalhado</div><div class="tbl-wrap"><table class="tbl" id="tblEpicos"></table></div></div>
+</div>
+
+<!-- ===== CMDB ===== -->
+<div class="tab-panel" id="panel-cmdb">
+  <div class="kpi-grid" id="kpiCmdb"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Inventário de ativos · Configuration Items</div><div class="tbl-wrap"><table class="tbl" id="tblCis"></table></div></div>
+    <div class="card"><div class="card-title">Dependências críticas · Mapa de impacto</div><div id="cmdbDeps"></div></div>
+  </div>
+  <div class="card"><div class="card-title">Lifecycle · EOL e renovação</div><div class="tbl-wrap"><table class="tbl" id="tblLifecycle"></table></div></div>
+</div>
+
+<!-- ===== RISCOS ===== -->
+<div class="tab-panel" id="panel-riscos">
+  <div class="kpi-grid" id="kpiRiscos"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Matriz de riscos · Probabilidade × Impacto</div><div id="riscosHeatmap"></div></div>
+    <div class="card"><div class="card-title">KRIs · Key Risk Indicators</div><div id="riscosKri"></div></div>
+  </div>
+  <div class="card"><div class="card-title">Registro de riscos · Planos de mitigação</div><div class="tbl-wrap"><table class="tbl" id="tblRiscos"></table></div></div>
+</div>
+
+<!-- ===== FINOPS ===== -->
+<div class="tab-panel" id="panel-finops">
+  <div class="kpi-grid" id="kpiFinops"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Custos cloud · Por provedor</div><div id="finopsCloud"></div></div>
+    <div class="card"><div class="card-title">Forecast vs Realizado · Mensal</div><div id="finopsForecast"></div></div>
+  </div>
+  <div class="card"><div class="card-title">Detalhamento · Centro de custo e otimizações</div><div class="tbl-wrap"><table class="tbl" id="tblFinops"></table></div></div>
+</div>
+
+<!-- ===== MUDANÇAS & CAB ===== -->
+<div class="tab-panel" id="panel-mudancas">
+  <div class="kpi-grid" id="kpiMud"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">RFCs em andamento · Calendário CAB</div><div class="tbl-wrap"><table class="tbl" id="tblMudancas"></table></div></div>
+    <div class="card"><div class="card-title">Taxa de sucesso · Rollbacks · Tendência</div><div id="mudTendencia"></div></div>
+  </div>
+  <div class="card"><div class="card-title">Janelas de manutenção · Próximas 2 semanas</div><div id="mudJanelas"></div></div>
+</div>
+
+<!-- ===== CONTINUIDADE ===== -->
+<div class="tab-panel" id="panel-continuidade">
+  <div class="kpi-grid" id="kpiCont"></div>
+  <div class="g2">
+    <div class="card"><div class="card-title">Planos DRP · Status e testes</div><div class="tbl-wrap"><table class="tbl" id="tblDrp"></table></div></div>
+    <div class="card"><div class="card-title">RTO / RPO · Por serviço crítico</div><div id="contRto"></div></div>
+  </div>
+  <div class="card"><div class="card-title">Playbooks de crise · Incidentes e simulações</div><div class="tbl-wrap"><table class="tbl" id="tblPlaybooks"></table></div></div>
+</div>
+
+</div><!-- /content -->
+
+<!-- ===================== MODAIS ===================== -->
+
+<!-- Modal: Adicionar / Editar Plataforma -->
+<div class="modal-overlay" id="modalAddPlat" onclick="if(event.target===this)closeModal('modalAddPlat')">
+  <div class="modal" style="max-width:580px;">
+    <div class="modal-header">
+      <div class="modal-title" id="modalAddPlatTitle">Nova Fonte de Dados</div>
+      <button class="modal-close" onclick="closeModal('modalAddPlat')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editPlatId" value=""/>
+      <div class="form-section">Identificação</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nome da fonte *</label>
+          <input class="form-input" id="fNome" placeholder="ex: SAP Produção"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo de plataforma *</label>
+          <select class="form-select" id="fTipo" onchange="onTipoChange()">
+            <option value="">Selecione...</option>
+            <option value="SAP">SAP ERP</option>
+            <option value="Oracle">Oracle ERP</option>
+            <option value="ServiceNow">ServiceNow</option>
+            <option value="Jira">Jira</option>
+            <option value="GLPI">GLPI</option>
+            <option value="Planilha">Planilha Excel/CSV</option>
+            <option value="API REST">API REST Genérica</option>
+            <option value="SQL">Banco de dados SQL</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <input class="form-input" id="fDescricao" placeholder="Breve descrição da fonte e o que ela fornece"/>
+      </div>
+
+      <div class="form-section">Conexão</div>
+      <div class="form-group">
+        <label class="form-label">URL / Endpoint *</label>
+        <input class="form-input" id="fUrl" placeholder="https://sap.empresa.com/api/..."/>
+        <div class="form-hint" id="fUrlHint">Endpoint da API ou caminho do arquivo</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Usuário / Client ID</label>
+          <input class="form-input" id="fUser" placeholder="usuario@empresa.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Senha / Client Secret</label>
+          <input class="form-input" type="password" id="fPass" placeholder="••••••••"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tipo de autenticação</label>
+        <select class="form-select" id="fAuth">
+          <option value="basic">Basic Auth</option>
+          <option value="bearer">Bearer Token</option>
+          <option value="oauth2">OAuth 2.0</option>
+          <option value="apikey">API Key</option>
+          <option value="none">Sem autenticação</option>
+          <option value="n8n">Gerenciado pelo N8N</option>
+        </select>
+      </div>
+
+      <div class="form-section">Módulos de destino</div>
+      <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">Selecione quais módulos da Governança esta fonte alimenta:</div>
+      <div id="modulosCheckboxes" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
+
+      <div class="form-section">Sincronização</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Frequência</label>
+          <select class="form-select" id="fFreq">
+            <option value="manual">Somente manual</option>
+            <option value="15min">A cada 15 min</option>
+            <option value="30min">A cada 30 min</option>
+            <option value="1h" selected>A cada 1 hora</option>
+            <option value="6h">A cada 6 horas</option>
+            <option value="daily">Diariamente</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">N8N Workflow ID</label>
+          <input class="form-input" id="fN8nWorkflow" placeholder="ex: wf_sap_contratos"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="margin-bottom:8px;">Opções</label>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label class="form-toggle"><span class="toggle on" id="togAtivo" onclick="this.classList.toggle('on')"></span> Fonte ativa</label>
+          <label class="form-toggle"><span class="toggle on" id="togSyncAuto" onclick="this.classList.toggle('on')"></span> Sincronização automática habilitada</label>
+          <label class="form-toggle"><span class="toggle" id="togSsl" onclick="this.classList.toggle('on')"></span> Verificar SSL</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('modalAddPlat')">Cancelar</button>
+      <button class="btn-sm" onclick="testConexao()">🔍 Testar conexão</button>
+      <button class="btn-primary" onclick="salvarFonte()">Salvar fonte</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Detalhes / Sincronização -->
+<div class="modal-overlay" id="modalDetalhes" onclick="if(event.target===this)closeModal('modalDetalhes')">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <div class="modal-title" id="modalDetTitle">Detalhes da Fonte</div>
+      <button class="modal-close" onclick="closeModal('modalDetalhes')">×</button>
+    </div>
+    <div class="modal-body" id="modalDetBody"></div>
+  </div>
+</div>
+
+<!-- ===== MODAL ADMIN AUTH ===== -->
+<div class="adm-overlay" id="admOverlay">
+  <div class="adm-box">
+    <button class="adm-close" onclick="closeAdmOverlay()">×</button>
+    <div class="adm-logo">🔐</div>
+    <div class="adm-title">Acesso Administrador</div>
+    <div class="adm-sub">Digite a senha para entrar no Modo Admin e liberar edições</div>
+    <div class="adm-inp-wrap">
+      <input class="adm-inp" id="admPassInput" type="password" placeholder="••••••••••••"
+        onkeydown="if(event.key==='Enter')submitAdm()"
+        oninput="$('admError').textContent=''"/>
+      <button class="adm-eye" id="admEye" onclick="togglePassVis()">👁</button>
+    </div>
+    <button class="adm-btn" onclick="submitAdm()">🔓 Entrar no Modo Admin</button>
+    <div class="adm-error" id="admError"></div>
+    <div class="adm-attempts" id="admAttempts"></div>
+    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+      <div style="font-size:9px;color:var(--text3);text-align:center;line-height:1.8;">
+        Sessão expira automaticamente em <b style="color:var(--amber);">15 minutos</b> de inatividade<br>
+        Máximo de <b style="color:var(--red);">5 tentativas</b> antes do bloqueio temporário
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Alterar senha ADM -->
+<div class="modal-overlay" id="modalTrocaSenha" onclick="if(event.target===this)closeModal('modalTrocaSenha')">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <div class="modal-title">🔑 Alterar senha do Administrador</div>
+      <button class="modal-close" onclick="closeModal('modalTrocaSenha')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Senha atual</label>
+        <input class="form-input" id="tsSenhaAtual" type="password" placeholder="Senha atual"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nova senha</label>
+        <input class="form-input" id="tsNovaSenha" type="password" placeholder="Mínimo 8 caracteres"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmar nova senha</label>
+        <input class="form-input" id="tsConfirmaSenha" type="password" placeholder="Repita a nova senha"/>
+      </div>
+      <div style="font-size:10px;color:var(--text3);padding:8px 10px;background:var(--bg3);border-radius:8px;">
+        💡 A senha é armazenada localmente neste navegador. Para alterar permanentemente no código-fonte, edite a constante <code style="color:var(--teal);">ADM_PASS</code> no script.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('modalTrocaSenha')">Cancelar</button>
+      <button class="btn-primary" onclick="trocarSenha()">Salvar nova senha</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<div style="text-align:center;padding:10px 24px 16px;font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;position:relative;z-index:1;">
+  Hub de Integração · Governança de TI · SAP · Oracle · ServiceNow · Jira · GLPI · N8N
+</div>
+
+<script>
+// =====================================================================
+// SISTEMA DE AUTENTICAÇÃO ADM
+// =====================================================================
+
+// ── Senha padrão ── altere aqui para personalizar ──────────────────
+const ADM_PASS_DEFAULT = 'GovTI@Adm2026';
+// ──────────────────────────────────────────────────────────────────
+
+const ADM_TIMEOUT_MS  = 15 * 60 * 1000; // 15 min de inatividade
+const ADM_MAX_TRIES   = 5;
+const ADM_LOCK_MS     = 2 * 60 * 1000;  // bloqueio de 2 min após 5 erros
+
+let admMode      = false;
+let admExpTimer  = null;
+let admTries     = 0;
+let admLockedUntil = 0;
+let admTickInterval = null;
+
+// Lê senha salva no localStorage (ou usa o padrão)
+function getAdmPass(){
+  return localStorage.getItem('hub_adm_pass') || ADM_PASS_DEFAULT;
+}
+
+function toggleAdm(){
+  if(admMode){ lockAdm(); return; }
+  // Verifica bloqueio temporário
+  if(Date.now() < admLockedUntil){
+    const rem = Math.ceil((admLockedUntil - Date.now())/1000);
+    toast(`Muitas tentativas. Aguarde ${rem}s para tentar novamente.`,'error','🚫');
+    return;
+  }
+  $('admPassInput').value = '';
+  $('admError').textContent = '';
+  $('admAttempts').textContent = admTries > 0 ? `${ADM_MAX_TRIES - admTries} tentativa(s) restante(s)` : '';
+  $('admOverlay').classList.add('open');
+  setTimeout(()=>$('admPassInput').focus(), 120);
+}
+
+function closeAdmOverlay(){
+  $('admOverlay').classList.remove('open');
+}
+
+function togglePassVis(){
+  const inp = $('admPassInput');
+  const eye = $('admEye');
+  if(inp.type === 'password'){ inp.type = 'text'; eye.textContent = '🙈'; }
+  else { inp.type = 'password'; eye.textContent = '👁'; }
+}
+
+function submitAdm(){
+  if(Date.now() < admLockedUntil) return;
+  const val = $('admPassInput').value;
+  if(val === getAdmPass()){
+    admTries = 0;
+    closeAdmOverlay();
+    unlockAdm();
+  } else {
+    admTries++;
+    $('admPassInput').value = '';
+    if(admTries >= ADM_MAX_TRIES){
+      admLockedUntil = Date.now() + ADM_LOCK_MS;
+      admTries = 0;
+      $('admError').textContent = 'Acesso bloqueado por 2 minutos.';
+      $('admAttempts').textContent = '';
+      toast('Muitas tentativas incorretas. Bloqueio de 2 min.','error','🚫');
+      setTimeout(closeAdmOverlay, 2000);
+    } else {
+      const rest = ADM_MAX_TRIES - admTries;
+      $('admError').textContent = `Senha incorreta. ${rest} tentativa${rest>1?'s':''} restante${rest>1?'s':''}.`;
+      $('admAttempts').textContent = `${admTries}/${ADM_MAX_TRIES} tentativas usadas`;
+      $('admPassInput').classList.add('adm-shake');
+      setTimeout(()=>$('admPassInput').classList.remove('adm-shake'),400);
+      $('admPassInput').focus();
+    }
+  }
+}
+
+function unlockAdm(){
+  admMode = true;
+  $('btnAdm').className = 'btn-adm-lock unlocked';
+  $('btnAdm').innerHTML = '🔓 Admin';
+  $('admBanner').classList.add('show');
+  // Libera elementos protegidos
+  document.querySelectorAll('.adm-protected').forEach(el=>{
+    el.classList.remove('adm-protected');
+    el.removeAttribute('disabled');
+  });
+  resetAdmTimer();
+  startAdmTick();
+  toast('Modo Admin ativado · Sessão expira em 15 min','success','🔓');
+}
+
+function lockAdm(){
+  admMode = false;
+  clearTimeout(admExpTimer);
+  clearInterval(admTickInterval);
+  $('btnAdm').className = 'btn-adm-lock locked';
+  $('btnAdm').innerHTML = '🔒 Admin';
+  $('admBanner').classList.remove('show');
+  // Reaplica proteção
+  applyAdmProtection();
+  toast('Modo Admin encerrado','info','🔒');
+}
+
+function resetAdmTimer(){
+  clearTimeout(admExpTimer);
+  admExpTimer = setTimeout(()=>{
+    if(admMode){ lockAdm(); toast('Sessão Admin expirada por inatividade','info','⏱️'); }
+  }, ADM_TIMEOUT_MS);
+}
+
+function startAdmTick(){
+  clearInterval(admTickInterval);
+  let remaining = ADM_TIMEOUT_MS;
+  const started = Date.now();
+  admTickInterval = setInterval(()=>{
+    if(!admMode){ clearInterval(admTickInterval); return; }
+    const elapsed = Date.now() - started;
+    remaining = ADM_TIMEOUT_MS - elapsed;
+    if(remaining <= 0){ clearInterval(admTickInterval); return; }
+    const m = Math.floor(remaining/60000);
+    const s = Math.floor((remaining%60000)/1000);
+    $('admTimer').textContent = `Expira em ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }, 1000);
+}
+
+// Reaplicar proteção a todos os botões de edição
+function applyAdmProtection(){
+  const ids = ['btnNovaFonte','btnSyncAll'];
+  ids.forEach(id=>{ const el=$(id); if(el) el.classList.add('adm-protected'); });
+}
+
+// Intercepta qualquer clique para resetar o timer de inatividade
+document.addEventListener('click', ()=>{ if(admMode) resetAdmTimer(); });
+
+// Verifica permissão antes de qualquer ação ADM
+function requireAdm(callback){
+  if(admMode){ callback(); return; }
+  toast('Ação bloqueada · Entre no Modo Admin primeiro','error','🔒');
+  $('admPassInput').value='';
+  $('admError').textContent='';
+  $('admOverlay').classList.add('open');
+  setTimeout(()=>$('admPassInput').focus(),120);
+}
+
+// Trocar senha
+function trocarSenha(){
+  const atual = $('tsSenhaAtual').value;
+  const nova  = $('tsNovaSenha').value;
+  const conf  = $('tsConfirmaSenha').value;
+  if(atual !== getAdmPass()){ toast('Senha atual incorreta','error','❌'); return; }
+  if(nova.length < 8){ toast('A nova senha deve ter ao menos 8 caracteres','error','⚠️'); return; }
+  if(nova !== conf){ toast('As senhas não coincidem','error','⚠️'); return; }
+  localStorage.setItem('hub_adm_pass', nova);
+  closeModal('modalTrocaSenha');
+  ['tsSenhaAtual','tsNovaSenha','tsConfirmaSenha'].forEach(id=>$(id).value='');
+  toast('Senha do Administrador alterada com sucesso','success','✅');
+}
+
+// Adiciona opção de troca de senha no painel de configurações
+function injectTrocaSenhaBtn(){
+  const cfg = $('panel-config');
+  if(!cfg) return;
+  const div = document.createElement('div');
+  div.className='card';
+  div.style.marginTop='12px';
+  div.innerHTML=`<div class="card-title">🔑 Segurança do Administrador</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">Gerencie a senha de acesso ao Modo Admin desta aplicação.</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn-primary" onclick="requireAdm(()=>openModal('modalTrocaSenha'))">🔑 Alterar senha ADM</button>
+      <button class="btn-sm" onclick="requireAdm(lockAdm)">🔒 Bloquear sessão agora</button>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:var(--bg3);border-radius:8px;font-size:10px;color:var(--text3);line-height:1.8;">
+      <b style="color:var(--text2);">Senha padrão inicial:</b> <code style="color:var(--amber);">GovTI@Adm2026</code><br>
+      <b style="color:var(--text2);">Timeout de sessão:</b> 15 minutos de inatividade<br>
+      <b style="color:var(--text2);">Bloqueio por tentativas:</b> 5 erros → bloqueio de 2 min<br>
+      <b style="color:var(--text2);">Armazenamento:</b> localStorage do navegador (altere no código para fixar)
+    </div>`;
+  cfg.appendChild(div);
+}
+
+// =====================================================================
+// ESTADO GLOBAL
+// =====================================================================
+const MODULOS_GOV = [
+  {id:'contratos',   nome:'Contratos',    icon:'📋'},
+  {id:'fornecedores',nome:'Fornecedores', icon:'🤝'},
+  {id:'itsm',        nome:'ITSM',         icon:'🚨'},
+  {id:'projetos',    nome:'Projetos',     icon:'📁'},
+  {id:'conformidade',nome:'Conformidade', icon:'✅'},
+  {id:'seguranca',   nome:'Segurança',    icon:'🔐'},
+  {id:'budget',      nome:'Budget',       icon:'💰'},
+  {id:'mudancas',    nome:'Mudanças',     icon:'🔄'},
+  {id:'ia',          nome:'Gov. IA',      icon:'🤖'},
+];
+
+const TIPO_META = {
+  'SAP':        {icon:'🟦',cor:'#0070f2',urlHint:'URL da API REST do SAP (ex: https://sap.host/api/v1/)'},
+  'Oracle':     {icon:'🔴',cor:'#e84236',urlHint:'URL do Oracle ERP Cloud ou OIC'},
+  'ServiceNow': {icon:'🟢',cor:'#62d84e',urlHint:'URL base da instância ServiceNow (ex: https://empresa.service-now.com)'},
+  'Jira':       {icon:'🔵',cor:'#0052cc',urlHint:'URL do Jira (ex: https://empresa.atlassian.net)'},
+  'GLPI':       {icon:'🟠',cor:'#f57900',urlHint:'URL da API REST do GLPI (ex: https://glpi.empresa.com/apirest.php)'},
+  'Planilha':   {icon:'🟩',cor:'#1e7e34',urlHint:'Caminho do arquivo ou URL pública do Google Sheets'},
+  'API REST':   {icon:'🔗',cor:'#8888bb',urlHint:'URL base do endpoint REST'},
+  'SQL':        {icon:'🗃️',cor:'#a78bfa',urlHint:'Connection string ou host do banco'},
+  'Outro':      {icon:'📦',cor:'#6b7280',urlHint:'Endpoint ou endereço de acesso'},
+};
+
+// Mapeamentos padrão por tipo de plataforma
+const MAPPINGS_DEFAULT = {
+  SAP: [
+    {src:'BUKRS',dst:'contrato.empresa',tipo:'string'},
+    {src:'LIFNR',dst:'fornecedor.id',tipo:'string'},
+    {src:'EBELN',dst:'contrato.id',tipo:'string'},
+    {src:'WAERS',dst:'contrato.moeda',tipo:'string'},
+    {src:'NETWR',dst:'contrato.valor',tipo:'number'},
+    {src:'KDATB',dst:'contrato.inicio',tipo:'date'},
+    {src:'KDATE',dst:'contrato.fim',tipo:'date'},
+    {src:'MATNR',dst:'contrato.descricao',tipo:'string'},
+  ],
+  Oracle: [
+    {src:'contract_number',dst:'contrato.id',tipo:'string'},
+    {src:'vendor_name',dst:'fornecedor.nome',tipo:'string'},
+    {src:'amount',dst:'contrato.valor',tipo:'number'},
+    {src:'start_date',dst:'contrato.inicio',tipo:'date'},
+    {src:'end_date',dst:'contrato.fim',tipo:'date'},
+    {src:'status_code',dst:'contrato.status',tipo:'string'},
+  ],
+  ServiceNow: [
+    {src:'number',dst:'incidente.id',tipo:'string'},
+    {src:'short_description',dst:'incidente.titulo',tipo:'string'},
+    {src:'priority',dst:'incidente.prioridade',tipo:'string'},
+    {src:'state',dst:'incidente.status',tipo:'string'},
+    {src:'assigned_to',dst:'incidente.responsavel',tipo:'string'},
+    {src:'category',dst:'incidente.categoria',tipo:'string'},
+    {src:'opened_at',dst:'incidente.abertura',tipo:'datetime'},
+    {src:'resolved_at',dst:'incidente.resolucao',tipo:'datetime'},
+    {src:'cmdb_ci',dst:'incidente.ativo',tipo:'string'},
+  ],
+  Jira: [
+    {src:'key',dst:'projeto.id',tipo:'string'},
+    {src:'summary',dst:'projeto.nome',tipo:'string'},
+    {src:'status.name',dst:'projeto.status',tipo:'string'},
+    {src:'priority.name',dst:'projeto.prioridade',tipo:'string'},
+    {src:'assignee.displayName',dst:'projeto.responsavel',tipo:'string'},
+    {src:'created',dst:'projeto.criado',tipo:'datetime'},
+    {src:'duedate',dst:'projeto.prazo',tipo:'date'},
+    {src:'customfield_story_points',dst:'projeto.pontos',tipo:'number'},
+  ],
+  GLPI: [
+    {src:'id',dst:'incidente.id',tipo:'string'},
+    {src:'name',dst:'incidente.titulo',tipo:'string'},
+    {src:'status',dst:'incidente.status',tipo:'number'},
+    {src:'urgency',dst:'incidente.urgencia',tipo:'number'},
+    {src:'impact',dst:'incidente.impacto',tipo:'number'},
+    {src:'priority',dst:'incidente.prioridade',tipo:'number'},
+    {src:'users_id_assign',dst:'incidente.responsavel',tipo:'string'},
+    {src:'date',dst:'incidente.abertura',tipo:'datetime'},
+    {src:'solvedate',dst:'incidente.resolucao',tipo:'datetime'},
+  ],
+  Planilha: [
+    {src:'Coluna_A',dst:'contrato.id',tipo:'string'},
+    {src:'Coluna_B',dst:'fornecedor.nome',tipo:'string'},
+    {src:'Coluna_C',dst:'contrato.valor',tipo:'number'},
+    {src:'Coluna_D',dst:'contrato.inicio',tipo:'date'},
+    {src:'Coluna_E',dst:'contrato.fim',tipo:'date'},
+  ],
+};
+
+// Fontes de dados iniciais
+let fontes = [
+  {
+    id:'src-001',nome:'SAP S/4HANA · Produção',tipo:'SAP',descricao:'ERP principal — extrai contratos, fornecedores e ordens de compra',
+    url:'https://sap.empresa.com.br/api/v1',user:'sap_api_user',pass:'••••',auth:'oauth2',
+    status:'ativo',ultimaSync:'22/05/2026 09:15',registros:1842,erros:0,
+    frequencia:'1h',n8nWorkflow:'wf_sap_contratos',
+    modulos:['contratos','fornecedores','budget'],ssl:false,syncAuto:true,
+    historico:[
+      {ts:'22/05/2026 09:15',status:'Sucesso',registros:1842,duracao:'00:02:14'},
+      {ts:'22/05/2026 08:15',status:'Sucesso',registros:1839,duracao:'00:02:11'},
+      {ts:'22/05/2026 07:15',status:'Sucesso',registros:1835,duracao:'00:02:09'},
+    ]
+  },
+  {
+    id:'src-002',nome:'Oracle ERP Cloud',tipo:'Oracle',descricao:'Módulos financeiros — faturas, pagamentos e fornecedores',
+    url:'https://oracle.empresa.com.br/fscmRestApi/resources/v1',user:'oracle_int',pass:'••••',auth:'oauth2',
+    status:'ativo',ultimaSync:'22/05/2026 08:00',registros:647,erros:0,
+    frequencia:'1h',n8nWorkflow:'wf_oracle_financeiro',
+    modulos:['contratos','fornecedores','budget'],ssl:true,syncAuto:true,
+    historico:[
+      {ts:'22/05/2026 08:00',status:'Sucesso',registros:647,duracao:'00:01:32'},
+      {ts:'22/05/2026 07:00',status:'Sucesso',registros:644,duracao:'00:01:29'},
+    ]
+  },
+  {
+    id:'src-003',nome:'ServiceNow · ITSM',tipo:'ServiceNow',descricao:'Plataforma ITSM — incidentes, mudanças, problemas e CMDB',
+    url:'https://empresa.service-now.com',user:'sn_api_reader',pass:'••••',auth:'basic',
+    status:'ativo',ultimaSync:'22/05/2026 09:30',registros:3201,erros:2,
+    frequencia:'15min',n8nWorkflow:'wf_snow_itsm',
+    modulos:['itsm','mudancas','conformidade'],ssl:true,syncAuto:true,
+    historico:[
+      {ts:'22/05/2026 09:30',status:'Parcial',registros:3201,duracao:'00:00:48',obs:'2 registros com campos inválidos ignorados'},
+      {ts:'22/05/2026 09:15',status:'Sucesso',registros:3198,duracao:'00:00:45'},
+      {ts:'22/05/2026 09:00',status:'Sucesso',registros:3195,duracao:'00:00:44'},
+    ]
+  },
+  {
+    id:'src-004',nome:'Jira · Projetos TI',tipo:'Jira',descricao:'Projetos e epics de TI — status, prazos e responsáveis',
+    url:'https://empresa.atlassian.net',user:'jira_int@empresa.com',pass:'••••',auth:'bearer',
+    status:'ativo',ultimaSync:'22/05/2026 09:00',registros:284,erros:0,
+    frequencia:'30min',n8nWorkflow:'wf_jira_projetos',
+    modulos:['projetos'],ssl:true,syncAuto:true,
+    historico:[
+      {ts:'22/05/2026 09:00',status:'Sucesso',registros:284,duracao:'00:00:22'},
+      {ts:'22/05/2026 08:30',status:'Sucesso',registros:281,duracao:'00:00:21'},
+    ]
+  },
+  {
+    id:'src-005',nome:'GLPI · Service Desk',tipo:'GLPI',descricao:'Service desk legado — tickets, ativos e usuários',
+    url:'https://glpi.empresa.com.br/apirest.php',user:'glpi_api',pass:'••••',auth:'apikey',
+    status:'erro',ultimaSync:'22/05/2026 07:00',registros:0,erros:1,
+    frequencia:'1h',n8nWorkflow:'wf_glpi_tickets',
+    modulos:['itsm'],ssl:false,syncAuto:true,
+    historico:[
+      {ts:'22/05/2026 08:00',status:'Erro',registros:0,duracao:'00:00:05',obs:'Connection timeout após 5s'},
+      {ts:'22/05/2026 07:00',status:'Sucesso',registros:892,duracao:'00:01:05'},
+      {ts:'22/05/2026 06:00',status:'Sucesso',registros:889,duracao:'00:01:03'},
+    ]
+  },
+  {
+    id:'src-006',nome:'Planilha · Contratos Legados',tipo:'Planilha',descricao:'Planilha Excel com contratos anteriores ao ERP',
+    url:'contratos_legados.xlsx',user:'',pass:'',auth:'none',
+    status:'inativo',ultimaSync:'20/05/2026 14:30',registros:156,erros:0,
+    frequencia:'manual',n8nWorkflow:'',
+    modulos:['contratos'],ssl:false,syncAuto:false,
+    historico:[
+      {ts:'20/05/2026 14:30',status:'Sucesso',registros:156,duracao:'00:00:08'},
+    ]
+  },
+];
+
+// Histórico global
+let historico = [];
+fontes.forEach(f => f.historico.forEach(h => historico.push({...h, fonte:f.nome, fonteId:f.id})));
+historico.sort((a,b)=>b.ts.localeCompare(a.ts));
+
+// N8N Workflows
+const n8nWorkflows = [
+  {id:'wf_sap_contratos',nome:'SAP → Contratos & Fornecedores',fonte:'SAP S/4HANA · Produção',modulo:'contratos,fornecedores',status:'ativo',execucoes:1204,ultimaExec:'22/05/2026 09:15',webhook:'POST /webhook/sap-contratos'},
+  {id:'wf_oracle_financeiro',nome:'Oracle → Budget & Contratos',fonte:'Oracle ERP Cloud',modulo:'budget,contratos',status:'ativo',execucoes:982,ultimaExec:'22/05/2026 08:00',webhook:'POST /webhook/oracle-fin'},
+  {id:'wf_snow_itsm',nome:'ServiceNow → ITSM & Mudanças',fonte:'ServiceNow · ITSM',modulo:'itsm,mudancas',status:'ativo',execucoes:4210,ultimaExec:'22/05/2026 09:30',webhook:'POST /webhook/snow-itsm'},
+  {id:'wf_jira_projetos',nome:'Jira → Projetos TI',fonte:'Jira · Projetos TI',modulo:'projetos',status:'ativo',execucoes:320,ultimaExec:'22/05/2026 09:00',webhook:'POST /webhook/jira-proj'},
+  {id:'wf_glpi_tickets',nome:'GLPI → ITSM',fonte:'GLPI · Service Desk',modulo:'itsm',status:'erro',execucoes:788,ultimaExec:'22/05/2026 08:00',webhook:'POST /webhook/glpi-tickets'},
+];
+
+// Módulos destino config
+const modulosCfg = {
+  contratos:    {destino:'contratos',    endpoint:'/api/contratos/bulk',       chave:'id',         metodo:'UPSERT'},
+  fornecedores: {destino:'fornecedores', endpoint:'/api/fornecedores/bulk',    chave:'id',         metodo:'UPSERT'},
+  itsm:         {destino:'itsm',         endpoint:'/api/incidentes/bulk',      chave:'id',         metodo:'UPSERT'},
+  projetos:     {destino:'projetos',     endpoint:'/api/projetos/bulk',        chave:'id',         metodo:'UPSERT'},
+  conformidade: {destino:'conformidade', endpoint:'/api/conformidade/bulk',    chave:'id',         metodo:'UPSERT'},
+  seguranca:    {destino:'seguranca',    endpoint:'/api/seguranca/bulk',       chave:'id',         metodo:'UPSERT'},
+  budget:       {destino:'budget',       endpoint:'/api/budget/lancamentos',   chave:'referencia', metodo:'APPEND'},
+  mudancas:     {destino:'mudancas',     endpoint:'/api/mudancas/bulk',        chave:'id',         metodo:'UPSERT'},
+  ia:           {destino:'ia',           endpoint:'/api/govai/modelos',        chave:'modelo_id',  metodo:'UPSERT'},
+};
+
+// Mapeamentos por fonte
+let mappings = {};
+Object.entries(MAPPINGS_DEFAULT).forEach(([k,v]) => mappings[k] = JSON.parse(JSON.stringify(v)));
+
+// =====================================================================
+// UTILITÁRIOS
+// =====================================================================
+function $(id){return document.getElementById(id);}
+function switchTab(tab, el){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  $('panel-'+tab).classList.add('active');
+  el.classList.add('active');
+  renderTab(tab);
+}
+function openModal(id){$(id).classList.add('open');}
+function closeModal(id){$(id).classList.remove('open');}
+function toast(msg,type='info',icon='ℹ️'){
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span>${icon}</span><span>${msg}</span>`;
+  $('toastWrap').appendChild(t);
+  setTimeout(()=>t.remove(),4000);
+}
+function badgeHtml(status){
+  const m={
+    'ativo':'<span class="badge b-teal">● Ativo</span>',
+    'inativo':'<span class="badge b-gray">○ Inativo</span>',
+    'erro':'<span class="badge b-red">✕ Erro</span>',
+    'Sucesso':'<span class="badge b-green">✓ Sucesso</span>',
+    'Erro':'<span class="badge b-red">✕ Erro</span>',
+    'Parcial':'<span class="badge b-amber">⚠ Parcial</span>',
+  };
+  return m[status]||`<span class="badge b-gray">${status}</span>`;
+}
+function statusDot(status){
+  const m={ativo:'sd-teal',inativo:'sd-gray',erro:'sd-red'};
+  return `<span class="status-dot ${m[status]||'sd-gray'}"></span>`;
+}
+
+// =====================================================================
+// TICKER
+// =====================================================================
+function buildTicker(){
+  const items = fontes.map(f=>{
+    const meta = TIPO_META[f.tipo]||{};
+    const cor = f.status==='ativo'?'vg':f.status==='erro'?'vr':'va';
+    return `<span class="ti">${meta.icon||'📦'} <b>${f.nome}</b> <span class="${cor}">${f.status.toUpperCase()}</span> · ${f.registros.toLocaleString()} reg · sync ${f.ultimaSync.split(' ')[1]}</span>`;
+  }).join('');
+  const el = $('tickerEl');
+  el.innerHTML = items+items;
+}
+
+// =====================================================================
+// CLOCK
+// =====================================================================
+function updateClock(){
+  const n=new Date();
+  $('clock').textContent=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
+}
+setInterval(updateClock,1000);updateClock();
+
+// =====================================================================
+// RENDER TABS
+// =====================================================================
+function renderTab(tab){
+  const fn = {
+    geral:renderGeral,fontes:renderFontes,mapeamento:renderMapeamento,n8n:renderN8n,
+    historico:renderHistorico,config:renderConfig,
+    itom:renderItom,govai:renderGovai,seguranca:renderSeguranca,compliance:renderCompliance,
+    pmo:renderPmo,cmdb:renderCmdb,riscos:renderRiscos,finops:renderFinops,
+    mudancas:renderMudancas,continuidade:renderContinuidade
+  };
+  if(fn[tab]) fn[tab]();
+}
+
+// ===== VISÃO GERAL =====
+function renderGeral(){
+  const total = fontes.length;
+  const ativos = fontes.filter(f=>f.status==='ativo').length;
+  const erros  = fontes.filter(f=>f.status==='erro').length;
+  const totalReg = fontes.reduce((s,f)=>s+f.registros,0);
+
+  $('kpiGeral').innerHTML = [
+    {icon:'🔌',label:'Fontes cadastradas',val:total,sub:`${ativos} ativas`,accent:'var(--teal)'},
+    {icon:'✅',label:'Fontes ativas',val:ativos,sub:`${total-ativos-erros} inativas`,accent:'var(--green)'},
+    {icon:'⚠️',label:'Fontes com erro',val:erros,sub:'verificar conexão',accent:erros?'var(--red)':'var(--green)'},
+    {icon:'📥',label:'Total de registros',val:totalReg.toLocaleString(),sub:'extraídos hoje',accent:'var(--blue)'},
+    {icon:'⚡',label:'Workflows N8N',val:n8nWorkflows.filter(w=>w.status==='ativo').length,sub:`de ${n8nWorkflows.length} total`,accent:'var(--amber)'},
+    {icon:'🔄',label:'Sincronizações hoje',val:historico.length,sub:'todas as fontes',accent:'var(--purple)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // Resumo fontes
+  $('resumoFontes').innerHTML = fontes.map(f=>{
+    const meta = TIPO_META[f.tipo]||{cor:'#8888bb',icon:'📦'};
+    return `<div class="card-sm" style="cursor:pointer;border-left:3px solid ${meta.cor};display:flex;align-items:center;gap:10px;" onclick="showDetalhes('${f.id}')">
+      <div style="font-size:22px;">${meta.icon}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.nome}</div>
+        <div style="font-size:10px;color:var(--text2);margin-top:1px;">${f.registros.toLocaleString()} registros · ${f.ultimaSync.split(' ')[1]}</div>
+      </div>
+      ${badgeHtml(f.status)}
+    </div>`;
+  }).join('');
+
+  // Últimas syncs
+  $('ultimasSyncs').innerHTML = historico.slice(0,12).map(h=>`
+    <div class="log-row">
+      <div class="log-time">${h.ts.split(' ')[1]}</div>
+      <div class="log-icon">${h.status==='Sucesso'?'✅':h.status==='Erro'?'❌':'⚠️'}</div>
+      <div class="log-text"><b>${h.fonte}</b> · ${h.registros.toLocaleString()} reg${h.obs?` <span style="color:var(--amber)">— ${h.obs}</span>`:''}</div>
+      <div class="log-count">${h.duracao}</div>
+    </div>`).join('');
+
+  // Módulos destino
+  const modCount = {};
+  fontes.forEach(f=>f.modulos.forEach(m=>{modCount[m]=(modCount[m]||0)+f.registros;}));
+  $('modulosDestino').innerHTML = MODULOS_GOV.map(m=>{
+    const cnt = modCount[m.id]||0;
+    const pct = cnt ? Math.min(100,Math.round(cnt/60)) : 0;
+    return `<div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-size:11px;">${m.icon} ${m.nome}</span>
+        <span style="font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--text2);">${cnt.toLocaleString()} reg</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:var(--teal);"></div></div>
+    </div>`;
+  }).join('');
+
+  // Alertas
+  const alertas = [];
+  fontes.filter(f=>f.status==='erro').forEach(f=>alertas.push({tipo:'red',msg:`<b>${f.nome}</b> está com erro de conexão — verificar configuração`}));
+  fontes.filter(f=>f.erros>0 && f.status!=='erro').forEach(f=>alertas.push({tipo:'amber',msg:`<b>${f.nome}</b> teve ${f.erros} erro(s) na última sincronização`}));
+  if(alertas.length===0) alertas.push({tipo:'green',msg:'Nenhum alerta crítico no momento — hub operando normalmente'});
+  $('alertasHub').innerHTML = alertas.map(a=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--${a.tipo==='red'?'red3':a.tipo==='amber'?'amber3':'green3'});border:1px solid rgba(${a.tipo==='red'?'247,95,95':a.tipo==='amber'?'245,166,35':'45,212,160'},0.2);border-radius:8px;margin-bottom:6px;font-size:11px;">
+      ${a.tipo==='red'?'🔴':a.tipo==='amber'?'🟡':'🟢'} <span>${a.msg}</span>
+    </div>`).join('');
+}
+
+// ===== FONTES DE DADOS =====
+function renderFontes(){
+  const grid = $('platGrid');
+  grid.innerHTML = fontes.map(f=>{
+    const meta = TIPO_META[f.tipo]||{cor:'#8888bb',icon:'📦'};
+    const cls = f.status==='inativo'?'inactive':f.status==='erro'?'error':'';
+    const modTags = f.modulos.map(m=>{
+      const mod = MODULOS_GOV.find(g=>g.id===m);
+      return mod?`<span class="mod-tag">${mod.icon} ${mod.nome}</span>`:'';
+    }).join('');
+    return `<div class="plat-card ${cls}" style="--pc:${meta.cor};">
+      <div class="plat-header">
+        <div class="plat-icon">${meta.icon}</div>
+        <div class="plat-info">
+          <div class="plat-name">${f.nome}</div>
+          <div class="plat-type">${f.tipo} · ${f.auth.toUpperCase()}</div>
+        </div>
+        <div class="plat-actions">
+          <button class="icon-btn" title="Sincronizar agora" onclick="syncFonte('${f.id}',event)">⟳</button>
+          <button class="icon-btn" title="Detalhes" onclick="showDetalhes('${f.id}')">👁</button>
+          <button class="icon-btn" title="Editar" onclick="editarFonte('${f.id}')">✏️</button>
+          <button class="icon-btn del" title="Remover" onclick="removerFonte('${f.id}',event)">🗑</button>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:10px;">${f.descricao}</div>
+      <div class="plat-stats">
+        <div class="plat-stat">
+          <div class="plat-stat-label">Registros</div>
+          <div class="plat-stat-val" style="color:var(--teal)">${f.registros.toLocaleString()}</div>
+        </div>
+        <div class="plat-stat">
+          <div class="plat-stat-label">Erros</div>
+          <div class="plat-stat-val" style="color:${f.erros?'var(--red)':'var(--green)'}">${f.erros}</div>
+        </div>
+        <div class="plat-stat">
+          <div class="plat-stat-label">Frequência</div>
+          <div class="plat-stat-val" style="font-size:11px;color:var(--text2)">${f.frequencia}</div>
+        </div>
+        <div class="plat-stat">
+          <div class="plat-stat-label">Status</div>
+          <div style="margin-top:3px;">${badgeHtml(f.status)}</div>
+        </div>
+      </div>
+      <div class="plat-footer">
+        <div>
+          <div class="plat-last">Último sync: ${f.ultimaSync}</div>
+          <div class="plat-modules" style="margin-top:5px;">${modTags}</div>
+        </div>
+        <button class="btn-sync" onclick="syncFonte('${f.id}',event)">▶ Sync</button>
+      </div>
+    </div>`;
+  }).join('') + `
+    <div class="plat-add" onclick="openModal('modalAddPlat')">
+      <div class="plat-add-icon">＋</div>
+      <div class="plat-add-text">Adicionar nova fonte</div>
+      <div style="font-size:10px;color:var(--text3);">SAP, Oracle, ServiceNow, Jira, GLPI, Planilha...</div>
+    </div>`;
+}
+
+// ===== MAPEAMENTO =====
+function renderMapeamento(){
+  // Populate select
+  const sel = $('mapFonteSel');
+  sel.innerHTML = '<option value="">Selecione a fonte...</option>' +
+    fontes.map(f=>`<option value="${f.tipo}">${f.nome} (${f.tipo})</option>`).join('');
+}
+
+function renderMapping(){
+  const tipo = $('mapFonteSel').value;
+  if(!tipo){
+    $('mappingCard').innerHTML = `<div style="text-align:center;padding:40px;color:var(--text3);"><div style="font-size:28px;margin-bottom:8px;">🗺️</div><div style="font-size:12px;">Selecione uma fonte para ver ou editar o mapeamento de campos</div></div>`;
+    return;
+  }
+  const maps = mappings[tipo] || [];
+  $('mappingCard').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="card-title" style="margin:0;">Mapeamento: ${tipo}</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sm" onclick="resetMapping('${tipo}')">↺ Resetar padrão</button>
+        <button class="btn-primary" onclick="saveMapping('${tipo}')">💾 Salvar</button>
+      </div>
+    </div>
+    <div style="font-size:10px;color:var(--text2);margin-bottom:12px;">
+      Configure a correspondência entre os campos da fonte e os campos do Portal de Governança TI
+    </div>
+    <div class="map-row">
+      <div class="map-row-header">Campo Origem (${tipo})</div>
+      <div></div>
+      <div class="map-row-header">Campo Destino (Governança)</div>
+      <div class="map-row-header">Tipo</div>
+    </div>
+    <div id="mapRows">
+      ${maps.map((m,i)=>`
+        <div class="map-row" id="maprow-${tipo}-${i}">
+          <input class="form-input" style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 8px;" value="${m.src}" onchange="maps['${tipo}'][${i}].src=this.value" placeholder="campo.origem"/>
+          <div class="map-arrow">→</div>
+          <input class="form-input" style="font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 8px;" value="${m.dst}" onchange="maps['${tipo}'][${i}].dst=this.value" placeholder="modulo.campo"/>
+          <select class="form-select" style="font-size:10px;padding:5px 6px;" onchange="mappings['${tipo}'][${i}].tipo=this.value">
+            <option ${m.tipo==='string'?'selected':''}>string</option>
+            <option ${m.tipo==='number'?'selected':''}>number</option>
+            <option ${m.tipo==='date'?'selected':''}>date</option>
+            <option ${m.tipo==='datetime'?'selected':''}>datetime</option>
+            <option ${m.tipo==='boolean'?'selected':''}>boolean</option>
+          </select>
+          <div class="map-del" onclick="deleteMappingRow('${tipo}',${i})">✕</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function addMappingRow(){
+  const tipo = $('mapFonteSel').value;
+  if(!tipo){toast('Selecione uma fonte primeiro','error','⚠️');return;}
+  if(!mappings[tipo]) mappings[tipo]=[];
+  mappings[tipo].push({src:'novo_campo',dst:'modulo.campo',tipo:'string'});
+  renderMapping();$('mapFonteSel').value=tipo;renderMapping();
+}
+
+function deleteMappingRow(tipo,idx){
+  mappings[tipo].splice(idx,1);
+  const tmp=$('mapFonteSel').value;renderMapping();$('mapFonteSel').value=tmp;renderMapping();
+}
+
+function resetMapping(tipo){
+  mappings[tipo]=JSON.parse(JSON.stringify(MAPPINGS_DEFAULT[tipo]||[]));
+  const tmp=$('mapFonteSel').value;renderMapping();$('mapFonteSel').value=tmp;renderMapping();
+  toast('Mapeamento resetado para o padrão','info','↺');
+}
+
+function saveMapping(tipo){toast(`Mapeamento de ${tipo} salvo com sucesso`,'success','✅');}
+
+// ===== N8N =====
+function renderN8n(){
+  $('kpiN8n').innerHTML = [
+    {icon:'⚡',label:'Workflows ativos',val:n8nWorkflows.filter(w=>w.status==='ativo').length,accent:'var(--amber)'},
+    {icon:'✅',label:'Execuções hoje',val:n8nWorkflows.reduce((s,w)=>s+(w.status==='ativo'?12:0),0),accent:'var(--green)'},
+    {icon:'❌',label:'Workflows com erro',val:n8nWorkflows.filter(w=>w.status==='erro').length,accent:'var(--red)'},
+    {icon:'📨',label:'Webhooks registrados',val:n8nWorkflows.length*2,accent:'var(--blue)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div></div>`).join('');
+
+  $('n8nWebhooksIn').innerHTML = fontes.filter(f=>f.n8nWorkflow).map(f=>`
+    <div class="n8n-node">
+      <div class="n8n-node-icon" style="background:var(--amber2);">⚡</div>
+      <div class="n8n-node-info">
+        <div class="n8n-node-name">${f.nome}</div>
+        <div class="n8n-node-url">POST /webhook/${f.n8nWorkflow}</div>
+      </div>
+      ${badgeHtml(f.status)}
+    </div>`).join('');
+
+  $('n8nWebhooksOut').innerHTML = MODULOS_GOV.slice(0,6).map(m=>`
+    <div class="n8n-node">
+      <div class="n8n-node-icon" style="background:var(--blue2);">📤</div>
+      <div class="n8n-node-info">
+        <div class="n8n-node-name">→ ${m.icon} ${m.nome}</div>
+        <div class="n8n-node-url">${modulosCfg[m.id]?.endpoint||'/api/...'}  [${modulosCfg[m.id]?.metodo||'UPSERT'}]</div>
+      </div>
+      <span class="badge b-teal">ATIVO</span>
+    </div>`).join('');
+
+  $('n8nWorkflows').innerHTML = `
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Workflow</th><th>Fonte</th><th>Módulo destino</th><th>Execuções</th><th>Última exec.</th><th>Status</th></tr></thead>
+      <tbody>${n8nWorkflows.map(w=>`
+        <tr>
+          <td><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue)">${w.id}</span><div style="font-size:10px;color:var(--text2)">${w.nome}</div></td>
+          <td><span style="font-size:11px;">${w.fonte}</span></td>
+          <td><span style="font-size:10px;color:var(--teal)">${w.modulo}</span></td>
+          <td style="font-family:'JetBrains Mono',monospace;">${w.execucoes.toLocaleString()}</td>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${w.ultimaExec}</td>
+          <td>${badgeHtml(w.status)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+// ===== HISTÓRICO =====
+function renderHistorico(){
+  const filtroFonte = $('filtroFonteHist').value;
+  const filtroStatus = $('filtroStatusHist').value;
+
+  // Populate select once
+  const sel = $('filtroFonteHist');
+  if(sel.options.length <= 1){
+    fontes.forEach(f=>{
+      const opt = document.createElement('option');
+      opt.value = f.nome; opt.textContent = f.nome;
+      sel.appendChild(opt);
+    });
+  }
+
+  const total = historico.length;
+  const suc   = historico.filter(h=>h.status==='Sucesso').length;
+  const errs  = historico.filter(h=>h.status==='Erro').length;
+  const totalReg = historico.reduce((s,h)=>s+h.registros,0);
+
+  $('kpiHistorico').innerHTML = [
+    {icon:'🔄',label:'Execuções total',val:total,accent:'var(--teal)'},
+    {icon:'✅',label:'Sucesso',val:suc,accent:'var(--green)'},
+    {icon:'❌',label:'Erros',val:errs,accent:errs?'var(--red)':'var(--green)'},
+    {icon:'📥',label:'Registros processados',val:totalReg.toLocaleString(),accent:'var(--blue)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div></div>`).join('');
+
+  let rows = historico;
+  if(filtroFonte) rows = rows.filter(h=>h.fonte===filtroFonte);
+  if(filtroStatus) rows = rows.filter(h=>h.status===filtroStatus);
+
+  $('tblHistorico').innerHTML = `
+    <thead><tr><th>Data/Hora</th><th>Fonte</th><th>Status</th><th>Registros</th><th>Duração</th><th>Observação</th></tr></thead>
+    <tbody>${rows.map(h=>`
+      <tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;white-space:nowrap;">${h.ts}</td>
+        <td>${h.fonte}</td>
+        <td>${badgeHtml(h.status)}</td>
+        <td style="font-family:'JetBrains Mono',monospace;">${h.registros.toLocaleString()}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);">${h.duracao}</td>
+        <td style="font-size:10px;color:var(--text2);">${h.obs||'—'}</td>
+      </tr>`).join('')}
+    </tbody>`;
+}
+
+// ===== CONFIG =====
+function renderConfig(){
+  $('modulosConfig').innerHTML = `
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Módulo</th><th>Endpoint de destino</th><th>Chave única</th><th>Método</th><th>Ação</th></tr></thead>
+      <tbody>${MODULOS_GOV.map(m=>{
+        const cfg = modulosCfg[m.id]||{endpoint:'',chave:'id',metodo:'UPSERT'};
+        return `<tr>
+          <td>${m.icon} <b>${m.nome}</b></td>
+          <td><input class="form-input" style="font-size:10px;padding:4px 8px;" value="${cfg.endpoint}" onchange="modulosCfg['${m.id}'].endpoint=this.value"/></td>
+          <td><input class="form-input" style="font-size:10px;padding:4px 8px;width:100px;" value="${cfg.chave}" onchange="modulosCfg['${m.id}'].chave=this.value"/></td>
+          <td><select class="form-select" style="font-size:10px;padding:4px 6px;width:90px;" onchange="modulosCfg['${m.id}'].metodo=this.value">
+            <option ${cfg.metodo==='UPSERT'?'selected':''}>UPSERT</option>
+            <option ${cfg.metodo==='APPEND'?'selected':''}>APPEND</option>
+            <option ${cfg.metodo==='REPLACE'?'selected':''}>REPLACE</option>
+          </select></td>
+          <td><button class="btn-sm" style="font-size:10px;padding:3px 8px;" onclick="toast('Módulo ${m.nome} salvo','success','✅')">Salvar</button></td>
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table></div>`;
+}
+
+// =====================================================================
+// AÇÕES
+// =====================================================================
+function syncFonte(id, ev){
+  if(ev){ev.stopPropagation();}
+  requireAdm(()=>_doSyncFonte(id));
+}
+function _doSyncFonte(id){
+  const fonte = fontes.find(f=>f.id===id);
+  if(!fonte){return;}
+  toast(`Sincronizando ${fonte.nome}...`,'info','⟳');
+  setTimeout(()=>{
+    const delta = Math.floor(Math.random()*20)+1;
+    fonte.registros += delta;
+    fonte.ultimaSync = new Date().toLocaleString('pt-BR').replace(',','');
+    if(fonte.status==='erro') {fonte.status='ativo';fonte.erros=0;}
+    const ts = new Date().toLocaleString('pt-BR').replace(',','');
+    const newHist = {ts,fonte:fonte.nome,fonteId:fonte.id,status:'Sucesso',registros:fonte.registros,duracao:'00:01:'+String(Math.floor(Math.random()*59)).padStart(2,'0')};
+    historico.unshift(newHist);
+    fonte.historico.unshift({...newHist});
+    toast(`${fonte.nome}: ${delta} novos registros extraídos`,'success','✅');
+    buildTicker();
+    renderTab(document.querySelector('.tab.active')?.dataset?.tab||'fontes');
+  },2000);
+}
+
+function syncAll(){
+  requireAdm(()=>{
+    toast('Iniciando sincronização de todas as fontes...','info','⟳');
+    fontes.filter(f=>f.status!=='inativo').forEach((f,idx)=>{
+      setTimeout(()=>_doSyncFonte(f.id),idx*700);
+    });
+  });
+}
+
+function showDetalhes(id){
+  const f = fontes.find(x=>x.id===id);
+  if(!f) return;
+  const meta = TIPO_META[f.tipo]||{icon:'📦',cor:'#8888bb'};
+  $('modalDetTitle').innerHTML = `${meta.icon} ${f.nome}`;
+  $('modalDetBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+      ${[
+        ['Tipo',f.tipo],['Status',badgeHtml(f.status)],
+        ['URL',`<span style="font-family:'JetBrains Mono',monospace;font-size:10px;word-break:break-all;">${f.url}</span>`],
+        ['Autenticação',f.auth.toUpperCase()],
+        ['Frequência',f.frequencia],['Workflow N8N',f.n8nWorkflow||'—'],
+        ['Registros',f.registros.toLocaleString()],['Erros',f.erros],
+        ['Última sync',f.ultimaSync],['Sync auto',f.syncAuto?'Sim':'Não'],
+      ].map(([l,v])=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${l}</div>
+        <div style="font-size:12px;font-weight:500;">${v}</div></div>`).join('')}
+    </div>
+    <div style="font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">Módulos alimentados</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+      ${f.modulos.map(m=>{const mod=MODULOS_GOV.find(g=>g.id===m);return mod?`<span class="badge b-teal">${mod.icon} ${mod.nome}</span>`:''}).join('')}
+    </div>
+    <div style="font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border);">Histórico recente</div>
+    ${f.historico.map(h=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);">
+        <span style="font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;min-width:130px;">${h.ts}</span>
+        ${badgeHtml(h.status)}
+        <span style="font-size:11px;flex:1;">${h.registros.toLocaleString()} registros</span>
+        <span style="font-size:10px;color:var(--text3);font-family:'JetBrains Mono',monospace;">${h.duracao}</span>
+        ${h.obs?`<span style="font-size:10px;color:var(--amber);">⚠ ${h.obs}</span>`:''}
+      </div>`).join('')}
+    <div style="margin-top:16px;display:flex;gap:8px;">
+      <button class="btn-primary" onclick="syncFonte('${f.id}');closeModal('modalDetalhes')">⟳ Sincronizar agora</button>
+      <button class="btn-sm" onclick="closeModal('modalDetalhes');editarFonte('${f.id}')">✏️ Editar</button>
+    </div>`;
+  openModal('modalDetalhes');
+}
+
+function editarFonte(id){
+  requireAdm(()=>_doEditarFonte(id));
+}
+function _doEditarFonte(id){
+  const f = fontes.find(x=>x.id===id);
+  if(!f) return;
+  $('modalAddPlatTitle').textContent = 'Editar Fonte de Dados';
+  $('editPlatId').value = f.id;
+  $('fNome').value = f.nome;
+  $('fTipo').value = f.tipo;
+  $('fDescricao').value = f.descricao;
+  $('fUrl').value = f.url;
+  $('fUser').value = f.user;
+  $('fPass').value = '';
+  $('fAuth').value = f.auth;
+  $('fFreq').value = f.frequencia;
+  $('fN8nWorkflow').value = f.n8nWorkflow;
+  if(f.syncAuto) $('togSyncAuto').classList.add('on'); else $('togSyncAuto').classList.remove('on');
+  if(f.status==='ativo') $('togAtivo').classList.add('on'); else $('togAtivo').classList.remove('on');
+  renderModulosCheckboxes(f.modulos);
+  openModal('modalAddPlat');
+}
+
+function removerFonte(id, ev){
+  if(ev) ev.stopPropagation();
+  requireAdm(()=>_doRemoverFonte(id));
+}
+function _doRemoverFonte(id){
+  const f = fontes.find(x=>x.id===id);
+  if(!f) return;
+  if(!confirm(`Remover a fonte "${f.nome}"? Esta ação não pode ser desfeita.`)) return;
+  fontes = fontes.filter(x=>x.id!==id);
+  toast(`Fonte "${f.nome}" removida`,'info','🗑');
+  renderFontes();
+  buildTicker();
+}
+
+function salvarFonte(){
+  requireAdm(()=>_doSalvarFonte());
+}
+function _doSalvarFonte(){
+  const id = $('editPlatId').value;
+  const nome = $('fNome').value.trim();
+  const tipo = $('fTipo').value;
+  if(!nome||!tipo){toast('Preencha o nome e o tipo da fonte','error','⚠️');return;}
+
+  const modulos = Array.from(document.querySelectorAll('#modulosCheckboxes input:checked')).map(c=>c.value);
+  const ativo = $('togAtivo').classList.contains('on');
+  const syncAuto = $('togSyncAuto').classList.contains('on');
+  const ssl = $('togSsl').classList.contains('on');
+
+  if(id){
+    // Editar existente
+    const f = fontes.find(x=>x.id===id);
+    Object.assign(f,{nome,tipo,descricao:$('fDescricao').value,url:$('fUrl').value,user:$('fUser').value,
+      auth:$('fAuth').value,frequencia:$('fFreq').value,n8nWorkflow:$('fN8nWorkflow').value,
+      modulos,status:ativo?'ativo':'inativo',syncAuto,ssl});
+    toast(`Fonte "${nome}" atualizada`,'success','✅');
+  } else {
+    // Nova fonte
+    const newId = 'src-'+String(Date.now()).slice(-6);
+    fontes.push({id:newId,nome,tipo,descricao:$('fDescricao').value,
+      url:$('fUrl').value,user:$('fUser').value,pass:'••••',auth:$('fAuth').value,
+      status:ativo?'ativo':'inativo',ultimaSync:'—',registros:0,erros:0,
+      frequencia:$('fFreq').value,n8nWorkflow:$('fN8nWorkflow').value,
+      modulos,ssl,syncAuto,historico:[]});
+    toast(`Fonte "${nome}" adicionada com sucesso`,'success','✅');
+  }
+  closeModal('modalAddPlat');
+  resetFormAddPlat();
+  renderFontes();
+  buildTicker();
+}
+
+function resetFormAddPlat(){
+  $('editPlatId').value='';
+  $('modalAddPlatTitle').textContent='Nova Fonte de Dados';
+  ['fNome','fDescricao','fUrl','fUser','fPass','fN8nWorkflow'].forEach(id=>$(id).value='');
+  $('fTipo').value='';$('fAuth').value='basic';$('fFreq').value='1h';
+  $('togAtivo').classList.add('on');$('togSyncAuto').classList.add('on');$('togSsl').classList.remove('on');
+  renderModulosCheckboxes([]);
+}
+
+function renderModulosCheckboxes(selected=[]){
+  $('modulosCheckboxes').innerHTML = MODULOS_GOV.map(m=>`
+    <label style="display:flex;align-items:center;gap:6px;font-size:11px;cursor:pointer;padding:5px 8px;background:var(--bg3);border-radius:7px;border:1px solid ${selected.includes(m.id)?'rgba(34,211,238,0.3)':'var(--border)'};">
+      <input type="checkbox" value="${m.id}" ${selected.includes(m.id)?'checked':''} style="accent-color:var(--teal);"/> ${m.icon} ${m.nome}
+    </label>`).join('');
+}
+
+function onTipoChange(){
+  const tipo = $('fTipo').value;
+  const meta = TIPO_META[tipo];
+  if(meta) $('fUrlHint').textContent = meta.urlHint;
+  // Sugerir workflow
+  if(tipo && !$('fN8nWorkflow').value){
+    $('fN8nWorkflow').value = 'wf_'+tipo.toLowerCase().replace(/\s/g,'_')+'_'+Date.now().toString().slice(-4);
+  }
+}
+
+function testConexao(){toast('Testando conexão... (simulado)','info','🔍');setTimeout(()=>toast('Conexão estabelecida com sucesso!','success','✅'),1500);}
+function savePortalConfig(){requireAdm(()=>toast('Configuração do portal salva','success','✅'));}
+function saveAutoConfig(){requireAdm(()=>toast('Configuração de sincronização salva','success','✅'));}
+function saveN8nConfig(){requireAdm(()=>toast('Configuração N8N salva','success','✅'));}
+function testN8n(){toast('Testando conexão N8N...','info','🔍');setTimeout(()=>toast('N8N: conexão OK · versão 1.38.2','success','✅'),1200);}
+function copyWebhook(){
+  navigator.clipboard?.writeText('https://n8n.empresa.com.br/webhook/hub-gov-ti').catch(()=>{});
+  toast('URL do webhook copiada!','success','📋');
+}
+function clearHistorico(){
+  requireAdm(()=>{
+    if(!confirm('Limpar todo o histórico?')) return;
+    historico=[];renderHistorico();toast('Histórico limpo','info','🗑');
+  });
+}
+
+// =====================================================================
+// DADOS — NOVOS MÓDULOS
+// =====================================================================
+
+const itomServidores = [
+  {nome:'SRV-ORADB01',tipo:'Banco de Dados',os:'Oracle Linux 8',cpu:78,mem:82,disk:61,status:'Alerta',uptime:'99.94%'},
+  {nome:'SRV-SAP-APP01',tipo:'Aplicação',os:'SUSE Linux 15',cpu:45,mem:67,disk:48,status:'Normal',uptime:'99.99%'},
+  {nome:'SRV-FILE01',tipo:'Fileserver',os:'Windows Server 2022',cpu:22,mem:54,disk:89,status:'Crítico',uptime:'98.12%'},
+  {nome:'SRV-PROXY01',tipo:'Proxy',os:'Ubuntu 22.04',cpu:31,mem:41,disk:33,status:'Normal',uptime:'100%'},
+  {nome:'SRV-DC01',tipo:'Domain Controller',os:'Windows Server 2022',cpu:18,mem:49,disk:42,status:'Normal',uptime:'99.97%'},
+  {nome:'SRV-BACKUP01',tipo:'Backup',os:'Veeam Linux',cpu:12,mem:38,disk:94,status:'Crítico',uptime:'97.80%'},
+  {nome:'SRV-WEB01',tipo:'Web',os:'Ubuntu 22.04',cpu:55,mem:60,disk:50,status:'Normal',uptime:'99.95%'},
+  {nome:'SRV-MON01',tipo:'Monitoramento',os:'CentOS 8',cpu:34,mem:71,disk:55,status:'Normal',uptime:'99.91%'},
+];
+const itomEventos = [
+  {id:'EVT-0421',ativo:'SRV-FILE01',tipo:'Capacidade',sev:'Crítico',msg:'Disco / acima de 90% — ação imediata',ts:'22/05 09:12'},
+  {id:'EVT-0420',ativo:'SRV-BACKUP01',tipo:'Disponibilidade',sev:'Crítico',msg:'Job de backup falhou há 14h',ts:'22/05 08:00'},
+  {id:'EVT-0419',ativo:'SRV-ORADB01',tipo:'Performance',sev:'Alto',msg:'CPU >75% por mais de 30 min',ts:'22/05 07:45'},
+  {id:'EVT-0418',ativo:'LINK-MPLS-SP',tipo:'Rede',sev:'Médio',msg:'Latência acima de 80ms para filial SP',ts:'22/05 06:30'},
+  {id:'EVT-0417',ativo:'SW-CORE-01',tipo:'Rede',sev:'Baixo',msg:'Interface Gi0/1 com erros CRC',ts:'21/05 23:15'},
+];
+
+const iaModelos = [
+  {id:'MDL-001',nome:'Agente Contratos',tipo:'LLM',fornecedor:'Anthropic',status:'Produção',risco:'Baixo',iso42001:'96%',tokens:'420K/mês',lgpd:'OK'},
+  {id:'MDL-002',nome:'Classificador ITSM',tipo:'Classificação',fornecedor:'OpenAI',status:'Produção',risco:'Baixo',iso42001:'94%',tokens:'185K/mês',lgpd:'OK'},
+  {id:'MDL-003',nome:'Copilot GRC',tipo:'LLM',fornecedor:'Anthropic',status:'Homolog.',risco:'Médio',iso42001:'88%',tokens:'95K/mês',lgpd:'Revisão'},
+  {id:'MDL-004',nome:'Modelo Restrito',tipo:'Generativo',fornecedor:'Open Source',status:'Bloqueado',risco:'Alto',iso42001:'62%',tokens:'0',lgpd:'Não conforme'},
+  {id:'MDL-005',nome:'Detector Anomalia',tipo:'ML',fornecedor:'Interno',status:'Produção',risco:'Baixo',iso42001:'91%',tokens:'—',lgpd:'OK'},
+];
+
+const segVulns = [
+  {cve:'CVE-2024-3094',ativo:'SRV-PROXY01',cvss:10.0,sev:'Crítico',status:'Remediação',prazo:'24/05/2026'},
+  {cve:'CVE-2024-21762',ativo:'FW-FORTIGATE',cvss:9.6,sev:'Crítico',status:'Em análise',prazo:'26/05/2026'},
+  {cve:'CVE-2023-44487',ativo:'SRV-WEB01',cvss:7.5,sev:'Alto',status:'Pendente',prazo:'30/05/2026'},
+  {cve:'CVE-2024-1086',ativo:'SRV-DC01',cvss:7.8,sev:'Alto',status:'Mitigado',prazo:'—'},
+  {cve:'CVE-2023-4966',ativo:'CITRIX-GW',cvss:9.4,sev:'Crítico',status:'Remediação',prazo:'25/05/2026'},
+];
+const segPam = [
+  {usuario:'svc_oracle',perfil:'DBA Admin',sistema:'Oracle DB',ultimoLogin:'22/05 04:12',mfa:'Não',rotacao:'187 dias'},
+  {usuario:'adm_sap',perfil:'SAP Basis',sistema:'SAP S/4HANA',ultimoLogin:'21/05 18:30',mfa:'Sim',rotacao:'42 dias'},
+  {usuario:'root_backup',perfil:'Root',sistema:'SRV-BACKUP01',ultimoLogin:'20/05 02:00',mfa:'Não',rotacao:'312 dias'},
+  {usuario:'adm_vmware',perfil:'vSphere Admin',sistema:'VMware vCenter',ultimoLogin:'22/05 09:00',mfa:'Sim',rotacao:'28 dias'},
+  {usuario:'sa_sqlserver',perfil:'SA SQL',sistema:'SQL Server',ultimoLogin:'19/05 14:22',mfa:'Não',rotacao:'245 dias'},
+];
+
+const compFrameworks = [
+  {framework:'COBIT 2019',score:91,meta:90,status:'Acima',controles:218,pendentes:20},
+  {framework:'ISO 27001',score:96,meta:95,status:'Acima',controles:114,pendentes:5},
+  {framework:'NIST CSF',score:94,meta:90,status:'Acima',controles:108,pendentes:6},
+  {framework:'LGPD',score:88,meta:95,status:'Abaixo',controles:74,pendentes:9},
+  {framework:'ISO 42001',score:96,meta:90,status:'Acima',controles:62,pendentes:3},
+];
+const compEvidencias = [
+  {id:'EVI-0041',controle:'A.9.1.1 IAM Policy',framework:'ISO 27001',vencimento:'28/05/2026',status:'Vencendo',responsavel:'M. Oliveira'},
+  {id:'EVI-0038',controle:'DSS05.07 Segurança',framework:'COBIT',vencimento:'02/06/2026',status:'Pendente',responsavel:'P. Costa'},
+  {id:'EVI-0031',controle:'ROPA Artigo 37',framework:'LGPD',vencimento:'15/06/2026',status:'Em elaboração',responsavel:'F. Rocha'},
+  {id:'EVI-0029',controle:'PR.DS-1 Proteção',framework:'NIST',vencimento:'30/06/2026',status:'OK',responsavel:'C. Mendes'},
+  {id:'EVI-0055',controle:'6.1 Risco IA',framework:'ISO 42001',vencimento:'31/07/2026',status:'OK',responsavel:'A. Lima'},
+];
+
+const pmoProjetos = [
+  {id:'PRJ-001',nome:'Modernização IAM',area:'Segurança',status:'Em andamento',prog:68,budget:'R$ 480K',prazo:'31/08/2026',roi:'22%',gestor:'M. Oliveira'},
+  {id:'PRJ-002',nome:'CMDB Enterprise',area:'Governança',status:'Atrasado',prog:34,budget:'R$ 320K',prazo:'30/06/2026',roi:'15%',gestor:'C. Mendes'},
+  {id:'PRJ-003',nome:'Portal GRC',area:'Compliance',status:'Em andamento',prog:82,budget:'R$ 210K',prazo:'31/05/2026',roi:'35%',gestor:'P. Costa'},
+  {id:'PRJ-004',nome:'Automação N8N',area:'Infraestrutura',status:'Concluído',prog:100,budget:'R$ 95K',prazo:'30/04/2026',roi:'180h/mês',gestor:'R. Silva'},
+  {id:'PRJ-005',nome:'SAP S/4HANA Migração',area:'Sistemas',status:'Planejamento',prog:12,budget:'R$ 2.1M',prazo:'31/03/2027',roi:'TBD',gestor:'A. Lima'},
+  {id:'PRJ-006',nome:'Zero Trust Network',area:'Segurança',status:'Em andamento',prog:45,budget:'R$ 740K',prazo:'31/12/2026',roi:'28%',gestor:'M. Oliveira'},
+];
+
+const cmdbCis = [
+  {id:'CI-0001',nome:'ERP SAP S/4HANA',tipo:'Aplicação',criticidade:'P1',owner:'A. Lima',deps:14,status:'Produção',eol:'—'},
+  {id:'CI-0002',nome:'ServiceNow ITSM',tipo:'Plataforma',criticidade:'P1',owner:'P. Costa',deps:8,status:'Produção',eol:'—'},
+  {id:'CI-0003',nome:'Oracle DB 19c',tipo:'Banco',criticidade:'P1',owner:'A. Lima',deps:11,status:'Produção',eol:'Dez/2027'},
+  {id:'CI-0004',nome:'VMware vCenter 7',tipo:'Virtualização',criticidade:'P2',owner:'C. Mendes',deps:22,status:'Produção',eol:'Out/2027'},
+  {id:'CI-0005',nome:'SRV-BACKUP01',tipo:'Servidor',criticidade:'P2',owner:'R. Silva',deps:3,status:'Crítico',eol:'Jan/2026'},
+  {id:'CI-0006',nome:'Cisco ASA 5545',tipo:'Firewall',criticidade:'P1',owner:'R. Silva',deps:18,status:'Produção',eol:'Jun/2026'},
+  {id:'CI-0007',nome:'FortiGate 600E',tipo:'UTM',criticidade:'P1',owner:'M. Oliveira',deps:12,status:'Produção',eol:'—'},
+];
+
+const riscosRegistro = [
+  {id:'RSC-001',titulo:'Dependência única fornecedor cloud',cat:'Fornecedor',prob:'Alto',impacto:'Crítico',kri:92,status:'Mitigação',plano:'Contrato redundância + multi-cloud'},
+  {id:'RSC-002',titulo:'Modelo IA sem auditoria',cat:'Gov. IA',prob:'Médio',impacto:'Alto',kri:78,status:'Em análise',plano:'Implementar ISO 42001 logging'},
+  {id:'RSC-003',titulo:'SRV-BACKUP01 sem suporte',cat:'Infraestrutura',prob:'Alto',impacto:'Crítico',kri:95,status:'Urgente',plano:'Substituição PRJ-002 — prazo Ago/26'},
+  {id:'RSC-004',titulo:'PAM sem rotação de senhas',cat:'Segurança',prob:'Alto',impacto:'Alto',kri:88,status:'Mitigação',plano:'CyberArk deployment Q3/2026'},
+  {id:'RSC-005',titulo:'LGPD ROPA desatualizado',cat:'Compliance',prob:'Médio',impacto:'Médio',kri:65,status:'Em elaboração',plano:'Revisão com jurídico — Jun/2026'},
+  {id:'RSC-006',titulo:'Budget cloud sem forecast',cat:'FinOps',prob:'Baixo',impacto:'Médio',kri:48,status:'Monitorando',plano:'FinOps dashboard implementado'},
+];
+
+const finopsItens = [
+  {provedor:'Azure',servico:'VMs & AKS',mensal:'R$ 175K',anual:'R$ 2.1M',forecast:'R$ 2.3M',savings:'R$ 42K',status:'Otimizar'},
+  {provedor:'AWS',servico:'EC2, S3, RDS',mensal:'R$ 116K',anual:'R$ 1.4M',forecast:'R$ 1.5M',savings:'R$ 28K',status:'OK'},
+  {provedor:'GCP',servico:'BigQuery & GKE',mensal:'R$ 51K',anual:'R$ 620K',forecast:'R$ 680K',savings:'R$ 15K',status:'OK'},
+  {provedor:'Anthropic',servico:'Claude API',mensal:'R$ 12K',anual:'R$ 144K',forecast:'R$ 170K',savings:'—',status:'Crescendo'},
+  {provedor:'OpenAI',servico:'GPT-4 API',mensal:'R$ 3.3K',anual:'R$ 40K',forecast:'R$ 35K',savings:'R$ 5K',status:'OK'},
+  {provedor:'On-Premise',servico:'DC Próprio',mensal:'R$ 98K',anual:'R$ 1.18M',forecast:'R$ 1.18M',savings:'R$ 210K',status:'Avaliar cloud'},
+];
+
+const mudancasRfcs = [
+  {id:'CHG-0881',titulo:'Atualização Oracle DB 19.22',tipo:'Normal',risco:'Alto',cab:'22/05/2026',janela:'Sáb 23/05 02h',status:'Aprovada',gestor:'A. Lima'},
+  {id:'CHG-0893',titulo:'Deploy Portal GRC v2.4',tipo:'Normal',risco:'Médio',cab:'22/05/2026',janela:'Dom 24/05 01h',status:'Aprovada',gestor:'P. Costa'},
+  {id:'CHG-0901',titulo:'Expansão storage SAN',tipo:'Emergência',risco:'Alto',cab:'Emergência',janela:'22/05 21h',status:'Em revisão',gestor:'C. Mendes'},
+  {id:'CHG-0907',titulo:'Upgrade FortiGate firmware',tipo:'Padrão',risco:'Baixo',cab:'—',janela:'Qua 27/05 23h',status:'Agendada',gestor:'M. Oliveira'},
+  {id:'CHG-0912',titulo:'Migração DNS corporativo',tipo:'Normal',risco:'Médio',cab:'29/05/2026',janela:'Qui 04/06 01h',status:'Pendente CAB',gestor:'R. Silva'},
+];
+
+const contDrp = [
+  {id:'DRP-001',sistema:'ERP SAP',rto:'2h',rpo:'15min',ultimoTeste:'15/03/2026',resultado:'Aprovado',prox:'15/09/2026',status:'OK'},
+  {id:'DRP-002',sistema:'Oracle DB',rto:'1h',rpo:'5min',ultimoTeste:'10/02/2026',resultado:'Reprovado',prox:'30/05/2026',status:'Urgente'},
+  {id:'DRP-003',sistema:'ServiceNow',rto:'4h',rpo:'1h',ultimoTeste:'20/04/2026',resultado:'Aprovado',prox:'20/10/2026',status:'OK'},
+  {id:'DRP-004',sistema:'E-mail Exchange',rto:'30min',rpo:'5min',ultimoTeste:'01/05/2026',resultado:'Aprovado',prox:'01/11/2026',status:'OK'},
+  {id:'DRP-005',sistema:'Portal Intranet',rto:'8h',rpo:'24h',ultimoTeste:'—',resultado:'Não testado',prox:'Imediato',status:'Crítico'},
+];
+const contPlaybooks = [
+  {id:'PBK-001',nome:'Resposta a Ransomware',tipo:'Cyber',versao:'v3.2',responsavel:'M. Oliveira',ultimaRevisao:'Jan/2026',status:'Vigente'},
+  {id:'PBK-002',nome:'Falha datacenter primário',tipo:'Infra',versao:'v2.1',responsavel:'C. Mendes',ultimaRevisao:'Mar/2026',status:'Vigente'},
+  {id:'PBK-003',nome:'Vazamento de dados LGPD',tipo:'Compliance',versao:'v1.4',responsavel:'F. Rocha',ultimaRevisao:'Dez/2025',status:'Revisão'},
+  {id:'PBK-004',nome:'Indisponibilidade SAP',tipo:'Negócio',versao:'v2.0',responsavel:'A. Lima',ultimaRevisao:'Abr/2026',status:'Vigente'},
+];
+
+// =====================================================================
+// RENDER — ITOM
+// =====================================================================
+function renderItom(){
+  $('kpiItom').innerHTML = [
+    {icon:'🖥️',label:'Servidores monitorados',val:'412',sub:'12 com alertas',accent:'var(--teal)'},
+    {icon:'⚡',label:'Eventos abertos',val:'12',sub:'3 críticos',accent:'var(--red)'},
+    {icon:'📈',label:'Uptime médio',val:'99.94%',sub:'últimos 30 dias',accent:'var(--green)'},
+    {icon:'💾',label:'Storage utilizado',val:'78%',sub:'saturação em ~60 dias',accent:'var(--amber)'},
+    {icon:'☁️',label:'Cloud Health Score',val:'96/100',sub:'Azure + AWS + GCP',accent:'var(--blue)'},
+    {icon:'🔥',label:'CPU média (pico)',val:'45%',sub:'2 hosts acima de 80%',accent:'var(--purple)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  $('tblServidores').innerHTML = `<thead><tr><th>Servidor</th><th>Tipo</th><th>CPU</th><th>Mem</th><th>Disk</th><th>Uptime</th><th>Status</th></tr></thead><tbody>`+
+    itomServidores.map(s=>{
+      const sColor = s.status==='Crítico'?'b-red':s.status==='Alerta'?'b-amber':'b-green';
+      const bar = (v,c)=>`<div style="display:flex;align-items:center;gap:5px;"><div class="prog-wrap" style="flex:1;"><div class="prog-bar" style="width:${v}%;background:${v>85?'var(--red)':v>65?'var(--amber)':'var(--teal)'};"></div></div><span style="font-size:10px;font-family:'JetBrains Mono',monospace;">${v}%</span></div>`;
+      return `<tr><td><b style="font-size:11px;">${s.nome}</b><div style="font-size:9px;color:var(--text3)">${s.os}</div></td><td>${s.tipo}</td><td>${bar(s.cpu)}</td><td>${bar(s.mem)}</td><td>${bar(s.disk)}</td><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${s.uptime}</td><td><span class="badge ${sColor}">${s.status}</span></td></tr>`;
+    }).join('')+'</tbody>';
+
+  $('tblEventos').innerHTML = `<thead><tr><th>ID</th><th>Ativo</th><th>Tipo</th><th>Severidade</th><th>Mensagem</th><th>Hora</th></tr></thead><tbody>`+
+    itomEventos.map(e=>{
+      const sc = e.sev==='Crítico'?'b-red':e.sev==='Alto'?'b-amber':'b-blue';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${e.id}</td><td><b>${e.ativo}</b></td><td>${e.tipo}</td><td><span class="badge ${sc}">${e.sev}</span></td><td style="font-size:10px;">${e.msg}</td><td style="font-size:10px;color:var(--text3)">${e.ts}</td></tr>`;
+    }).join('')+'</tbody>';
+
+  $('itomCapacidade').innerHTML = ['CPU Média Cluster','Memória RAM Cluster','Storage SAN Principal','Storage Backup'].map((l,i)=>{
+    const vals=[45,67,78,94]; const v=vals[i];
+    const c=v>85?'var(--red)':v>65?'var(--amber)':'var(--teal)';
+    return `<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;">${l}</span><span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:${c};">${v}%</span></div><div class="prog-wrap" style="height:8px;"><div class="prog-bar" style="width:${v}%;background:${c};"></div></div></div>`;
+  }).join('');
+
+  $('itomCloud').innerHTML = [
+    {p:'Azure',score:97,cor:'var(--blue)'},
+    {p:'AWS',score:98,cor:'var(--amber)'},
+    {p:'GCP',score:93,cor:'var(--green)'},
+  ].map(c=>`<div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--bg3);border-radius:8px;margin-bottom:8px;"><div style="font-size:20px;">☁️</div><div style="flex:1;"><div style="display:flex;justify-content:space-between;"><span style="font-size:12px;font-weight:600;">${c.p}</span><span style="font-size:13px;font-weight:700;color:${c.cor};">${c.score}/100</span></div><div class="prog-wrap" style="margin-top:5px;"><div class="prog-bar" style="width:${c.score}%;background:${c.cor};"></div></div></div></div>`).join('');
+}
+
+// =====================================================================
+// RENDER — GOV IA
+// =====================================================================
+function renderGovai(){
+  $('kpiGovai').innerHTML = [
+    {icon:'🤖',label:'Modelos em produção',val:'4',sub:'1 bloqueado',accent:'var(--purple)'},
+    {icon:'📋',label:'ISO 42001',val:'96%',sub:'acima da meta 90%',accent:'var(--green)'},
+    {icon:'🔢',label:'Tokens/mês',val:'1.8M',sub:'+23% vs mês anterior',accent:'var(--amber)'},
+    {icon:'🚫',label:'Modelos restritos',val:'2',sub:'fora da política',accent:'var(--red)'},
+    {icon:'🛡️',label:'LGPD conformidade',val:'88%',sub:'revisão pendente',accent:'var(--blue)'},
+    {icon:'⚡',label:'Automações ativas',val:'58',sub:'N8N workflows',accent:'var(--teal)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  $('tblModelos').innerHTML = `<thead><tr><th>ID</th><th>Modelo</th><th>Tipo</th><th>Fornecedor</th><th>Status</th><th>Risco</th><th>ISO 42001</th><th>LGPD</th></tr></thead><tbody>`+
+    iaModelos.map(m=>{
+      const sc=m.status==='Produção'?'b-green':m.status==='Bloqueado'?'b-red':'b-amber';
+      const rc=m.risco==='Alto'?'b-red':m.risco==='Médio'?'b-amber':'b-green';
+      const lc=m.lgpd==='OK'?'b-green':m.lgpd==='Revisão'?'b-amber':'b-red';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${m.id}</td><td><b>${m.nome}</b></td><td>${m.tipo}</td><td>${m.fornecedor}</td><td><span class="badge ${sc}">${m.status}</span></td><td><span class="badge ${rc}">${m.risco}</span></td><td style="font-family:'JetBrains Mono',monospace;">${m.iso42001}</td><td><span class="badge ${lc}">${m.lgpd}</span></td></tr>`;
+    }).join('')+'</tbody>';
+
+  $('ia42001').innerHTML = ['6.1 Gestão de Riscos','7.2 Competência','8.4 Ciclo de Vida','9.1 Monitoramento','10.1 Melhoria Contínua'].map((d,i)=>{
+    const vals=[96,91,94,88,97]; const v=vals[i];
+    return `<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;">${d}</span><span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:${v>=90?'var(--green)':'var(--amber)'};">${v}%</span></div><div class="prog-wrap"><div class="prog-bar" style="width:${v}%;background:${v>=90?'var(--purple)':'var(--amber)'};"></div></div></div>`;
+  }).join('');
+
+  $('iaTokens').innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;">`+
+    iaModelos.filter(m=>m.tokens!=='0'&&m.tokens!=='—').map(m=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;border:1px solid var(--border2);"><div style="font-size:10px;color:var(--text3);margin-bottom:4px;">${m.nome}</div><div style="font-size:16px;font-weight:700;color:var(--purple);font-family:'JetBrains Mono',monospace;">${m.tokens}</div><div style="font-size:9px;color:var(--text3);margin-top:2px;">${m.fornecedor}</div></div>`).join('')+'</div>';
+}
+
+// =====================================================================
+// RENDER — SEGURANÇA & IAM
+// =====================================================================
+function renderSeguranca(){
+  $('kpiSeg').innerHTML = [
+    {icon:'🛡️',label:'MFA habilitado',val:'98%',sub:'2% sem MFA',accent:'var(--green)'},
+    {icon:'🔑',label:'Contas PAM críticas',val:'7',sub:'sem rotação de senha',accent:'var(--red)'},
+    {icon:'🐛',label:'Vulns críticas',val:'12',sub:'CVEs em aberto',accent:'var(--red)'},
+    {icon:'🔒',label:'Zero Trust Score',val:'91%',sub:'meta: 95%',accent:'var(--amber)'},
+    {icon:'👁️',label:'Eventos SIEM/24h',val:'3.4K',sub:'12 correlacionados',accent:'var(--blue)'},
+    {icon:'✅',label:'ISO 27001',val:'96%',sub:'5 controles pendentes',accent:'var(--teal)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  $('tblVulns').innerHTML = `<thead><tr><th>CVE</th><th>Ativo</th><th>CVSS</th><th>Severidade</th><th>Status</th><th>Prazo</th></tr></thead><tbody>`+
+    segVulns.map(v=>{
+      const sc=v.sev==='Crítico'?'b-red':v.sev==='Alto'?'b-amber':'b-blue';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);">${v.cve}</td><td><b>${v.ativo}</b></td><td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:${v.cvss>=9?'var(--red)':'var(--amber)'};">${v.cvss}</td><td><span class="badge ${sc}">${v.sev}</span></td><td style="font-size:11px;">${v.status}</td><td style="font-size:10px;font-family:'JetBrains Mono',monospace;">${v.prazo}</td></tr>`;
+    }).join('')+'</tbody>';
+
+  $('tblPam').innerHTML = `<thead><tr><th>Usuário</th><th>Perfil</th><th>Sistema</th><th>Último Login</th><th>MFA</th><th>Rotação de Senha</th></tr></thead><tbody>`+
+    segPam.map(p=>{
+      const mc=p.mfa==='Sim'?'b-green':'b-red';
+      const dias=parseInt(p.rotacao);
+      const rc=dias>180?'b-red':dias>90?'b-amber':'b-green';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${p.usuario}</td><td>${p.perfil}</td><td>${p.sistema}</td><td style="font-size:10px;font-family:'JetBrains Mono',monospace;">${p.ultimoLogin}</td><td><span class="badge ${mc}">${p.mfa}</span></td><td><span class="badge ${rc}">${p.rotacao}</span></td></tr>`;
+    }).join('')+'</tbody>';
+
+  $('segMfa').innerHTML = [
+    {label:'MFA Habilitado',val:98,c:'var(--green)'},
+    {label:'Sem MFA',val:2,c:'var(--red)'},
+    {label:'Zero Trust Score',val:91,c:'var(--teal)'},
+    {label:'PAM Rotação OK',val:60,c:'var(--amber)'},
+    {label:'Identidades gerenciadas',val:87,c:'var(--blue)'},
+  ].map(i=>`<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;">${i.label}</span><span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:${i.c};">${i.val}%</span></div><div class="prog-wrap"><div class="prog-bar" style="width:${i.val}%;background:${i.c};"></div></div></div>`).join('');
+
+  $('segIncidentes').innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap;">`+
+    ['Jan','Fev','Mar','Abr','Mai'].map((m,i)=>{
+      const v=[3,5,2,4,7][i];
+      return `<div style="flex:1;min-width:50px;background:var(--bg3);border-radius:8px;padding:8px;text-align:center;border:1px solid var(--border);"><div style="font-size:14px;font-weight:700;color:${v>4?'var(--red)':'var(--amber)'};">${v}</div><div style="font-size:9px;color:var(--text3);margin-top:2px;">${m}</div></div>`;
+    }).join('')+'</div>';
+}
+
+// =====================================================================
+// RENDER — COMPLIANCE
+// =====================================================================
+function renderCompliance(){
+  $('kpiComp').innerHTML = [
+    {icon:'📐',label:'COBIT 2019',val:'91%',sub:'meta 90% — acima',accent:'var(--green)'},
+    {icon:'🔏',label:'ISO 27001',val:'96%',sub:'5 controles pendentes',accent:'var(--green)'},
+    {icon:'🌐',label:'NIST CSF',val:'94%',sub:'meta 90% — acima',accent:'var(--green)'},
+    {icon:'🇧🇷',label:'LGPD',val:'88%',sub:'abaixo da meta 95%',accent:'var(--red)'},
+    {icon:'🤖',label:'ISO 42001',val:'96%',sub:'meta 90% — acima',accent:'var(--purple)'},
+    {icon:'📄',label:'Evidências vencendo',val:'4',sub:'próximos 30 dias',accent:'var(--amber)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  $('compFrameworks').innerHTML = compFrameworks.map(f=>{
+    const sc=f.status==='Acima'?'b-green':'b-red';
+    const c=f.status==='Acima'?'var(--green)':'var(--red)';
+    return `<div style="margin-bottom:12px;padding:10px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><span style="font-size:12px;font-weight:600;">${f.framework}</span><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:13px;font-weight:700;color:${c};">${f.score}%</span><span class="badge ${sc}">${f.status}</span></div></div><div class="prog-wrap"><div class="prog-bar" style="width:${f.score}%;background:${c};"></div></div><div style="font-size:9px;color:var(--text3);margin-top:5px;">${f.controles} controles · ${f.pendentes} pendentes · Meta: ${f.meta}%</div></div>`;
+  }).join('');
+
+  $('tblEvidencias').innerHTML = `<thead><tr><th>ID</th><th>Controle</th><th>Framework</th><th>Vencimento</th><th>Status</th><th>Responsável</th></tr></thead><tbody>`+
+    compEvidencias.map(e=>{
+      const sc=e.status==='OK'?'b-green':e.status==='Vencendo'?'b-red':'b-amber';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${e.id}</td><td style="font-size:11px;">${e.controle}</td><td><span class="badge b-blue">${e.framework}</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${e.vencimento}</td><td><span class="badge ${sc}">${e.status}</span></td><td style="font-size:11px;">${e.responsavel}</td></tr>`;
+    }).join('')+'</tbody>';
+
+  $('tblControles').innerHTML = `<thead><tr><th>Framework</th><th>Aderência</th><th>Meta</th><th>Controles</th><th>Pendentes</th><th>Status</th></tr></thead><tbody>`+
+    compFrameworks.map(f=>{
+      const sc=f.status==='Acima'?'b-green':'b-red';
+      return `<tr><td><b>${f.framework}</b></td><td style="font-family:'JetBrains Mono',monospace;font-weight:700;">${f.score}%</td><td style="font-family:'JetBrains Mono',monospace;">${f.meta}%</td><td style="font-family:'JetBrains Mono',monospace;">${f.controles}</td><td style="font-family:'JetBrains Mono',monospace;color:${f.pendentes>5?'var(--amber)':'var(--green)'};">${f.pendentes}</td><td><span class="badge ${sc}">${f.status}</span></td></tr>`;
+    }).join('')+'</tbody>';
+}
+
+// =====================================================================
+// RENDER — PMO
+// =====================================================================
+function renderPmo(){
+  const ativos=pmoProjetos.filter(p=>p.status!=='Concluído').length;
+  const atrasados=pmoProjetos.filter(p=>p.status==='Atrasado').length;
+  $('kpiPmo').innerHTML = [
+    {icon:'📁',label:'Projetos no portfólio',val:pmoProjetos.length,sub:`${ativos} em andamento`,accent:'var(--blue)'},
+    {icon:'⚠️',label:'Projetos atrasados',val:atrasados,sub:'requer atenção',accent:atrasados?'var(--red)':'var(--green)'},
+    {icon:'✅',label:'Projetos concluídos',val:pmoProjetos.filter(p=>p.status==='Concluído').length,sub:'este trimestre',accent:'var(--green)'},
+    {icon:'💰',label:'Budget total portfólio',val:'R$ 3.9M',sub:'aprovado 2026',accent:'var(--amber)'},
+    {icon:'📈',label:'ROI médio',val:'22%',sub:'projetos concluídos',accent:'var(--teal)'},
+    {icon:'🚩',label:'Marcos críticos 90d',val:'3',sub:'próximos vencimentos',accent:'var(--purple)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  $('tblProjetos').innerHTML = `<thead><tr><th>ID</th><th>Projeto</th><th>Área</th><th>Progresso</th><th>Budget</th><th>Prazo</th><th>ROI</th><th>Status</th></tr></thead><tbody>`+
+    pmoProjetos.map(p=>{
+      const sc=p.status==='Concluído'?'b-green':p.status==='Atrasado'?'b-red':p.status==='Planejamento'?'b-gray':'b-blue';
+      const pc=p.prog===100?'var(--green)':p.status==='Atrasado'?'var(--red)':'var(--teal)';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${p.id}</td><td><b>${p.nome}</b><div style="font-size:9px;color:var(--text3)">${p.gestor}</div></td><td>${p.area}</td><td style="min-width:100px;"><div style="display:flex;align-items:center;gap:5px;"><div class="prog-wrap" style="flex:1;"><div class="prog-bar" style="width:${p.prog}%;background:${pc};"></div></div><span style="font-size:10px;font-family:'JetBrains Mono',monospace;">${p.prog}%</span></div></td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${p.budget}</td><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${p.prazo}</td><td style="font-size:11px;color:var(--green);">${p.roi}</td><td><span class="badge ${sc}">${p.status}</span></td></tr>`;
+    }).join('')+'</tbody>';
+
+  $('pmoMarcos').innerHTML = [
+    {marco:'Portal GRC Go-Live',projeto:'PRJ-003',prazo:'31/05/2026',dias:9,cor:'var(--red)'},
+    {marco:'Fase 1 CMDB',projeto:'PRJ-002',prazo:'30/06/2026',dias:39,cor:'var(--amber)'},
+    {marco:'IAM Modernização P1',projeto:'PRJ-001',prazo:'31/07/2026',dias:70,cor:'var(--amber)'},
+    {marco:'Zero Trust Piloto',projeto:'PRJ-006',prazo:'31/08/2026',dias:101,cor:'var(--green)'},
+  ].map(m=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--bg3);border-radius:8px;margin-bottom:6px;border-left:3px solid ${m.cor};"><div style="flex:1;"><div style="font-size:12px;font-weight:500;">${m.marco}</div><div style="font-size:10px;color:var(--text3);">${m.projeto} · Prazo: ${m.prazo}</div></div><div style="font-size:12px;font-weight:700;color:${m.cor};">${m.dias}d</div></div>`).join('');
+
+  $('tblEpicos').innerHTML = `<thead><tr><th>Projeto</th><th>Épico / Entregável</th><th>Responsável</th><th>Progresso</th><th>Status</th></tr></thead><tbody>`+
+    [
+      {proj:'PRJ-001',epico:'Inventário de identidades',resp:'M. Oliveira',prog:80,st:'Em andamento'},
+      {proj:'PRJ-001',epico:'Implementação CyberArk PAM',resp:'M. Oliveira',prog:45,st:'Em andamento'},
+      {proj:'PRJ-002',epico:'Discovery automático de CIs',resp:'C. Mendes',prog:30,st:'Atrasado'},
+      {proj:'PRJ-003',epico:'Módulo Contratos',resp:'P. Costa',prog:95,st:'Em revisão'},
+      {proj:'PRJ-003',epico:'Módulo Compliance',resp:'P. Costa',prog:75,st:'Em andamento'},
+      {proj:'PRJ-006',epico:'Segmentação de rede',resp:'R. Silva',prog:50,st:'Em andamento'},
+    ].map(e=>{
+      const sc=e.st==='Atrasado'?'b-red':e.st==='Em revisão'?'b-amber':'b-blue';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${e.proj}</td><td>${e.epico}</td><td>${e.resp}</td><td style="min-width:100px;"><div style="display:flex;align-items:center;gap:5px;"><div class="prog-wrap" style="flex:1;"><div class="prog-bar" style="width:${e.prog}%;background:var(--teal);"></div></div><span style="font-size:10px;">${e.prog}%</span></div></td><td><span class="badge ${sc}">${e.st}</span></td></tr>`;
+    }).join('')+'</tbody>';
+}
+
+// =====================================================================
+// RENDER — CMDB
+// =====================================================================
+function renderCmdb(){
+  $('kpiCmdb').innerHTML = [
+    {icon:'🧩',label:'Total de CIs',val:'1.284',sub:'12 tipos cadastrados',accent:'var(--teal)'},
+    {icon:'👤',label:'CIs com owner',val:'92%',sub:'99 sem responsável',accent:'var(--amber)'},
+    {icon:'🔗',label:'Dependências críticas',val:'17',sub:'sem teste de falha',accent:'var(--red)'},
+    {icon:'⚰️',label:'Ativos EOL',val:'31',sub:'renovação necessária',accent:'var(--red)'},
+    {icon:'🔄',label:'Atualiz. automática',val:'N8N',sub:'sync a cada 1h',accent:'var(--green)'},
+    {icon:'📊',label:'Cobertura CMDB',val:'87%',sub:'meta: 95%',accent:'var(--blue)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  $('tblCis').innerHTML = `<thead><tr><th>ID</th><th>Nome CI</th><th>Tipo</th><th>Criticidade</th><th>Owner</th><th>Dependências</th><th>EOL</th><th>Status</th></tr></thead><tbody>`+
+    cmdbCis.map(c=>{
+      const pc=c.criticidade==='P1'?'b-red':'b-amber';
+      const sc=c.status==='Crítico'?'b-red':'b-green';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${c.id}</td><td><b>${c.nome}</b></td><td>${c.tipo}</td><td><span class="badge ${pc}">${c.criticidade}</span></td><td>${c.owner}</td><td style="font-family:'JetBrains Mono',monospace;">${c.deps}</td><td style="font-size:10px;color:${c.eol!=='—'?'var(--amber)':'var(--text3)'};">${c.eol}</td><td><span class="badge ${sc}">${c.status}</span></td></tr>`;
+    }).join('')+'</tbody>';
+
+  $('cmdbDeps').innerHTML = cmdbCis.map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--bg3);border-radius:7px;margin-bottom:6px;"><div style="font-size:18px;">🔗</div><div style="flex:1;"><div style="font-size:11px;font-weight:500;">${c.nome}</div><div style="font-size:9px;color:var(--text3);">${c.deps} dependências · ${c.tipo}</div></div><span class="badge ${c.criticidade==='P1'?'b-red':'b-amber'}">${c.criticidade}</span></div>`).join('');
+
+  $('tblLifecycle').innerHTML = `<thead><tr><th>CI</th><th>Tipo</th><th>EOL</th><th>Ação necessária</th><th>Prioridade</th></tr></thead><tbody>`+
+    cmdbCis.filter(c=>c.eol!=='—').concat([
+      {id:'CI-0008',nome:'Windows Server 2012 R2',tipo:'SO',eol:'Out/2025',criticidade:'P1'},
+      {id:'CI-0009',nome:'Cisco ASA 5505',tipo:'Firewall',eol:'Já EOL',criticidade:'P1'},
+    ]).map(c=>{
+      const pc=c.criticidade==='P1'?'b-red':'b-amber';
+      return `<tr><td><b>${c.nome}</b></td><td>${c.tipo}</td><td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amber);">${c.eol}</td><td style="font-size:11px;">Planejar substituição ou upgrade</td><td><span class="badge ${pc}">${c.criticidade}</span></td></tr>`;
+    }).join('')+'</tbody>';
+}
+
+// =====================================================================
+// RENDER — RISCOS
+// =====================================================================
+function renderRiscos(){
+  $('kpiRiscos').innerHTML = [
+    {icon:'🔥',label:'Riscos críticos',val:'4',sub:'acima do apetite',accent:'var(--red)'},
+    {icon:'⬆️',label:'Riscos altos',val:'9',sub:'monitoramento contínuo',accent:'var(--amber)'},
+    {icon:'🛡️',label:'KRI Score médio',val:'84/100',sub:'limite: 80 — alerta',accent:'var(--red)'},
+    {icon:'✅',label:'Mitigações em andamento',val:'11',sub:'planos ativos',accent:'var(--green)'},
+    {icon:'🤖',label:'Riscos IA',val:'2',sub:'críticos por política',accent:'var(--purple)'},
+    {icon:'📊',label:'Apetite de risco',val:'65',sub:'tolerância do board',accent:'var(--blue)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // Heatmap de risco
+  const cells=[
+    {p:'Quase certo',i:'Crítico',cor:'var(--red)',label:'RSC-003'},
+    {p:'Provável',i:'Crítico',cor:'var(--red)',label:'RSC-004'},
+    {p:'Quase certo',i:'Alto',cor:'var(--red)',label:'RSC-001'},
+    {p:'Provável',i:'Alto',cor:'var(--amber)',label:'RSC-002'},
+    {p:'Possível',i:'Médio',cor:'var(--amber)',label:'RSC-005'},
+    {p:'Improvável',i:'Baixo',cor:'var(--green)',label:'—'},
+  ];
+  const probLevels=['Quase certo','Provável','Possível','Improvável'];
+  const impLevels=['Crítico','Alto','Médio','Baixo'];
+  $('riscosHeatmap').innerHTML = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:11px;"><thead><tr><th style="padding:6px;color:var(--text3);text-align:left;">Probabilidade \\ Impacto</th>${impLevels.map(i=>`<th style="padding:6px;text-align:center;font-size:10px;color:var(--text2);">${i}</th>`).join('')}</tr></thead><tbody>${probLevels.map(prob=>`<tr><td style="padding:6px 10px;font-size:10px;color:var(--text2);white-space:nowrap;">${prob}</td>${impLevels.map(imp=>{
+    const c = cells.find(x=>x.p===prob&&x.i===imp);
+    const bg = c?c.cor:'var(--bg3)';
+    return `<td style="padding:6px;text-align:center;"><div style="background:${bg};opacity:0.8;border-radius:6px;padding:8px 4px;font-size:10px;font-weight:600;">${c?c.label:'·'}</div></td>`;
+  }).join('')}</tr>`).join('')}</tbody></table></div>`;
+
+  $('riscosKri').innerHTML = [
+    {kri:'RSC-001 Fornecedor único cloud',val:92,limite:80},
+    {kri:'RSC-003 Backup sem suporte',val:95,limite:80},
+    {kri:'RSC-004 PAM sem rotação',val:88,limite:80},
+    {kri:'RSC-002 IA sem auditoria',val:78,limite:80},
+    {kri:'RSC-005 ROPA LGPD',val:65,limite:80},
+    {kri:'RSC-006 Cloud sem forecast',val:48,limite:80},
+  ].map(k=>`<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;">${k.kri}</span><span style="font-size:11px;font-family:'JetBrains Mono',monospace;color:${k.val>k.limite?'var(--red)':'var(--green)'};">${k.val}/100</span></div><div class="prog-wrap"><div class="prog-bar" style="width:${k.val}%;background:${k.val>k.limite?'var(--red)':'var(--green)'};"></div></div></div>`).join('');
+
+  $('tblRiscos').innerHTML = `<thead><tr><th>ID</th><th>Risco</th><th>Categoria</th><th>Probabilidade</th><th>Impacto</th><th>KRI</th><th>Status</th><th>Plano de mitigação</th></tr></thead><tbody>`+
+    riscosRegistro.map(r=>{
+      const pc=r.prob==='Alto'?'b-red':'b-amber';
+      const ic=r.impacto==='Crítico'?'b-red':r.impacto==='Alto'?'b-amber':'b-blue';
+      const sc=r.status==='Urgente'?'b-red':r.status==='Mitigação'?'b-amber':'b-blue';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${r.id}</td><td><b>${r.titulo}</b></td><td>${r.cat}</td><td><span class="badge ${pc}">${r.prob}</span></td><td><span class="badge ${ic}">${r.impacto}</span></td><td style="font-family:'JetBrains Mono',monospace;color:${r.kri>80?'var(--red)':'var(--green)'};">${r.kri}</td><td><span class="badge ${sc}">${r.status}</span></td><td style="font-size:10px;color:var(--text2);">${r.plano}</td></tr>`;
+    }).join('')+'</tbody>';
+}
+
+// =====================================================================
+// RENDER — FINOPS
+// =====================================================================
+function renderFinops(){
+  $('kpiFinops').innerHTML = [
+    {icon:'☁️',label:'Gasto cloud total',val:'R$ 4.8M',sub:'anualizado 2026',accent:'var(--blue)'},
+    {icon:'🤖',label:'Custo IA/mês',val:'R$ 184K',sub:'+23% vs mês anterior',accent:'var(--purple)'},
+    {icon:'🎯',label:'Forecast accuracy',val:'96%',sub:'desvio de 4%',accent:'var(--green)'},
+    {icon:'💡',label:'Savings identificados',val:'R$ 740K',sub:'oportunidades mapeadas',accent:'var(--teal)'},
+    {icon:'📊',label:'FinOps maturidade',val:'Crawl',sub:'evolução para Walk Q3',accent:'var(--amber)'},
+    {icon:'🏷️',label:'Recursos sem tag',val:'8%',sub:'638 recursos',accent:'var(--red)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  $('finopsCloud').innerHTML = finopsItens.map(f=>{
+    const sc=f.status==='OK'?'b-green':f.status==='Otimizar'?'b-amber':f.status==='Crescendo'?'b-purple':'b-blue';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--bg3);border-radius:8px;margin-bottom:6px;border:1px solid var(--border);"><div style="font-size:20px;">☁️</div><div style="flex:1;"><div style="display:flex;justify-content:space-between;"><span style="font-size:12px;font-weight:600;">${f.provedor}</span><span style="font-size:12px;font-weight:700;color:var(--green);">${f.mensal}/mês</span></div><div style="font-size:10px;color:var(--text3);">${f.servico} · Anual: ${f.anual}</div></div><span class="badge ${sc}">${f.status}</span></div>`;
+  }).join('');
+
+  $('finopsForecast').innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;">`+
+    ['Jan','Fev','Mar','Abr','Mai','Jun'].map((m,i)=>{
+      const prev=[380,395,410,420,430,445][i];
+      const real=[375,400,415,425,0,0][i];
+      return `<div style="background:var(--bg3);border-radius:8px;padding:10px;text-align:center;border:1px solid var(--border);"><div style="font-size:10px;color:var(--text3);margin-bottom:4px;">${m}/26</div><div style="font-size:13px;font-weight:700;color:var(--green);">${real?'R$ '+real+'K':'—'}</div><div style="font-size:9px;color:var(--text3);">prev: R$ ${prev}K</div></div>`;
+    }).join('')+'</div>';
+
+  $('tblFinops').innerHTML = `<thead><tr><th>Provedor</th><th>Serviço</th><th>Mensal</th><th>Anual</th><th>Forecast</th><th>Savings</th><th>Status</th></tr></thead><tbody>`+
+    finopsItens.map(f=>{
+      const sc=f.status==='OK'?'b-green':f.status==='Otimizar'?'b-amber':f.status==='Crescendo'?'b-purple':'b-blue';
+      return `<tr><td><b>${f.provedor}</b></td><td style="font-size:11px;">${f.servico}</td><td style="font-family:'JetBrains Mono',monospace;color:var(--green);">${f.mensal}</td><td style="font-family:'JetBrains Mono',monospace;">${f.anual}</td><td style="font-family:'JetBrains Mono',monospace;color:var(--amber);">${f.forecast}</td><td style="font-family:'JetBrains Mono',monospace;color:var(--teal);">${f.savings}</td><td><span class="badge ${sc}">${f.status}</span></td></tr>`;
+    }).join('')+'</tbody>';
+}
+
+// =====================================================================
+// RENDER — MUDANÇAS & CAB
+// =====================================================================
+function renderMudancas(){
+  $('kpiMud').innerHTML = [
+    {icon:'📝',label:'RFCs esta semana',val:'14',sub:'3 emergências',accent:'var(--blue)'},
+    {icon:'✅',label:'Taxa de sucesso',val:'98.1%',sub:'último trimestre',accent:'var(--green)'},
+    {icon:'↩️',label:'Rollbacks',val:'3',sub:'último mês',accent:'var(--amber)'},
+    {icon:'⚠️',label:'Janelas de risco',val:'1',sub:'domingo — crítico',accent:'var(--red)'},
+    {icon:'🗓️',label:'Próximo CAB',val:'29/05',sub:'quinta-feira 14h',accent:'var(--teal)'},
+    {icon:'🔄',label:'Mudanças no mês',val:'58',sub:'vs 62 mês anterior',accent:'var(--purple)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  $('tblMudancas').innerHTML = `<thead><tr><th>RFC</th><th>Título</th><th>Tipo</th><th>Risco</th><th>CAB</th><th>Janela</th><th>Status</th><th>Gestor</th></tr></thead><tbody>`+
+    mudancasRfcs.map(m=>{
+      const rc=m.risco==='Alto'?'b-red':m.risco==='Médio'?'b-amber':'b-green';
+      const sc=m.status==='Aprovada'?'b-green':m.status==='Em revisão'?'b-amber':'b-blue';
+      const tc=m.tipo==='Emergência'?'b-red':m.tipo==='Padrão'?'b-gray':'b-blue';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${m.id}</td><td><b style="font-size:11px;">${m.titulo}</b></td><td><span class="badge ${tc}">${m.tipo}</span></td><td><span class="badge ${rc}">${m.risco}</span></td><td style="font-size:10px;">${m.cab}</td><td style="font-size:10px;font-family:'JetBrains Mono',monospace;">${m.janela}</td><td><span class="badge ${sc}">${m.status}</span></td><td style="font-size:11px;">${m.gestor}</td></tr>`;
+    }).join('')+'</tbody>';
+
+  $('mudTendencia').innerHTML = ['Jan','Fev','Mar','Abr','Mai'].map((m,i)=>{
+    const ok=[52,58,61,55,58][i]; const rb=[2,1,3,2,3][i];
+    return `<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;">${m}/26</span><span style="font-size:10px;color:var(--text3);">${ok} ok · <span style="color:var(--amber);">${rb} rollback</span></span></div><div class="prog-wrap"><div class="prog-bar" style="width:${Math.round(ok/(ok+rb)*100)}%;background:var(--green);"></div></div></div>`;
+  }).join('');
+
+  $('mudJanelas').innerHTML = [
+    {dt:'Seg 26/05 23h–02h',tipo:'Padrão',cis:'SRV-WEB01, SRV-PROXY01',risco:'Baixo'},
+    {dt:'Qua 28/05 01h–03h',tipo:'Padrão',cis:'SW-CORE-01, SW-DIST-02',risco:'Médio'},
+    {dt:'Dom 01/06 02h–06h',tipo:'Crítico',cis:'Oracle DB, SAP APP',risco:'Alto'},
+    {dt:'Seg 02/06 23h–01h',tipo:'Padrão',cis:'FortiGate firewall',risco:'Médio'},
+  ].map(j=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg3);border-radius:8px;margin-bottom:6px;border-left:3px solid ${j.risco==='Alto'?'var(--red)':j.risco==='Médio'?'var(--amber)':'var(--green)'};"><div style="min-width:140px;font-family:'JetBrains Mono',monospace;font-size:10px;">${j.dt}</div><div style="flex:1;font-size:11px;">${j.cis}</div><span class="badge ${j.risco==='Alto'?'b-red':j.risco==='Médio'?'b-amber':'b-green'}">${j.risco}</span></div>`).join('');
+}
+
+// =====================================================================
+// RENDER — CONTINUIDADE
+// =====================================================================
+function renderContinuidade(){
+  $('kpiCont').innerHTML = [
+    {icon:'🛡️',label:'DRP coverage',val:'87%',sub:'meta: 100%',accent:'var(--amber)'},
+    {icon:'⏱️',label:'RTO médio',val:'4h',sub:'meta: 2h',accent:'var(--amber)'},
+    {icon:'💾',label:'RPO médio',val:'15min',sub:'meta: 30min — OK',accent:'var(--green)'},
+    {icon:'🧪',label:'Último teste DRP',val:'Mai/26',sub:'Oracle reprovado',accent:'var(--red)'},
+    {icon:'📕',label:'Playbooks ativos',val:'4',sub:'1 em revisão',accent:'var(--blue)'},
+    {icon:'🚨',label:'Incidentes críticos/ano',val:'2',sub:'MTTR: 4h média',accent:'var(--teal)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  $('tblDrp').innerHTML = `<thead><tr><th>ID</th><th>Sistema</th><th>RTO</th><th>RPO</th><th>Último Teste</th><th>Resultado</th><th>Próx. Teste</th><th>Status</th></tr></thead><tbody>`+
+    contDrp.map(d=>{
+      const sc=d.status==='OK'?'b-green':d.status==='Crítico'?'b-red':'b-amber';
+      const rc=d.resultado==='Aprovado'?'b-green':d.resultado==='Reprovado'?'b-red':'b-gray';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${d.id}</td><td><b>${d.sistema}</b></td><td style="font-family:'JetBrains Mono',monospace;color:var(--teal);">${d.rto}</td><td style="font-family:'JetBrains Mono',monospace;color:var(--green);">${d.rpo}</td><td style="font-size:10px;">${d.ultimoTeste}</td><td><span class="badge ${rc}">${d.resultado}</span></td><td style="font-size:10px;color:${d.prox==='Imediato'?'var(--red)':'var(--text2)'};">${d.prox}</td><td><span class="badge ${sc}">${d.status}</span></td></tr>`;
+    }).join('')+'</tbody>';
+
+  $('contRto').innerHTML = contDrp.map(d=>{
+    const rtoH=parseInt(d.rto)||0.5;
+    const metaH=2; const pct=Math.min(100,Math.round((metaH/Math.max(rtoH,0.1))*100));
+    const c=rtoH<=metaH?'var(--green)':'var(--red)';
+    return `<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:11px;">${d.sistema}</span><div style="display:flex;gap:6px;align-items:center;"><span style="font-size:10px;color:var(--text3);">RTO: <b style="color:${c};">${d.rto}</b></span><span style="font-size:10px;color:var(--text3);">RPO: ${d.rpo}</span></div></div><div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:${c};"></div></div></div>`;
+  }).join('');
+
+  $('tblPlaybooks').innerHTML = `<thead><tr><th>ID</th><th>Playbook</th><th>Tipo</th><th>Versão</th><th>Responsável</th><th>Última revisão</th><th>Status</th></tr></thead><tbody>`+
+    contPlaybooks.map(p=>{
+      const sc=p.status==='Vigente'?'b-green':'b-amber';
+      return `<tr><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${p.id}</td><td><b>${p.nome}</b></td><td>${p.tipo}</td><td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${p.versao}</td><td>${p.responsavel}</td><td style="font-size:10px;">${p.ultimaRevisao}</td><td><span class="badge ${sc}">${p.status}</span></td></tr>`;
+    }).join('')+'</tbody>';
+}
+
+// =====================================================================
+// INICIALIZAÇÃO
+// =====================================================================
+// Renderiza checkboxes no modal ao abrir
+document.querySelector('[onclick="openModal(\'modalAddPlat\')"]')?.addEventListener('click',()=>{
+  resetFormAddPlat();renderModulosCheckboxes([]);
+});
+// Intercepta click no botão "Nova Fonte" do header
+document.querySelector('.btn-primary[onclick="openModal(\'modalAddPlat\')"]')?.addEventListener('click',()=>{
+  resetFormAddPlat();renderModulosCheckboxes([]);
+});
+
+// =====================================================================
+// CARREGAMENTO DINÂMICO DO data.json (GitHub Pages / servidor web)
+// =====================================================================
+async function loadDataJson(){
+  try {
+    const res = await fetch('./data/data.json?v=' + Date.now());
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const d = await res.json();
+
+    // Sobrescreve variáveis com dados reais do JSON
+    if(d.fontes)      fontes      = d.fontes.map(f=>({...f, historico: f.historico||[]}));
+    if(d.historico)   historico   = d.historico;
+    if(d.itom?.servidores) Object.assign(itomServidores, d.itom.servidores);
+    // Reconstrói historico global a partir das fontes
+    if(d.historico)   historico   = d.historico;
+    if(d.seguranca?.vulnerabilidades) segVulns.splice(0,segVulns.length,...d.seguranca.vulnerabilidades);
+    if(d.seguranca?.pam)              segPam.splice(0,segPam.length,...d.seguranca.pam);
+    if(d.compliance?.frameworks)      compFrameworks.splice(0,compFrameworks.length,...d.compliance.frameworks);
+    if(d.pmo?.projetos)               pmoProjetos.splice(0,pmoProjetos.length,...d.pmo.projetos);
+    if(d.riscos)                      riscosRegistro.splice(0,riscosRegistro.length,...d.riscos);
+    if(d.finops)                      finopsItens.splice(0,finopsItens.length,...d.finops);
+    if(d.mudancas)                    mudancasRfcs.splice(0,mudancasRfcs.length,...d.mudancas);
+    if(d.continuidade?.drp)           contDrp.splice(0,contDrp.length,...d.continuidade.drp);
+    if(d.ia?.modelos)                 iaModelos.splice(0,iaModelos.length,...d.ia.modelos);
+    if(d.cmdb?.cis)                   cmdbCis.splice(0,cmdbCis.length,...d.cmdb.cis);
+    if(d.itom?.eventos)               itomEventos.splice(0,itomEventos.length,...d.itom.eventos);
+
+    // Mostra info da última atualização no banner se existir
+    if(d._meta?.atualizadoEm){
+      const dt = new Date(d._meta.atualizadoEm).toLocaleString('pt-BR');
+      const banner = document.createElement('div');
+      banner.style.cssText='text-align:center;font-size:9px;color:var(--teal);font-family:"JetBrains Mono",monospace;padding:3px;background:var(--teal2);border-bottom:1px solid rgba(34,211,238,0.15);position:relative;z-index:1;';
+      banner.textContent = `✦ Dados sincronizados via N8N · ${dt} · ${d._meta.atualizadoPor}`;
+      document.querySelector('.tabs-wrap')?.insertAdjacentElement('afterend', banner);
+    }
+
+    toast('Dados carregados do servidor ✓','success','☁️');
+  } catch(e) {
+    // Arquivo não encontrado (rodando local) — mantém dados simulados
+    console.info('[Hub] data.json não encontrado — usando dados simulados.', e.message);
+  }
+}
+
+// Inicializa: tenta carregar dados reais, depois renderiza
+(async ()=>{
+  await loadDataJson();
+  buildTicker();
+  renderGeral();
+  applyAdmProtection();
+  setTimeout(()=>{ injectTrocaSenhaBtn(); renderModulosCheckboxes([]); }, 100);
+})();
+</script>
+</body>
+</html>

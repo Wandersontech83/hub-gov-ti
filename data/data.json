@@ -1,0 +1,213 @@
+{
+  "_meta": {
+    "versao": "1.0",
+    "atualizadoEm": "2026-05-22T09:15:00Z",
+    "atualizadoPor": "N8N · Workflow Automático",
+    "descricao": "Dados extraídos das fontes e tratados pelo N8N para o Hub de Integração de Governança TI"
+  },
+
+  "fontes": [
+    {
+      "id": "src-001",
+      "nome": "SAP S/4HANA · Produção",
+      "tipo": "SAP",
+      "descricao": "ERP principal — extrai contratos, fornecedores e ordens de compra",
+      "url": "https://sap.empresa.com.br/api/v1",
+      "user": "sap_api_user",
+      "auth": "oauth2",
+      "status": "ativo",
+      "ultimaSync": "22/05/2026 09:15",
+      "registros": 1842,
+      "erros": 0,
+      "frequencia": "1h",
+      "n8nWorkflow": "wf_sap_contratos",
+      "modulos": ["contratos", "fornecedores", "budget"],
+      "syncAuto": true
+    },
+    {
+      "id": "src-002",
+      "nome": "Oracle ERP Cloud",
+      "tipo": "Oracle",
+      "descricao": "Módulos financeiros — faturas, pagamentos e fornecedores",
+      "url": "https://oracle.empresa.com.br/fscmRestApi/resources/v1",
+      "user": "oracle_int",
+      "auth": "oauth2",
+      "status": "ativo",
+      "ultimaSync": "22/05/2026 08:00",
+      "registros": 647,
+      "erros": 0,
+      "frequencia": "1h",
+      "n8nWorkflow": "wf_oracle_financeiro",
+      "modulos": ["contratos", "fornecedores", "budget"],
+      "syncAuto": true
+    },
+    {
+      "id": "src-003",
+      "nome": "ServiceNow · ITSM",
+      "tipo": "ServiceNow",
+      "descricao": "Plataforma ITSM — incidentes, mudanças, problemas e CMDB",
+      "url": "https://empresa.service-now.com",
+      "user": "sn_api_reader",
+      "auth": "basic",
+      "status": "ativo",
+      "ultimaSync": "22/05/2026 09:30",
+      "registros": 3201,
+      "erros": 2,
+      "frequencia": "15min",
+      "n8nWorkflow": "wf_snow_itsm",
+      "modulos": ["itsm", "mudancas", "conformidade"],
+      "syncAuto": true
+    },
+    {
+      "id": "src-004",
+      "nome": "Jira · Projetos TI",
+      "tipo": "Jira",
+      "descricao": "Projetos e epics de TI — status, prazos e responsáveis",
+      "url": "https://empresa.atlassian.net",
+      "user": "jira_int@empresa.com",
+      "auth": "bearer",
+      "status": "ativo",
+      "ultimaSync": "22/05/2026 09:00",
+      "registros": 284,
+      "erros": 0,
+      "frequencia": "30min",
+      "n8nWorkflow": "wf_jira_projetos",
+      "modulos": ["projetos"],
+      "syncAuto": true
+    },
+    {
+      "id": "src-005",
+      "nome": "GLPI · Service Desk",
+      "tipo": "GLPI",
+      "descricao": "Service desk legado — tickets, ativos e usuários",
+      "url": "https://glpi.empresa.com.br/apirest.php",
+      "user": "glpi_api",
+      "auth": "apikey",
+      "status": "erro",
+      "ultimaSync": "22/05/2026 07:00",
+      "registros": 0,
+      "erros": 1,
+      "frequencia": "1h",
+      "n8nWorkflow": "wf_glpi_tickets",
+      "modulos": ["itsm"],
+      "syncAuto": true
+    },
+    {
+      "id": "src-006",
+      "nome": "Planilha · Contratos Legados",
+      "tipo": "Planilha",
+      "descricao": "Planilha Excel com contratos anteriores ao ERP",
+      "url": "contratos_legados.xlsx",
+      "user": "",
+      "auth": "none",
+      "status": "inativo",
+      "ultimaSync": "20/05/2026 14:30",
+      "registros": 156,
+      "erros": 0,
+      "frequencia": "manual",
+      "n8nWorkflow": "",
+      "modulos": ["contratos"],
+      "syncAuto": false
+    }
+  ],
+
+  "historico": [
+    { "ts": "22/05/2026 09:30", "fonte": "ServiceNow · ITSM", "fonteId": "src-003", "status": "Parcial", "registros": 3201, "duracao": "00:00:48", "obs": "2 registros com campos inválidos ignorados" },
+    { "ts": "22/05/2026 09:15", "fonte": "SAP S/4HANA · Produção", "fonteId": "src-001", "status": "Sucesso", "registros": 1842, "duracao": "00:02:14" },
+    { "ts": "22/05/2026 09:00", "fonte": "Jira · Projetos TI", "fonteId": "src-004", "status": "Sucesso", "registros": 284, "duracao": "00:00:22" },
+    { "ts": "22/05/2026 08:00", "fonte": "Oracle ERP Cloud", "fonteId": "src-002", "status": "Sucesso", "registros": 647, "duracao": "00:01:32" },
+    { "ts": "22/05/2026 08:00", "fonte": "GLPI · Service Desk", "fonteId": "src-005", "status": "Erro", "registros": 0, "duracao": "00:00:05", "obs": "Connection timeout após 5s" }
+  ],
+
+  "itom": {
+    "servidores": [
+      { "nome": "SRV-ORADB01", "tipo": "Banco de Dados", "os": "Oracle Linux 8", "cpu": 78, "mem": 82, "disk": 61, "status": "Alerta", "uptime": "99.94%" },
+      { "nome": "SRV-SAP-APP01", "tipo": "Aplicação", "os": "SUSE Linux 15", "cpu": 45, "mem": 67, "disk": 48, "status": "Normal", "uptime": "99.99%" },
+      { "nome": "SRV-FILE01", "tipo": "Fileserver", "os": "Windows Server 2022", "cpu": 22, "mem": 54, "disk": 89, "status": "Crítico", "uptime": "98.12%" },
+      { "nome": "SRV-DC01", "tipo": "Domain Controller", "os": "Windows Server 2022", "cpu": 18, "mem": 49, "disk": 42, "status": "Normal", "uptime": "99.97%" },
+      { "nome": "SRV-BACKUP01", "tipo": "Backup", "os": "Veeam Linux", "cpu": 12, "mem": 38, "disk": 94, "status": "Crítico", "uptime": "97.80%" },
+      { "nome": "SRV-WEB01", "tipo": "Web", "os": "Ubuntu 22.04", "cpu": 55, "mem": 60, "disk": 50, "status": "Normal", "uptime": "99.95%" }
+    ],
+    "eventos": [
+      { "id": "EVT-0421", "ativo": "SRV-FILE01", "tipo": "Capacidade", "sev": "Crítico", "msg": "Disco / acima de 90% — ação imediata", "ts": "22/05 09:12" },
+      { "id": "EVT-0420", "ativo": "SRV-BACKUP01", "tipo": "Disponibilidade", "sev": "Crítico", "msg": "Job de backup falhou há 14h", "ts": "22/05 08:00" },
+      { "id": "EVT-0419", "ativo": "SRV-ORADB01", "tipo": "Performance", "sev": "Alto", "msg": "CPU >75% por mais de 30 min", "ts": "22/05 07:45" }
+    ]
+  },
+
+  "seguranca": {
+    "vulnerabilidades": [
+      { "cve": "CVE-2024-3094", "ativo": "SRV-PROXY01", "cvss": 10.0, "sev": "Crítico", "status": "Remediação", "prazo": "24/05/2026" },
+      { "cve": "CVE-2024-21762", "ativo": "FW-FORTIGATE", "cvss": 9.6, "sev": "Crítico", "status": "Em análise", "prazo": "26/05/2026" },
+      { "cve": "CVE-2023-44487", "ativo": "SRV-WEB01", "cvss": 7.5, "sev": "Alto", "status": "Pendente", "prazo": "30/05/2026" }
+    ],
+    "pam": [
+      { "usuario": "svc_oracle", "perfil": "DBA Admin", "sistema": "Oracle DB", "ultimoLogin": "22/05 04:12", "mfa": "Não", "rotacao": "187 dias" },
+      { "usuario": "adm_sap", "perfil": "SAP Basis", "sistema": "SAP S/4HANA", "ultimoLogin": "21/05 18:30", "mfa": "Sim", "rotacao": "42 dias" },
+      { "usuario": "root_backup", "perfil": "Root", "sistema": "SRV-BACKUP01", "ultimoLogin": "20/05 02:00", "mfa": "Não", "rotacao": "312 dias" }
+    ]
+  },
+
+  "compliance": {
+    "frameworks": [
+      { "framework": "COBIT 2019", "score": 91, "meta": 90, "status": "Acima", "controles": 218, "pendentes": 20 },
+      { "framework": "ISO 27001", "score": 96, "meta": 95, "status": "Acima", "controles": 114, "pendentes": 5 },
+      { "framework": "NIST CSF", "score": 94, "meta": 90, "status": "Acima", "controles": 108, "pendentes": 6 },
+      { "framework": "LGPD", "score": 88, "meta": 95, "status": "Abaixo", "controles": 74, "pendentes": 9 },
+      { "framework": "ISO 42001", "score": 96, "meta": 90, "status": "Acima", "controles": 62, "pendentes": 3 }
+    ]
+  },
+
+  "pmo": {
+    "projetos": [
+      { "id": "PRJ-001", "nome": "Modernização IAM", "area": "Segurança", "status": "Em andamento", "prog": 68, "budget": "R$ 480K", "prazo": "31/08/2026", "roi": "22%", "gestor": "M. Oliveira" },
+      { "id": "PRJ-002", "nome": "CMDB Enterprise", "area": "Governança", "status": "Atrasado", "prog": 34, "budget": "R$ 320K", "prazo": "30/06/2026", "roi": "15%", "gestor": "C. Mendes" },
+      { "id": "PRJ-003", "nome": "Portal GRC", "area": "Compliance", "status": "Em andamento", "prog": 82, "budget": "R$ 210K", "prazo": "31/05/2026", "roi": "35%", "gestor": "P. Costa" },
+      { "id": "PRJ-004", "nome": "Automação N8N", "area": "Infraestrutura", "status": "Concluído", "prog": 100, "budget": "R$ 95K", "prazo": "30/04/2026", "roi": "180h/mês", "gestor": "R. Silva" }
+    ]
+  },
+
+  "riscos": [
+    { "id": "RSC-001", "titulo": "Dependência única fornecedor cloud", "cat": "Fornecedor", "prob": "Alto", "impacto": "Crítico", "kri": 92, "status": "Mitigação", "plano": "Contrato redundância + multi-cloud" },
+    { "id": "RSC-002", "titulo": "Modelo IA sem auditoria", "cat": "Gov. IA", "prob": "Médio", "impacto": "Alto", "kri": 78, "status": "Em análise", "plano": "Implementar ISO 42001 logging" },
+    { "id": "RSC-003", "titulo": "SRV-BACKUP01 sem suporte", "cat": "Infraestrutura", "prob": "Alto", "impacto": "Crítico", "kri": 95, "status": "Urgente", "plano": "Substituição PRJ-002" }
+  ],
+
+  "finops": [
+    { "provedor": "Azure", "servico": "VMs & AKS", "mensal": "R$ 175K", "anual": "R$ 2.1M", "forecast": "R$ 2.3M", "savings": "R$ 42K", "status": "Otimizar" },
+    { "provedor": "AWS", "servico": "EC2, S3, RDS", "mensal": "R$ 116K", "anual": "R$ 1.4M", "forecast": "R$ 1.5M", "savings": "R$ 28K", "status": "OK" },
+    { "provedor": "GCP", "servico": "BigQuery & GKE", "mensal": "R$ 51K", "anual": "R$ 620K", "forecast": "R$ 680K", "savings": "R$ 15K", "status": "OK" }
+  ],
+
+  "mudancas": [
+    { "id": "CHG-0881", "titulo": "Atualização Oracle DB 19.22", "tipo": "Normal", "risco": "Alto", "cab": "22/05/2026", "janela": "Sáb 23/05 02h", "status": "Aprovada", "gestor": "A. Lima" },
+    { "id": "CHG-0893", "titulo": "Deploy Portal GRC v2.4", "tipo": "Normal", "risco": "Médio", "cab": "22/05/2026", "janela": "Dom 24/05 01h", "status": "Aprovada", "gestor": "P. Costa" },
+    { "id": "CHG-0901", "titulo": "Expansão storage SAN", "tipo": "Emergência", "risco": "Alto", "cab": "Emergência", "janela": "22/05 21h", "status": "Em revisão", "gestor": "C. Mendes" }
+  ],
+
+  "continuidade": {
+    "drp": [
+      { "id": "DRP-001", "sistema": "ERP SAP", "rto": "2h", "rpo": "15min", "ultimoTeste": "15/03/2026", "resultado": "Aprovado", "prox": "15/09/2026", "status": "OK" },
+      { "id": "DRP-002", "sistema": "Oracle DB", "rto": "1h", "rpo": "5min", "ultimoTeste": "10/02/2026", "resultado": "Reprovado", "prox": "30/05/2026", "status": "Urgente" },
+      { "id": "DRP-003", "sistema": "ServiceNow", "rto": "4h", "rpo": "1h", "ultimoTeste": "20/04/2026", "resultado": "Aprovado", "prox": "20/10/2026", "status": "OK" }
+    ]
+  },
+
+  "ia": {
+    "modelos": [
+      { "id": "MDL-001", "nome": "Agente Contratos", "tipo": "LLM", "fornecedor": "Anthropic", "status": "Produção", "risco": "Baixo", "iso42001": "96%", "tokens": "420K/mês", "lgpd": "OK" },
+      { "id": "MDL-002", "nome": "Classificador ITSM", "tipo": "Classificação", "fornecedor": "OpenAI", "status": "Produção", "risco": "Baixo", "iso42001": "94%", "tokens": "185K/mês", "lgpd": "OK" },
+      { "id": "MDL-003", "nome": "Copilot GRC", "tipo": "LLM", "fornecedor": "Anthropic", "status": "Homolog.", "risco": "Médio", "iso42001": "88%", "tokens": "95K/mês", "lgpd": "Revisão" },
+      { "id": "MDL-004", "nome": "Modelo Restrito", "tipo": "Generativo", "fornecedor": "Open Source", "status": "Bloqueado", "risco": "Alto", "iso42001": "62%", "tokens": "0", "lgpd": "Não conforme" }
+    ]
+  },
+
+  "cmdb": {
+    "cis": [
+      { "id": "CI-0001", "nome": "ERP SAP S/4HANA", "tipo": "Aplicação", "criticidade": "P1", "owner": "A. Lima", "deps": 14, "status": "Produção", "eol": "—" },
+      { "id": "CI-0002", "nome": "ServiceNow ITSM", "tipo": "Plataforma", "criticidade": "P1", "owner": "P. Costa", "deps": 8, "status": "Produção", "eol": "—" },
+      { "id": "CI-0003", "nome": "Oracle DB 19c", "tipo": "Banco", "criticidade": "P1", "owner": "A. Lima", "deps": 11, "status": "Produção", "eol": "Dez/2027" },
+      { "id": "CI-0004", "nome": "SRV-BACKUP01", "tipo": "Servidor", "criticidade": "P2", "owner": "R. Silva", "deps": 3, "status": "Crítico", "eol": "Jan/2026" }
+    ]
+  }
+}
