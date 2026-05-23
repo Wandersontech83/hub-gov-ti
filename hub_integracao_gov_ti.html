@@ -668,19 +668,13 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
           </div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">📊 Conformidade ISO 42001 por domínio</div>
-        <div id="ia42001"></div>
-        <div style="margin-top:12px;"><div class="card-title">📈 Score geral de conformidade IA</div>
-          <div style="position:relative;height:180px;"><canvas id="chartIaScore"></canvas></div>
-        </div>
-      </div>
     </div>
   </div>
 
   <!-- MODELOS -->
   <div class="mini-panel" id="govai-modelos">
     <div class="card"><div class="card-title">Inventário de modelos de IA · Homologados e em produção</div><div class="tbl-wrap"><table class="tbl" id="tblModelos"></table></div></div>
+    <div class="card" style="margin-top:12px;"><div class="card-title">📈 Score de compliance por modelo</div><div style="position:relative;height:180px;"><canvas id="chartIaScore"></canvas></div></div>
   </div>
 
   <!-- ISO 42001 -->
@@ -3250,6 +3244,29 @@ function renderFinops(){
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
     });
   },50);
+
+  // Sub-módulos: torres, fornecedores, riscos financeiros, saldo forecast
+  renderFinopsTorres();
+  renderFinopsFornecedores();
+  renderFinopsRiscos();
+  setTimeout(()=>{
+    const saldos = budgetAnual.actual.slice(0,5).map((v,i)=>v?budgetAnual.plan[i]-v:null);
+    initChart('chartSaldo',{
+      type:'line',
+      data:{
+        labels:['Jan','Fev','Mar','Abr','Mai'],
+        datasets:[{
+          label:'Saldo (planejado − realizado)',
+          data:saldos,
+          borderColor:saldos.map(s=>s>=0?'#2dd4a0':'#f75f5f')[0]||'#2dd4a0',
+          backgroundColor:'rgba(45,212,160,0.08)',
+          tension:0.3,fill:true,
+          segment:{borderColor:ctx=>ctx.p1.parsed.y<0?'#f75f5f':'#2dd4a0'}
+        }]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+  },60);
 }
 
 // Abrir modal de detalhe do contrato
@@ -3772,6 +3789,7 @@ function renderAtivosExtra(){
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'rgba(255,255,255,0.04)'}}}}
     });
   },50);
+  renderAtivosExtra();
 }
 
 // =====================================================================
@@ -3940,8 +3958,8 @@ function renderGovai(){
       </tr>`;
     }).join('')+'</tbody>';
 
-  // ISO 42001 por domínio
-  $('ia42001').innerHTML = iaControles42001.map(d=>{
+  // ISO 42001 por domínio — renderiza diretamente no mini-panel ISO 42001
+  const ia42001Html = iaControles42001.map(d=>{
     const pct=d.score;
     const c=pct>=85?'var(--green)':pct>=70?'var(--amber)':'var(--red)';
     return `<div style="margin-bottom:10px;">
@@ -3953,9 +3971,7 @@ function renderGovai(){
       <div style="font-size:9px;color:var(--text3);margin-top:2px;">${d.ok}/${d.controles} controles OK · ${d.nok} pendentes</div>
     </div>`;
   }).join('');
-
-  // ISO 42001 controles (mini-panel)
-  if($('ia42001Controles')) $('ia42001Controles').innerHTML = $('ia42001').innerHTML;
+  if($('ia42001Controles')) $('ia42001Controles').innerHTML = ia42001Html;
 
   // Tokens
   $('iaTokens').innerHTML = iaModelosCompleto.filter(m=>m.tokens!=='—').map(m=>`
@@ -4086,7 +4102,8 @@ function processarPerguntaIA(p){
   const venc30 = contratos.filter(c=>{ try{ const[d,m,y]=c.fim.split('/'); const dt=new Date(y,m-1,d); return (dt-hoje)<30*864e5&&dt>hoje; }catch(e){ return false; }});
 
   // Contratos — valor total
-  if((q.includes('contrato')&&q.includes('valor'))||(q.includes('total dos contratos'))||(q.includes('contratos ativos'))){
+  const isContratoQuery = (q.includes('contrato')&&(q.includes('valor')||q.includes('total')||q.includes('quanto')||q.includes('carteira')||q.includes('ativo')))||(q.includes('total dos contratos'))||(q.includes('total de contrato'))||(q.includes('contratos ativos'));
+  if(isContratoQuery){
     return `💰 <b>Carteira de contratos TI</b><br><br>
       <b style="color:var(--green);font-size:15px;">R$ ${totalContr.toLocaleString('pt-BR')}</b> em ${contratos.length} contratos.<br><br>
       <b>OPEX:</b> R$ ${opexContr.toLocaleString('pt-BR')} em ${contratos.filter(c=>c.tipo==='OPEX').length} contratos<br>
@@ -4111,7 +4128,7 @@ function processarPerguntaIA(p){
   }
 
   // Budget / saldo
-  if(q.includes('budget')||q.includes('saldo')||q.includes('resta de')){
+  if(q.includes('budget')||q.includes('saldo')||q.includes('resta de')||q.includes('orcamento')||q.includes('orçamento')||(q.includes('quanto')&&q.includes('gast'))||(q.includes('realizad'))){
     const saldo = budgetAnual.total - budgetAnual.spent;
     const pct = Math.round(budgetAnual.spent/budgetAnual.total*100);
     return `💰 <b>Budget TI 2026</b><br><br>
@@ -4122,7 +4139,7 @@ function processarPerguntaIA(p){
   }
 
   // Contratos vencendo em 30 dias
-  if(q.includes('venc')&&q.includes('30')){
+  if((q.includes('venc')&&q.includes('30'))||(q.includes('venc')&&q.includes('mes'))){
     return venc30.length
       ? `📋 <b>${venc30.length} contrato(s) vencendo em 30 dias:</b><br><br>`+venc30.map(c=>`• <b>${c.nome}</b> — vence ${c.fim}<br>  Fornecedor: ${c.fornecedor} · Valor: R$ ${(c.valor/1000).toFixed(0)}K<br>  Renovação: ${c.renovacao}`).join('<br><br>')
       : '✅ Nenhum contrato vencendo nos próximos 30 dias.';
@@ -4136,7 +4153,7 @@ function processarPerguntaIA(p){
   }
 
   // Incidentes P1
-  if((q.includes('incidente')&&q.includes('p1'))||(q.includes('p1 aberto'))){
+  if((q.includes('incidente')&&(q.includes('p1')||q.includes('critico')||q.includes('aberto')||q.includes('sla')))||(q.includes('p1 aberto'))||(q.includes('incidente')&&q.includes('aberto'))){
     return `🚨 <b>Incidentes P1 em aberto: 2</b><br><br>
       • <b>INC0042891</b> — Oracle DB Produção com degradação<br>
         SLA restante: <span style="color:var(--red);">2h15min</span> · Responsável: J. Santos<br><br>
@@ -4146,7 +4163,7 @@ function processarPerguntaIA(p){
   }
 
   // Fornecedor maior consumo
-  if(q.includes('fornecedor')&&(q.includes('maior')||q.includes('consumo'))){
+  if(q.includes('fornecedor')&&(q.includes('maior')||q.includes('consumo')||q.includes('top')||q.includes('principal')||q.includes('mais caro'))){
     const top = contratos.sort((a,b)=>b.valor-a.valor)[0];
     return `🤝 <b>Maior fornecedor por valor contratado:</b><br><br>
       <b style="color:var(--teal);">${top.fornecedor}</b><br>
@@ -4167,7 +4184,7 @@ function processarPerguntaIA(p){
   }
 
   // Ativos em manutenção
-  if(q.includes('ativo')&&q.includes('manut')){
+  if((q.includes('ativo')&&(q.includes('manut')||q.includes('reparo')||q.includes('parado')))||(q.includes('manut')&&(q.includes('equipamento')||q.includes('hardware')))){
     const em = ativosInventario.filter(a=>a.status==='Em manutenção');
     return em.length
       ? `🔧 <b>${em.length} ativo(s) em manutenção:</b><br><br>`+em.map(a=>`• <b>${a.nome}</b> (${a.patrimonio})<br>  Local: ${a.local} · Responsável: ${a.resp}`).join('<br><br>')
@@ -4175,7 +4192,7 @@ function processarPerguntaIA(p){
   }
 
   // Riscos críticos sem mitigação
-  if(q.includes('risco')&&(q.includes('critico')||q.includes('mitigacao')||q.includes('sem plano'))){
+  if(q.includes('risco')&&(q.includes('criti')||q.includes('mitigacao')||q.includes('sem plano')||q.includes('urgente')||q.includes('pendente')||q.includes('maior'))){
     return `🔥 <b>Riscos críticos sem plano de mitigação ativo:</b><br><br>
       • <b>RSC-003</b> — Backup sem suporte (KRI: 95/100)<br>
         Status: <span style="color:var(--red);">Urgente</span><br><br>
@@ -4185,7 +4202,7 @@ function processarPerguntaIA(p){
   }
 
   // Mudanças CAB maior impacto
-  if(q.includes('mudanca')&&q.includes('impacto')){
+  if((q.includes('mudanca')||q.includes('rfc')||q.includes('cab'))&&(q.includes('impacto')||q.includes('criti')||q.includes('maior')||q.includes('pendente')||q.includes('proximo')||q.includes('aberta')||q.includes('aprovad'))){
     const m = mudancasCompletas.filter(x=>x.impacto==='Crítico')[0];
     return m
       ? `🔄 <b>Mudança com maior impacto:</b><br><br>
@@ -4283,40 +4300,6 @@ function renderFinopsRiscos(){
     </div>
     <div style="font-size:12px;font-weight:700;color:${r.impacto.startsWith('-')?'var(--green)':'var(--red)'};white-space:nowrap;">${r.impacto}</div>
   </div>`).join('');
-}
-
-// Injeta chamadas extras nos renders existentes
-const _origRenderFinops = renderFinops;
-function renderFinops(){
-  _origRenderFinops();
-  renderFinopsTorres();
-  renderFinopsFornecedores();
-  renderFinopsRiscos();
-  // Saldo chart
-  setTimeout(()=>{
-    const saldos = budgetAnual.actual.slice(0,5).map((v,i)=>v?budgetAnual.plan[i]-v:null);
-    initChart('chartSaldo',{
-      type:'line',
-      data:{
-        labels:['Jan','Fev','Mar','Abr','Mai'],
-        datasets:[{
-          label:'Saldo (planejado − realizado)',
-          data:saldos,
-          borderColor:saldos.map(s=>s>=0?'#2dd4a0':'#f75f5f')[0]||'#2dd4a0',
-          backgroundColor:'rgba(45,212,160,0.08)',
-          tension:0.3,fill:true,
-          segment:{borderColor:ctx=>ctx.p1.parsed.y<0?'#f75f5f':'#2dd4a0'}
-        }]
-      },
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
-    });
-  },60);
-}
-
-const _origRenderAtivos = renderAtivos;
-function renderAtivos(){
-  _origRenderAtivos();
-  renderAtivosExtra();
 }
 
 // =====================================================================
