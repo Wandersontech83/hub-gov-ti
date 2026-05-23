@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hub de Integração · Governança de TI</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 :root{
   --bg:#07070f;--bg2:#0e0e1a;--bg3:#141422;--card:#18182a;--card2:#1e1e30;
@@ -321,6 +322,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <button class="tab" data-tab="compliance" style="--tab-color:var(--green);" onclick="switchTab('compliance',this)"><span class="tab-icon">✅</span> Compliance</button>
     <button class="tab" data-tab="pmo" style="--tab-color:var(--blue);" onclick="switchTab('pmo',this)"><span class="tab-icon">🚀</span> PMO</button>
     <button class="tab" data-tab="cmdb" style="--tab-color:var(--teal);" onclick="switchTab('cmdb',this)"><span class="tab-icon">🧩</span> CMDB</button>
+    <button class="tab" data-tab="ativos" style="--tab-color:var(--blue);" onclick="switchTab('ativos',this)"><span class="tab-icon">🖥️</span> Ativos de TI</button>
     <button class="tab" data-tab="riscos" style="--tab-color:var(--red);" onclick="switchTab('riscos',this)"><span class="tab-icon">🔥</span> Riscos</button>
     <button class="tab" data-tab="finops" style="--tab-color:var(--green);" onclick="switchTab('finops',this)"><span class="tab-icon">💰</span> FinOps</button>
     <button class="tab" data-tab="mudancas" style="--tab-color:var(--blue);" onclick="switchTab('mudancas',this)"><span class="tab-icon">🔄</span> Mudanças & CAB</button>
@@ -335,22 +337,53 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- ===== VISÃO GERAL ===== -->
 <div class="tab-panel active" id="panel-geral">
-  <div class="kpi-grid" id="kpiGeral"></div>
-  <div class="sec-div">Status das Fontes · Resumo em tempo real</div>
-  <div id="resumoFontes" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:16px;"></div>
-  <div class="g2">
+
+  <!-- KPI Hero Row -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px;" id="kpiGeral"></div>
+
+  <!-- Alertas críticos (topo) -->
+  <div class="card" style="margin-bottom:14px;border-left:3px solid var(--red);">
+    <div class="card-title" style="color:var(--red);">🚨 Alertas Críticos · Ação imediata necessária</div>
+    <div id="alertasHub"></div>
+  </div>
+
+  <!-- Linha 1: Incidentes Trend + Priority Doughnut -->
+  <div class="g2" style="margin-bottom:14px;">
     <div class="card">
-      <div class="card-title">Últimas sincronizações</div>
-      <div id="ultimasSyncs" style="max-height:260px;overflow-y:auto;"></div>
+      <div class="card-title">📈 Tendência de Incidentes · Últimos 6 meses</div>
+      <div style="position:relative;height:200px;"><canvas id="chartIncTrend"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-title">Módulos de destino · Registros alimentados</div>
-      <div id="modulosDestino"></div>
+      <div class="card-title">🎯 Incidentes Abertos por Prioridade</div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="position:relative;width:160px;height:160px;flex-shrink:0;"><canvas id="chartIncPriority"></canvas></div>
+        <div id="incPriorityLegend" style="flex:1;"></div>
+      </div>
     </div>
   </div>
-  <div class="card" style="margin-top:0;">
-    <div class="card-title">Alertas e avisos do hub</div>
-    <div id="alertasHub"></div>
+
+  <!-- Linha 2: Budget Stacked + Compliance Bar -->
+  <div class="g2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title">💰 Budget TI · Realizado vs Planejado (R$ K)</div>
+      <div style="position:relative;height:200px;"><canvas id="chartBudgetStack"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">✅ Conformidade por Framework (%)</div>
+      <div style="position:relative;height:200px;"><canvas id="chartComplianceBar"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Linha 3: Status fontes + Módulos -->
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">🔌 Status das Fontes de Dados</div>
+      <div id="resumoFontes" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 Módulos · Últimas sincronizações</div>
+      <div id="ultimasSyncs" style="max-height:240px;overflow-y:auto;"></div>
+    </div>
   </div>
 </div>
 
@@ -571,6 +604,64 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="card"><div class="card-title">Lifecycle · EOL e renovação</div><div class="tbl-wrap"><table class="tbl" id="tblLifecycle"></table></div></div>
 </div>
 
+<!-- ===== ATIVOS DE TI ===== -->
+<div class="tab-panel" id="panel-ativos">
+
+  <!-- KPIs de Ativos -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;" id="kpiAtivos"></div>
+
+  <!-- Gráfico distribuição + Movimentações -->
+  <div class="g2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title">Distribuição por categoria</div>
+      <div style="position:relative;height:200px;display:flex;align-items:center;justify-content:center;">
+        <canvas id="chartAtivosCategoria" style="max-width:200px;max-height:200px;"></canvas>
+        <div id="ativosCategLegend" style="margin-left:20px;flex:1;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📥 Movimentações · Entrada e Saída</div>
+      <div style="position:relative;height:200px;"><canvas id="chartAtivosMoviment"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Ações -->
+  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+    <button class="btn-primary adm-protected" onclick="requireAdm(()=>openModal('modalEntradaAtivo'))">📥 Registrar Entrada</button>
+    <button class="btn-danger adm-protected" onclick="requireAdm(()=>openModal('modalSaidaAtivo'))">📤 Registrar Saída</button>
+    <button class="btn-sm adm-protected" onclick="requireAdm(()=>openModal('modalNovoAtivo'))">➕ Cadastrar Ativo</button>
+    <select class="form-select" style="font-size:10px;padding:5px 8px;width:160px;" id="filtroCategAtivo" onchange="renderAtivos()">
+      <option value="">Todas as categorias</option>
+      <option value="Servidor">Servidor</option>
+      <option value="Rede">Rede</option>
+      <option value="Desktop">Desktop / Notebook</option>
+      <option value="Storage">Storage</option>
+      <option value="Telefonia">Telefonia</option>
+      <option value="Impressora">Impressora</option>
+      <option value="Outro">Outro</option>
+    </select>
+    <select class="form-select" style="font-size:10px;padding:5px 8px;width:140px;" id="filtroStatusAtivo" onchange="renderAtivos()">
+      <option value="">Todos os status</option>
+      <option value="Ativo">Ativo</option>
+      <option value="Em manutenção">Em manutenção</option>
+      <option value="Baixado">Baixado</option>
+      <option value="Emprestado">Emprestado</option>
+    </select>
+  </div>
+
+  <!-- Tabela de Ativos -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title">Inventário de ativos · Documentação completa</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblAtivos"></table></div>
+  </div>
+
+  <!-- Histórico de Movimentações -->
+  <div class="card">
+    <div class="card-title">📋 Histórico de Movimentações (Entrada / Saída)</div>
+    <div class="tbl-wrap" style="max-height:280px;"><table class="tbl" id="tblMovimentAtivos"></table></div>
+  </div>
+</div>
+
 <!-- ===== RISCOS ===== -->
 <div class="tab-panel" id="panel-riscos">
   <div class="kpi-grid" id="kpiRiscos"></div>
@@ -583,12 +674,52 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- ===== FINOPS ===== -->
 <div class="tab-panel" id="panel-finops">
-  <div class="kpi-grid" id="kpiFinops"></div>
-  <div class="g2">
-    <div class="card"><div class="card-title">Custos cloud · Por provedor</div><div id="finopsCloud"></div></div>
-    <div class="card"><div class="card-title">Forecast vs Realizado · Mensal</div><div id="finopsForecast"></div></div>
+
+  <!-- ── SEÇÃO: BUDGET TI ── -->
+  <div class="sec-div" style="margin-top:0;">💰 Budget de TI · Visão CAPEX / OPEX</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;" id="kpiBudget"></div>
+  <div class="g2" style="margin-bottom:14px;">
+    <div class="card">
+      <div class="card-title">CAPEX vs OPEX · Distribuição Anual</div>
+      <div style="position:relative;height:200px;display:flex;align-items:center;justify-content:center;">
+        <canvas id="chartCapexOpex" style="max-width:200px;max-height:200px;"></canvas>
+        <div id="capexOpexLegend" style="margin-left:20px;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Realizado vs Planejado · Mensal (R$ K)</div>
+      <div style="position:relative;height:200px;"><canvas id="chartBudgetMensal"></canvas></div>
+    </div>
   </div>
-  <div class="card"><div class="card-title">Detalhamento · Centro de custo e otimizações</div><div class="tbl-wrap"><table class="tbl" id="tblFinops"></table></div></div>
+
+  <!-- ── SEÇÃO: CONTRATOS ── -->
+  <div class="sec-div">📋 Contratos de TI · Clique na linha para ver detalhes</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;" id="kpiContratos"></div>
+  <div class="card" style="margin-bottom:14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div class="card-title" style="margin-bottom:0;">Carteira de contratos ativos</div>
+      <div style="display:flex;gap:6px;">
+        <select class="form-select" style="font-size:10px;padding:4px 8px;width:120px;" id="filtroTipoContrato" onchange="renderFinops()">
+          <option value="">Todos</option>
+          <option value="OPEX">OPEX</option>
+          <option value="CAPEX">CAPEX</option>
+        </select>
+      </div>
+    </div>
+    <div class="tbl-wrap"><table class="tbl" id="tblContratos"></table></div>
+  </div>
+
+  <!-- ── SEÇÃO: CLOUD / FINOPS ── -->
+  <div class="sec-div">☁️ FinOps Cloud · Custos por provedor</div>
+  <div class="kpi-grid" id="kpiFinops"></div>
+  <div class="g2" style="margin-top:12px;">
+    <div class="card"><div class="card-title">Custos cloud · Por provedor</div><div id="finopsCloud"></div></div>
+    <div class="card">
+      <div class="card-title">Gasto mensal por provedor (R$ K)</div>
+      <div style="position:relative;height:200px;"><canvas id="chartCloudSpend"></canvas></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px;"><div class="card-title">Detalhamento · Centro de custo e otimizações</div><div class="tbl-wrap"><table class="tbl" id="tblFinops"></table></div></div>
 </div>
 
 <!-- ===== MUDANÇAS & CAB ===== -->
@@ -726,6 +857,178 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <button class="modal-close" onclick="closeModal('modalDetalhes')">×</button>
     </div>
     <div class="modal-body" id="modalDetBody"></div>
+  </div>
+</div>
+
+<!-- ===== MODAL: CONTRATO DETALHE ===== -->
+<div class="modal-overlay" id="modalContratoDetalhe" onclick="if(event.target===this)closeModal('modalContratoDetalhe')">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <div class="modal-title" id="mdCtrTitle">Detalhes do Contrato</div>
+      <button class="modal-close" onclick="closeModal('modalContratoDetalhe')">×</button>
+    </div>
+    <div class="modal-body" id="mdCtrBody"></div>
+  </div>
+</div>
+
+<!-- ===== MODAL: CADASTRAR ATIVO ===== -->
+<div class="modal-overlay" id="modalNovoAtivo" onclick="if(event.target===this)closeModal('modalNovoAtivo')">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-header">
+      <div class="modal-title" id="modalNovoAtivoTitle">Cadastrar Novo Ativo</div>
+      <button class="modal-close" onclick="closeModal('modalNovoAtivo')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editAtivoId"/>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Patrimônio / Nº Série *</label>
+          <input class="form-input" id="aPatrimonio" placeholder="PAT-00001 ou SN-XXXXX"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Categoria *</label>
+          <select class="form-select" id="aCategoria">
+            <option value="">Selecione...</option>
+            <option>Servidor</option><option>Rede</option><option>Desktop</option>
+            <option>Notebook</option><option>Storage</option><option>Telefonia</option>
+            <option>Impressora</option><option>Monitor</option><option>Outro</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fabricante</label>
+          <input class="form-input" id="aFabricante" placeholder="Dell, HP, Cisco..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Modelo</label>
+          <input class="form-input" id="aModelo" placeholder="PowerEdge R750, ProBook 450..."/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Responsável</label>
+          <input class="form-input" id="aResponsavel" placeholder="Nome do responsável"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Localização</label>
+          <input class="form-input" id="aLocalizacao" placeholder="Datacenter A / Sala 201..."/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Valor de aquisição (R$)</label>
+          <input class="form-input" id="aValor" type="number" placeholder="0.00"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Data de aquisição</label>
+          <input class="form-input" id="aDataAquisicao" type="date"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Garantia até</label>
+          <input class="form-input" id="aGarantia" type="date"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo contábil</label>
+          <select class="form-select" id="aTipoContabil">
+            <option value="CAPEX">CAPEX</option>
+            <option value="OPEX">OPEX (Leasing/Locação)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrição / Especificações</label>
+        <textarea class="form-textarea" id="aDescricao" placeholder="Especificações técnicas, uso, observações..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('modalNovoAtivo')">Cancelar</button>
+      <button class="btn-primary" onclick="salvarAtivo()">💾 Salvar Ativo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: ENTRADA DE ATIVO ===== -->
+<div class="modal-overlay" id="modalEntradaAtivo" onclick="if(event.target===this)closeModal('modalEntradaAtivo')">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header">
+      <div class="modal-title">📥 Registrar Entrada de Ativo</div>
+      <button class="modal-close" onclick="closeModal('modalEntradaAtivo')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Ativo *</label>
+        <select class="form-select" id="entradaAtivoSel"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Data de entrada</label>
+          <input class="form-input" id="entradaData" type="date"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Origem</label>
+          <input class="form-input" id="entradaOrigem" placeholder="Fornecedor, almoxarifado..."/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Responsável pelo recebimento</label>
+        <input class="form-input" id="entradaResp" placeholder="Nome"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observações</label>
+        <textarea class="form-textarea" id="entradaObs" placeholder="NF, estado do equipamento..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('modalEntradaAtivo')">Cancelar</button>
+      <button class="btn-primary" onclick="registrarMovimentacao('entrada')">📥 Confirmar Entrada</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: SAÍDA DE ATIVO ===== -->
+<div class="modal-overlay" id="modalSaidaAtivo" onclick="if(event.target===this)closeModal('modalSaidaAtivo')">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header">
+      <div class="modal-title">📤 Registrar Saída de Ativo</div>
+      <button class="modal-close" onclick="closeModal('modalSaidaAtivo')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Ativo *</label>
+        <select class="form-select" id="saidaAtivoSel"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Data de saída</label>
+          <input class="form-input" id="saidaData" type="date"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Motivo</label>
+          <select class="form-select" id="saidaMotivo">
+            <option>Baixa / Descarte</option>
+            <option>Empréstimo</option>
+            <option>Manutenção externa</option>
+            <option>Transferência de setor</option>
+            <option>Devolução ao fornecedor</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Responsável pela saída</label>
+        <input class="form-input" id="saidaResp" placeholder="Nome"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Destino / Observações</label>
+        <textarea class="form-textarea" id="saidaObs" placeholder="Para onde vai, motivo detalhado..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm" onclick="closeModal('modalSaidaAtivo')">Cancelar</button>
+      <button class="btn-danger" onclick="registrarMovimentacao('saida')">📤 Confirmar Saída</button>
+    </div>
   </div>
 </div>
 
@@ -1232,7 +1535,7 @@ function renderTab(tab){
     historico:renderHistorico,config:renderConfig,
     itom:renderItom,govai:renderGovai,seguranca:renderSeguranca,compliance:renderCompliance,
     pmo:renderPmo,cmdb:renderCmdb,riscos:renderRiscos,finops:renderFinops,
-    mudancas:renderMudancas,continuidade:renderContinuidade
+    mudancas:renderMudancas,continuidade:renderContinuidade,ativos:renderAtivos
   };
   if(fn[tab]) fn[tab]();
 }
@@ -2273,6 +2576,579 @@ async function loadDataJson(){
   }
 }
 
+// =====================================================================
+// CHART.JS — CONFIGURAÇÃO GLOBAL
+// =====================================================================
+if(typeof Chart !== 'undefined'){
+  Chart.defaults.color = '#8888bb';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+  Chart.defaults.font.family = "'Space Grotesk', sans-serif";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.plugins.legend.labels.boxWidth = 12;
+  Chart.defaults.plugins.legend.labels.padding = 14;
+}
+const CHARTS = {};
+function initChart(id, config){
+  if(CHARTS[id]){ try{ CHARTS[id].destroy(); }catch(e){} }
+  const el = document.getElementById(id);
+  if(!el) return null;
+  CHARTS[id] = new Chart(el, config);
+  return CHARTS[id];
+}
+
+// =====================================================================
+// DADOS — BUDGET & CONTRATOS
+// =====================================================================
+const budgetAnual = {
+  total: 12800000, capex: 3840000, opex: 8960000,
+  spent: 5420000,  // realizado até Maio
+  labels:      ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+  plan:        [1050,1060,1070,1080,1090,1100,1100,1100,1080,1090,1070,910],
+  actual:      [1020,1085,1098,1072,1145,0,0,0,0,0,0,0],
+};
+
+let contratos = [
+  {id:'CTR-001',nome:'Oracle Database Enterprise',fornecedor:'Oracle Brasil Ltda',tipo:'OPEX',valor:480000,inicio:'01/01/2026',fim:'31/12/2026',status:'Ativo',cat:'Software/Licença',resp:'J. Santos',renovacao:'Automática',obs:'12 processadores · Suporte Premier Plus 24×7'},
+  {id:'CTR-002',nome:'Azure Enterprise Agreement',fornecedor:'Microsoft',tipo:'OPEX',valor:2160000,inicio:'01/01/2025',fim:'31/12/2027',status:'Ativo',cat:'Cloud Infrastructure',resp:'M. Oliveira',renovacao:'3 anos fixo',obs:'R$ 180K/mês · M365 E5 para 2.000 usuários'},
+  {id:'CTR-003',nome:'ServiceNow ITSM Platform',fornecedor:'ServiceNow Inc.',tipo:'OPEX',valor:360000,inicio:'01/03/2026',fim:'28/02/2027',status:'Ativo',cat:'SaaS',resp:'C. Mendes',renovacao:'Anual',obs:'ITSM + ITOM + CMDB · 500 usuários concorrentes'},
+  {id:'CTR-004',nome:'Datacenter Co-location',fornecedor:'Equinix Brasil',tipo:'OPEX',valor:840000,inicio:'01/06/2024',fim:'31/05/2027',status:'Ativo',cat:'Infraestrutura',resp:'P. Costa',renovacao:'3 anos',obs:'10 racks · 40kW · SLA 99,9999%'},
+  {id:'CTR-005',nome:'Fortinet Security Suite',fornecedor:'Fortinet Brasil',tipo:'CAPEX',valor:680000,inicio:'01/02/2026',fim:'31/01/2029',status:'Ativo',cat:'Segurança/HW',resp:'R. Silva',renovacao:'3 anos',obs:'FortiGate 600F HA · FortiAnalyzer · FortiManager'},
+  {id:'CTR-006',nome:'Projeto CMDB Implementation',fornecedor:'Deloitte Technology',tipo:'CAPEX',valor:520000,inicio:'01/04/2026',fim:'31/10/2026',status:'Em andamento',cat:'Consultoria',resp:'C. Mendes',renovacao:'Projeto fixo',obs:'7 meses · Discovery automático via N8N'},
+  {id:'CTR-007',nome:'IBM Mainframe z16 Leasing',fornecedor:'IBM Brasil',tipo:'CAPEX',valor:1400000,inicio:'01/01/2025',fim:'31/12/2029',status:'Ativo',cat:'Hardware',resp:'A. Lima',renovacao:'Leasing 5 anos',obs:'5 IFLs · Processamento SAP/Oracle batch crítico'},
+  {id:'CTR-008',nome:'Broadcom VMware vSphere',fornecedor:'Broadcom',tipo:'OPEX',valor:280000,inicio:'01/01/2026',fim:'31/12/2026',status:'⚠ Revisão',cat:'Software/Licença',resp:'J. Santos',renovacao:'Negociando (+300%)',obs:'400 CPUs vSphere Ent+ · ALERTA: preço triplicou — avaliar OpenShift/Proxmox'},
+];
+
+// =====================================================================
+// DADOS — ATIVOS DE TI
+// =====================================================================
+let ativosInventario = [
+  {id:'ATI-001',patrimonio:'PAT-00842',nome:'Servidor Dell PowerEdge R750',cat:'Servidor',fabricante:'Dell',modelo:'PowerEdge R750',resp:'João Santos',local:'Datacenter A - Rack 03',status:'Ativo',valor:48000,aquisicao:'15/03/2024',garantia:'15/03/2027',tipo:'CAPEX',serie:'SN-7XTPA2S',spec:'2× Intel Xeon 6338 / 512GB RAM / 8×2TB SAS'},
+  {id:'ATI-002',patrimonio:'PAT-00843',nome:'Servidor Dell PowerEdge R750',cat:'Servidor',fabricante:'Dell',modelo:'PowerEdge R750',resp:'João Santos',local:'Datacenter A - Rack 03',status:'Ativo',valor:48000,aquisicao:'15/03/2024',garantia:'15/03/2027',tipo:'CAPEX',serie:'SN-7XTPA2T',spec:'2× Intel Xeon 6338 / 512GB RAM / 8×2TB SAS (HA pair)'},
+  {id:'ATI-003',patrimonio:'PAT-00755',nome:'Switch Cisco Catalyst 9300',cat:'Rede',fabricante:'Cisco',modelo:'Catalyst 9300-48P',resp:'Ricardo Silva',local:'Datacenter A - Rack 01',status:'Ativo',valor:22000,aquisicao:'10/06/2023',garantia:'10/06/2026',tipo:'CAPEX',serie:'SN-FDO2345K',spec:'48 portas PoE+ · 4× 10G uplink'},
+  {id:'ATI-004',patrimonio:'PAT-00821',nome:'Storage NetApp AFF A400',cat:'Storage',fabricante:'NetApp',modelo:'AFF A400',resp:'Carlos Mendes',local:'Datacenter A - Rack 05',status:'Ativo',valor:185000,aquisicao:'20/11/2023',garantia:'20/11/2026',tipo:'CAPEX',serie:'SN-NTA400-01',spec:'24× NVMe SSD · 96TB raw · NVMe/FC'},
+  {id:'ATI-005',patrimonio:'PAT-00612',nome:'Notebook Dell Latitude 5540',cat:'Notebook',fabricante:'Dell',modelo:'Latitude 5540',resp:'Maria Oliveira',local:'Usuário – Sala TI',status:'Ativo',valor:5200,aquisicao:'02/01/2023',garantia:'02/01/2026',tipo:'CAPEX',serie:'SN-CNBK001',spec:'Intel Core i7-1365U / 32GB / 512GB SSD'},
+  {id:'ATI-006',patrimonio:'PAT-00613',nome:'Notebook Dell Latitude 5540',cat:'Notebook',fabricante:'Dell',modelo:'Latitude 5540',resp:'Pedro Costa',local:'Usuário – Sala 201',status:'Ativo',valor:5200,aquisicao:'02/01/2023',garantia:'02/01/2026',tipo:'CAPEX',serie:'SN-CNBK002',spec:'Intel Core i7-1365U / 32GB / 512GB SSD'},
+  {id:'ATI-007',patrimonio:'PAT-00530',nome:'Impressora HP LaserJet E60175',cat:'Impressora',fabricante:'HP',modelo:'LaserJet E60175dn',resp:'Ana Lima',local:'Copa 3º andar',status:'Em manutenção',valor:3800,aquisicao:'05/07/2022',garantia:'05/07/2025',tipo:'CAPEX',serie:'SN-CNBZ200',spec:'75ppm · Duplex · Rede'},
+  {id:'ATI-008',patrimonio:'PAT-00498',nome:'Cisco IP Phone 8861',cat:'Telefonia',fabricante:'Cisco',modelo:'CP-8861',resp:'Ana Lima',local:'Recepção',status:'Ativo',valor:1200,aquisicao:'10/03/2022',garantia:'10/03/2025',tipo:'CAPEX',serie:'SN-FCH2345A',spec:'WiFi · Bluetooth · 5 linhas SIP'},
+  {id:'ATI-009',patrimonio:'PAT-00102',nome:'Servidor HP ProLiant DL380 G9',cat:'Servidor',fabricante:'HP',modelo:'ProLiant DL380 G9',resp:'João Santos',local:'Datacenter B - Rack 01',status:'Baixado',valor:28000,aquisicao:'01/01/2018',garantia:'Expirada',tipo:'CAPEX',serie:'SN-MXQ718',spec:'2× Intel Xeon E5-2690v4 / 256GB RAM — EOL'},
+  {id:'ATI-010',patrimonio:'PAT-00901',nome:'FortiGate 600F Firewall',cat:'Rede',fabricante:'Fortinet',modelo:'FortiGate 600F',resp:'Ricardo Silva',local:'Datacenter A - Rack 02',status:'Ativo',valor:85000,aquisicao:'01/02/2026',garantia:'31/01/2029',tipo:'CAPEX',serie:'SN-FG600F-A01',spec:'36Gbps throughput · IPS · SD-WAN · Zero Trust'},
+];
+
+let movimentacoes = [
+  {id:'MOV-001',tipo:'entrada',ativoId:'ATI-001',ativoNome:'Servidor Dell PowerEdge R750',data:'15/03/2024',origem:'Dell Brasil (NF 45892)',resp:'João Santos',obs:'Equipamento recebido conforme NF. Teste de burn-in realizado.'},
+  {id:'MOV-002',tipo:'entrada',ativoId:'ATI-010',ativoNome:'FortiGate 600F Firewall',data:'01/02/2026',origem:'Fortinet Brasil (NF 78234)',resp:'Ricardo Silva',obs:'Contrato CTR-005 · Substituição do FortiGate 300E'},
+  {id:'MOV-003',tipo:'saida', ativoId:'ATI-009',ativoNome:'Servidor HP ProLiant DL380 G9',data:'12/04/2026',origem:'—',resp:'João Santos',obs:'Baixa patrimonial · Equipamento EOL desde 2023. Descarte certificado via empresa DL Recicla.'},
+  {id:'MOV-004',tipo:'saida', ativoId:'ATI-007',ativoNome:'Impressora HP LaserJet E60175',data:'20/05/2026',origem:'—',resp:'Ana Lima',obs:'Saída para manutenção externa · HP Authorized Service · Previsão de retorno: 05/06/2026'},
+];
+
+// =====================================================================
+// RENDER — VISÃO GERAL (COM GRÁFICOS)
+// =====================================================================
+function renderGeral(){
+  const ativas = fontes.filter(f=>f.status==='ativo').length;
+  const erros  = fontes.filter(f=>f.status==='erro').length;
+  const totalReg = fontes.reduce((s,f)=>s+f.registros,0);
+  const totalContr = contratos.reduce((s,c)=>s+c.valor,0);
+
+  $('kpiGeral').innerHTML = [
+    {icon:'💰',label:'Budget TI Anual',val:'R$ 12,8M',sub:`Realizado: R$ ${(budgetAnual.spent/1e6).toFixed(1)}M`,accent:'var(--amber)'},
+    {icon:'📋',label:'Contratos Ativos',val:contratos.filter(c=>c.status==='Ativo'||c.status==='Em andamento').length,sub:`Total: R$ ${(totalContr/1e6).toFixed(1)}M`,accent:'var(--blue)'},
+    {icon:'🚨',label:'Incidentes Abertos',val:'23',sub:'P1: 2 · P2: 5 críticos',accent:'var(--red)'},
+    {icon:'✅',label:'Conformidade Média',val:'69%',sub:'7 frameworks ativos',accent:'var(--green)'},
+    {icon:'🔌',label:'Fontes Ativas',val:ativas,sub:`${erros} com erro · ${totalReg.toLocaleString()} registros`,accent:'var(--teal)'},
+    {icon:'🖥️',label:'Ativos Inventariados',val:ativosInventario.filter(a=>a.status!=='Baixado').length,sub:`${ativosInventario.filter(a=>a.status==='Em manutenção').length} em manutenção`,accent:'var(--purple)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // Alertas críticos
+  $('alertasHub').innerHTML = [
+    {icon:'🔴',txt:'<b>2 incidentes P1 abertos</b> · SLA em risco · Oracle DB e SAP APP com degradação de performance',cor:'var(--red)'},
+    {icon:'⚠️',txt:'<b>Broadcom VMware — aumento 300%</b> · Contrato CTR-008 vence em 31/12/2026 · Avaliar alternativas',cor:'var(--amber)'},
+    {icon:'⚠️',txt:'<b>3 servidores com disco crítico</b> (>85%) · SRV-FILE01: 89% · SRV-BACKUP01: 94%',cor:'var(--amber)'},
+    {icon:'🔴',txt:'<b>Certificado SSL expirado</b> · api.intranet.empresa.com.br · Expirou em 20/05/2026',cor:'var(--red)'},
+    {icon:'🟡',txt:'<b>Ativo PAT-00530 em manutenção</b> · Impressora HP E60175 · Saída em 20/05/2026',cor:'var(--amber)'},
+  ].map(a=>`<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);"><span style="font-size:14px;">${a.icon}</span><span style="font-size:11px;color:var(--text2);flex:1;line-height:1.5;">${a.txt}</span></div>`).join('');
+
+  // Status fontes
+  $('resumoFontes').innerHTML = fontes.map(f=>{
+    const c=f.status==='ativo'?'var(--green)':f.status==='erro'?'var(--red)':'var(--gray-500)';
+    return `<div style="background:var(--bg3);border-radius:8px;padding:8px 10px;border:1px solid var(--border);border-left:3px solid ${c};">
+      <div style="font-size:11px;font-weight:600;margin-bottom:2px;">${f.nome}</div>
+      <div style="font-size:9px;color:var(--text3);">Sync: ${f.ultimaSync}</div>
+      <div style="font-size:9px;color:${c};font-weight:600;">${f.status.toUpperCase()}</div>
+    </div>`;
+  }).join('');
+
+  // Últimas syncs
+  $('ultimasSyncs').innerHTML = historico.slice(0,8).map(h=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:10px;color:${h.status==='Sucesso'?'var(--green)':'var(--red)'};">●</span>
+      <span style="font-size:10px;color:var(--text2);flex:1;">${h.fonte}</span>
+      <span style="font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--text3);">${h.ts.split(' ')[1]||h.ts}</span>
+    </div>`).join('');
+
+  // Gráficos
+  setTimeout(()=>{
+    // Trend de incidentes
+    initChart('chartIncTrend',{
+      type:'line',
+      data:{
+        labels:['Dez/25','Jan/26','Fev/26','Mar/26','Abr/26','Mai/26'],
+        datasets:[
+          {label:'Abertos',data:[78,92,65,83,71,58],borderColor:'#f75f5f',backgroundColor:'rgba(247,95,95,0.08)',tension:0.4,fill:true},
+          {label:'Fechados',data:[74,88,71,79,78,55],borderColor:'#2dd4a0',backgroundColor:'rgba(45,212,160,0.06)',tension:0.4,fill:true},
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true,grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+
+    // Prioridade doughnut
+    const priData=[2,5,16,4];
+    const priLabels=['P1 Crítico','P2 Alto','P3 Médio','P4 Baixo'];
+    const priColors=['#f75f5f','#f5a623','#4f8ef7','#8888bb'];
+    initChart('chartIncPriority',{
+      type:'doughnut',
+      data:{labels:priLabels,datasets:[{data:priData,backgroundColor:priColors,borderWidth:0}]},
+      options:{responsive:false,plugins:{legend:{display:false}},cutout:'68%'}
+    });
+    $('incPriorityLegend').innerHTML = priLabels.map((l,i)=>
+      `<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+        <span style="width:10px;height:10px;border-radius:2px;background:${priColors[i]};display:inline-block;flex-shrink:0;"></span>
+        <span style="font-size:11px;flex:1;">${l}</span>
+        <span style="font-size:13px;font-weight:700;color:${priColors[i]};">${priData[i]}</span>
+       </div>`).join('');
+
+    // Budget stacked
+    initChart('chartBudgetStack',{
+      type:'bar',
+      data:{
+        labels:['Jan','Fev','Mar','Abr','Mai'],
+        datasets:[
+          {label:'Planejado',data:[1050,1060,1070,1080,1090],backgroundColor:'rgba(79,142,247,0.3)',borderColor:'#4f8ef7',borderWidth:1},
+          {label:'Realizado',data:[1020,1085,1098,1072,1145],backgroundColor:'rgba(34,211,238,0.6)',borderColor:'#22d3ee',borderWidth:1},
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:false,ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+
+    // Compliance bar horizontal
+    initChart('chartComplianceBar',{
+      type:'bar',
+      data:{
+        labels:['ITIL 4','LGPD','COBIT 2019','ISO 27001','NIST CSF','TBM','ISO 42001'],
+        datasets:[{
+          label:'Conformidade %',
+          data:[85,81,78,72,68,55,45],
+          backgroundColor:['#2dd4a0','#2dd4a0','#22d3ee','#f5a623','#f5a623','#f75f5f','#f75f5f'],
+          borderRadius:4,
+        }]
+      },
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+  },50);
+}
+
+// =====================================================================
+// RENDER — FINOPS (BUDGET + CONTRATOS + CLOUD)
+// =====================================================================
+function renderFinops(){
+  // --- KPIs Budget ---
+  const totalContr = contratos.reduce((s,c)=>s+c.valor,0);
+  const opexContr  = contratos.filter(c=>c.tipo==='OPEX').reduce((s,c)=>s+c.valor,0);
+  const capexContr = contratos.filter(c=>c.tipo==='CAPEX').reduce((s,c)=>s+c.valor,0);
+  const vencendo   = contratos.filter(c=>{
+    if(!c.fim) return false;
+    const [d,m,y]=c.fim.split('/'); const dt=new Date(y,m-1,d);
+    return dt-Date.now()<90*864e5 && dt>Date.now();
+  }).length;
+
+  $('kpiBudget').innerHTML = [
+    {icon:'💰',label:'Budget TI Anual',val:'R$ 12,8M',sub:'aprovado 2026',accent:'var(--amber)'},
+    {icon:'📈',label:'CAPEX',val:`R$ ${(budgetAnual.capex/1e6).toFixed(1)}M`,sub:'30% do budget',accent:'var(--blue)'},
+    {icon:'🔄',label:'OPEX',val:`R$ ${(budgetAnual.opex/1e6).toFixed(1)}M`,sub:'70% do budget',accent:'var(--teal)'},
+    {icon:'✅',label:'Realizado (Mai)',val:`R$ ${(budgetAnual.spent/1e6).toFixed(1)}M`,sub:`${Math.round(budgetAnual.spent/budgetAnual.total*100)}% do anual`,accent:'var(--green)'},
+    {icon:'🔮',label:'Forecast Anual',val:'R$ 13,1M',sub:'+2,3% acima do budget',accent:'var(--red)'},
+    {icon:'📋',label:'Total Contratos',val:`R$ ${(totalContr/1e6).toFixed(1)}M`,sub:`${contratos.length} contratos ativos`,accent:'var(--purple)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // --- KPIs Contratos ---
+  $('kpiContratos').innerHTML = [
+    {icon:'💳',label:'Total OPEX',val:`R$ ${(opexContr/1e6).toFixed(1)}M`,sub:`${contratos.filter(c=>c.tipo==='OPEX').length} contratos`,accent:'var(--teal)'},
+    {icon:'🏗️',label:'Total CAPEX',val:`R$ ${(capexContr/1e6).toFixed(1)}M`,sub:`${contratos.filter(c=>c.tipo==='CAPEX').length} contratos`,accent:'var(--blue)'},
+    {icon:'⚠️',label:'Vencendo em 90d',val:vencendo,sub:'requer atenção',accent:vencendo?'var(--amber)':'var(--green)'},
+    {icon:'📋',label:'Total carteira',val:`R$ ${(totalContr/1e6).toFixed(1)}M`,sub:`${contratos.length} contratos`,accent:'var(--purple)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // --- Tabela de Contratos ---
+  const filtroTipo = $('filtroTipoContrato')?.value || '';
+  const ctrFilt = contratos.filter(c=>!filtroTipo||c.tipo===filtroTipo);
+  $('tblContratos').innerHTML = `<thead><tr><th>ID</th><th>Contrato</th><th>Fornecedor</th><th>Tipo</th><th>Categoria</th><th>Valor</th><th>Vigência</th><th>Renovação</th><th>Status</th></tr></thead><tbody>`+
+    ctrFilt.map(c=>{
+      const tc=c.tipo==='OPEX'?'b-teal':'b-blue';
+      const sc=c.status==='Ativo'?'b-green':c.status==='Em andamento'?'b-blue':c.status.includes('Revisão')||c.status.includes('⚠')?'b-amber':'b-gray';
+      return `<tr onclick="abrirContratoDetalhe('${c.id}')" style="cursor:pointer;" title="Clique para ver detalhes">
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${c.id}</td>
+        <td><b style="font-size:11px;">${c.nome}</b></td>
+        <td style="font-size:11px;">${c.fornecedor}</td>
+        <td><span class="badge ${tc}">${c.tipo}</span></td>
+        <td style="font-size:10px;color:var(--text2);">${c.cat}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">R$ ${(c.valor/1000).toFixed(0)}K</td>
+        <td style="font-size:10px;font-family:'JetBrains Mono',monospace;">${c.inicio} → ${c.fim}</td>
+        <td style="font-size:10px;color:var(--text2);">${c.renovacao}</td>
+        <td><span class="badge ${sc}">${c.status}</span></td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // --- KPIs FinOps Cloud ---
+  $('kpiFinops').innerHTML = [
+    {icon:'☁️',label:'Gasto cloud total',val:'R$ 4,8M',sub:'anualizado 2026',accent:'var(--blue)'},
+    {icon:'🤖',label:'Custo IA/mês',val:'R$ 184K',sub:'+23% vs mês anterior',accent:'var(--purple)'},
+    {icon:'🎯',label:'Forecast accuracy',val:'96%',sub:'desvio de 4%',accent:'var(--green)'},
+    {icon:'💡',label:'Savings identificados',val:'R$ 740K',sub:'oportunidades mapeadas',accent:'var(--teal)'},
+    {icon:'📊',label:'FinOps maturidade',val:'Crawl',sub:'evolução para Walk Q3',accent:'var(--amber)'},
+    {icon:'🏷️',label:'Recursos sem tag',val:'8%',sub:'638 recursos',accent:'var(--red)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  $('finopsCloud').innerHTML = finopsItens.map(f=>{
+    const sc=f.status==='OK'?'b-green':f.status==='Otimizar'?'b-amber':f.status==='Crescendo'?'b-purple':'b-blue';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--bg3);border-radius:8px;margin-bottom:6px;border:1px solid var(--border);">
+      <div style="font-size:20px;">☁️</div>
+      <div style="flex:1;">
+        <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;font-weight:600;">${f.provedor}</span><span style="font-size:12px;font-weight:700;color:var(--green);">${f.mensal}/mês</span></div>
+        <div style="font-size:10px;color:var(--text3);">${f.servico} · Anual: ${f.anual}</div>
+      </div>
+      <span class="badge ${sc}">${f.status}</span>
+    </div>`;
+  }).join('');
+
+  $('tblFinops').innerHTML = `<thead><tr><th>Provedor</th><th>Serviço</th><th>Mensal</th><th>Anual</th><th>Forecast</th><th>Savings</th><th>Status</th></tr></thead><tbody>`+
+    finopsItens.map(f=>{
+      const sc=f.status==='OK'?'b-green':f.status==='Otimizar'?'b-amber':f.status==='Crescendo'?'b-purple':'b-blue';
+      return `<tr><td><b>${f.provedor}</b></td><td style="font-size:11px;">${f.servico}</td><td style="font-family:'JetBrains Mono',monospace;color:var(--green);">${f.mensal}</td><td style="font-family:'JetBrains Mono',monospace;">${f.anual}</td><td style="font-family:'JetBrains Mono',monospace;color:var(--amber);">${f.forecast}</td><td style="font-family:'JetBrains Mono',monospace;color:var(--teal);">${f.savings}</td><td><span class="badge ${sc}">${f.status}</span></td></tr>`;
+    }).join('')+'</tbody>';
+
+  // --- Gráficos ---
+  setTimeout(()=>{
+    // CAPEX/OPEX doughnut
+    const opexV = contratos.filter(c=>c.tipo==='OPEX').reduce((s,c)=>s+c.valor,0);
+    const capexV = contratos.filter(c=>c.tipo==='CAPEX').reduce((s,c)=>s+c.valor,0);
+    initChart('chartCapexOpex',{
+      type:'doughnut',
+      data:{labels:['OPEX','CAPEX'],datasets:[{data:[opexV,capexV],backgroundColor:['#22d3ee','#4f8ef7'],borderWidth:0}]},
+      options:{responsive:false,plugins:{legend:{display:false}},cutout:'62%'}
+    });
+    $('capexOpexLegend').innerHTML = [
+      {l:'OPEX',v:opexV,c:'#22d3ee'},{l:'CAPEX',v:capexV,c:'#4f8ef7'}
+    ].map(x=>`<div style="margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">
+        <span style="width:10px;height:10px;border-radius:2px;background:${x.c};display:inline-block;"></span>
+        <span style="font-size:12px;font-weight:600;">${x.l}</span>
+      </div>
+      <div style="font-size:15px;font-weight:700;">R$ ${(x.v/1e6).toFixed(1)}M</div>
+      <div style="font-size:9px;color:var(--text3);">${Math.round(x.v/(opexV+capexV)*100)}% da carteira</div>
+    </div>`).join('');
+
+    // Budget mensal plan vs actual
+    initChart('chartBudgetMensal',{
+      type:'bar',
+      data:{
+        labels:budgetAnual.labels.slice(0,8),
+        datasets:[
+          {label:'Planejado',data:budgetAnual.plan.slice(0,8),backgroundColor:'rgba(79,142,247,0.3)',borderColor:'#4f8ef7',borderWidth:1,borderRadius:3},
+          {label:'Realizado',data:budgetAnual.actual.slice(0,8).map(v=>v||null),backgroundColor:'rgba(34,211,238,0.7)',borderColor:'#22d3ee',borderWidth:1,borderRadius:3},
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{ticks:{callback:v=>v?v+'K':''},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+
+    // Cloud spend bar
+    initChart('chartCloudSpend',{
+      type:'bar',
+      data:{
+        labels:finopsItens.map(f=>f.provedor),
+        datasets:[{
+          label:'Mensal (R$ K)',
+          data:finopsItens.map(f=>parseInt(f.mensal.replace(/\D/g,''))||0),
+          backgroundColor:['#4f8ef7','#22d3ee','#2dd4a0','#f5a623','#a78bfa'],
+          borderRadius:4,
+        }]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+  },50);
+}
+
+// Abrir modal de detalhe do contrato
+function abrirContratoDetalhe(id){
+  const c = contratos.find(x=>x.id===id);
+  if(!c) return;
+  const tc=c.tipo==='OPEX'?'b-teal':'b-blue';
+  const sc=c.status==='Ativo'?'b-green':c.status==='Em andamento'?'b-blue':'b-amber';
+  $('mdCtrTitle').innerHTML = `📋 ${c.nome}`;
+  $('mdCtrBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+      ${[
+        ['Fornecedor',c.fornecedor],['Categoria',c.cat],
+        ['Tipo contábil',`<span class="badge ${tc}">${c.tipo}</span>`],
+        ['Status',`<span class="badge ${sc}">${c.status}</span>`],
+        ['Valor total',`<span style="font-size:16px;font-weight:700;color:var(--green);">R$ ${c.valor.toLocaleString('pt-BR')}</span>`],
+        ['Renovação',c.renovacao],
+        ['Vigência início',c.inicio],['Vigência fim',c.fim],
+        ['Responsável',c.resp],['Contrato Nº',c.id],
+      ].map(([l,v])=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">${l}</div>
+        <div style="font-size:12px;font-weight:500;">${v}</div>
+      </div>`).join('')}
+    </div>
+    <div style="background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:16px;">
+      <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px;">Escopo / Observações</div>
+      <div style="font-size:12px;line-height:1.6;">${c.obs}</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-primary adm-protected" onclick="requireAdm(()=>{closeModal('modalContratoDetalhe');toast('Edição de contrato — em breve','info','🔧')})">✏️ Editar</button>
+      <button class="btn-sm" onclick="closeModal('modalContratoDetalhe')">Fechar</button>
+    </div>`;
+  openModal('modalContratoDetalhe');
+}
+
+// =====================================================================
+// RENDER — ATIVOS DE TI
+// =====================================================================
+function renderAtivos(){
+  const filtroCateg  = $('filtroCategAtivo')?.value  || '';
+  const filtroStatus = $('filtroStatusAtivo')?.value || '';
+  const lista = ativosInventario.filter(a=>
+    (!filtroCateg  || a.cat===filtroCateg) &&
+    (!filtroStatus || a.status===filtroStatus)
+  );
+
+  // KPIs
+  const ativos   = ativosInventario.filter(a=>a.status==='Ativo').length;
+  const manut    = ativosInventario.filter(a=>a.status==='Em manutenção').length;
+  const baixados = ativosInventario.filter(a=>a.status==='Baixado').length;
+  const totalVal = ativosInventario.filter(a=>a.status!=='Baixado').reduce((s,a)=>s+a.valor,0);
+  const capexAtv = ativosInventario.filter(a=>a.tipo==='CAPEX'&&a.status!=='Baixado').reduce((s,a)=>s+a.valor,0);
+
+  $('kpiAtivos').innerHTML = [
+    {icon:'🖥️',label:'Ativos ativos',val:ativos,sub:`${ativosInventario.length} no inventário`,accent:'var(--teal)'},
+    {icon:'🔧',label:'Em manutenção',val:manut,sub:'aguardando retorno',accent:manut?'var(--amber)':'var(--green)'},
+    {icon:'📉',label:'Baixados',val:baixados,sub:'este ano',accent:'var(--gray-500)'},
+    {icon:'💰',label:'Valor inventário',val:`R$ ${(totalVal/1e3).toFixed(0)}K`,sub:'ativos vigentes',accent:'var(--blue)'},
+    {icon:'🏗️',label:'CAPEX inventário',val:`R$ ${(capexAtv/1e3).toFixed(0)}K`,sub:'ativos CAPEX',accent:'var(--purple)'},
+    {icon:'📋',label:'Movimentações',val:movimentacoes.length,sub:'este ciclo',accent:'var(--amber)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // Tabela de ativos
+  $('tblAtivos').innerHTML = `<thead><tr><th>Patrimônio</th><th>Ativo</th><th>Categoria</th><th>Fabricante/Modelo</th><th>Responsável</th><th>Localização</th><th>Tipo</th><th>Valor</th><th>Garantia</th><th>Status</th><th>Ações</th></tr></thead><tbody>`+
+    lista.map(a=>{
+      const sc=a.status==='Ativo'?'b-green':a.status==='Em manutenção'?'b-amber':a.status==='Emprestado'?'b-blue':'b-gray';
+      const tc=a.tipo==='CAPEX'?'b-blue':'b-teal';
+      const garantiaExp = a.garantia==='Expirada'||new Date(a.garantia.split('/').reverse().join('-'))<new Date();
+      return `<tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${a.patrimonio}</td>
+        <td><b style="font-size:11px;">${a.nome}</b><div style="font-size:9px;color:var(--text3);">${a.serie}</div></td>
+        <td>${a.cat}</td>
+        <td style="font-size:11px;">${a.fabricante} ${a.modelo}</td>
+        <td style="font-size:11px;">${a.resp}</td>
+        <td style="font-size:10px;color:var(--text2);">${a.local}</td>
+        <td><span class="badge ${tc}">${a.tipo}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--green);">R$ ${(a.valor/1e3).toFixed(0)}K</td>
+        <td style="font-size:10px;color:${garantiaExp?'var(--red)':'var(--text2)'};">${a.garantia}</td>
+        <td><span class="badge ${sc}">${a.status}</span></td>
+        <td>
+          <div style="display:flex;gap:4px;">
+            <button class="icon-btn" title="Ver detalhes" onclick="verDetalheAtivo('${a.id}')">👁</button>
+            <button class="icon-btn adm-protected" title="Editar" onclick="requireAdm(()=>editarAtivo('${a.id}'))">✏️</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // Tabela movimentações
+  $('tblMovimentAtivos').innerHTML = `<thead><tr><th>ID</th><th>Tipo</th><th>Ativo</th><th>Data</th><th>Origem/Destino</th><th>Responsável</th><th>Observações</th></tr></thead><tbody>`+
+    movimentacoes.slice().reverse().map(m=>{
+      const tipo=m.tipo==='entrada';
+      return `<tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${m.id}</td>
+        <td><span class="badge ${tipo?'b-green':'b-amber'}">${tipo?'📥 Entrada':'📤 Saída'}</span></td>
+        <td style="font-size:11px;"><b>${m.ativoNome}</b></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${m.data}</td>
+        <td style="font-size:10px;color:var(--text2);">${m.origem||'—'}</td>
+        <td style="font-size:11px;">${m.resp}</td>
+        <td style="font-size:10px;color:var(--text2);max-width:200px;">${m.obs}</td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // Gráficos
+  setTimeout(()=>{
+    // Distribuição por categoria
+    const catMap={};
+    ativosInventario.filter(a=>a.status!=='Baixado').forEach(a=>{catMap[a.cat]=(catMap[a.cat]||0)+1;});
+    const catKeys=Object.keys(catMap); const catVals=catKeys.map(k=>catMap[k]);
+    const catColors=['#4f8ef7','#22d3ee','#2dd4a0','#f5a623','#f75f5f','#a78bfa','#f472b6'];
+    initChart('chartAtivosCategoria',{
+      type:'doughnut',
+      data:{labels:catKeys,datasets:[{data:catVals,backgroundColor:catColors,borderWidth:0}]},
+      options:{responsive:false,plugins:{legend:{display:false}},cutout:'60%'}
+    });
+    $('ativosCategLegend').innerHTML = catKeys.map((k,i)=>
+      `<div style="display:flex;align-items:center;gap:6px;margin-bottom:7px;">
+        <span style="width:9px;height:9px;border-radius:2px;background:${catColors[i]};display:inline-block;flex-shrink:0;"></span>
+        <span style="font-size:11px;flex:1;">${k}</span>
+        <span style="font-size:12px;font-weight:700;">${catVals[i]}</span>
+       </div>`).join('');
+
+    // Movimentações bar
+    const meses=['Jan','Fev','Mar','Abr','Mai'];
+    initChart('chartAtivosMoviment',{
+      type:'bar',
+      data:{
+        labels:meses,
+        datasets:[
+          {label:'Entradas',data:[3,1,2,1,2],backgroundColor:'rgba(45,212,160,0.7)',borderRadius:3},
+          {label:'Saídas',  data:[1,0,1,2,1],backgroundColor:'rgba(247,95,95,0.7)', borderRadius:3},
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+  },50);
+}
+
+// Detalhes do ativo
+function verDetalheAtivo(id){
+  const a = ativosInventario.find(x=>x.id===id);
+  if(!a) return;
+  const sc=a.status==='Ativo'?'b-green':a.status==='Em manutenção'?'b-amber':'b-gray';
+  const tc=a.tipo==='CAPEX'?'b-blue':'b-teal';
+  const garantiaExp = a.garantia==='Expirada'||new Date(a.garantia.split('/').reverse().join('-'))<new Date();
+
+  $('modalDetTitle').innerHTML = `🖥️ ${a.nome}`;
+  $('modalDetBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      ${[
+        ['Nº Patrimônio',a.patrimonio],['Nº Série',a.serie],
+        ['Categoria',a.cat],['Status',`<span class="badge ${sc}">${a.status}</span>`],
+        ['Fabricante',a.fabricante],['Modelo',a.modelo],
+        ['Responsável',a.resp],['Localização',a.local],
+        ['Tipo contábil',`<span class="badge ${tc}">${a.tipo}</span>`],
+        ['Valor',`<span style="font-weight:700;color:var(--green);">R$ ${a.valor.toLocaleString('pt-BR')}</span>`],
+        ['Data aquisição',a.aquisicao],['Garantia',`<span style="color:${garantiaExp?'var(--red)':'var(--green)'};">${a.garantia}</span>`],
+      ].map(([l,v])=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">${l}</div>
+        <div style="font-size:12px;">${v}</div></div>`).join('')}
+    </div>
+    <div style="background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:12px;">
+      <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:5px;">Especificações técnicas</div>
+      <div style="font-size:12px;line-height:1.6;">${a.spec}</div>
+    </div>
+    <div style="font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border);">Histórico de movimentações</div>
+    ${movimentacoes.filter(m=>m.ativoId===id).map(m=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">
+        <span style="font-size:12px;">${m.tipo==='entrada'?'📥':'📤'}</span>
+        <span style="font-size:10px;color:var(--text3);min-width:80px;">${m.data}</span>
+        <span style="font-size:11px;flex:1;">${m.obs}</span>
+        <span style="font-size:10px;color:var(--text2);">${m.resp}</span>
+      </div>`).join('')||'<div style="font-size:11px;color:var(--text3);padding:8px 0;">Nenhuma movimentação registrada</div>'}
+    <div style="margin-top:14px;display:flex;gap:8px;">
+      <button class="btn-primary adm-protected" onclick="requireAdm(()=>editarAtivo('${id}'))">✏️ Editar</button>
+      <button class="btn-sm" onclick="closeModal('modalDetalhes')">Fechar</button>
+    </div>`;
+  openModal('modalDetalhes');
+}
+
+function editarAtivo(id){
+  const a = ativosInventario.find(x=>x.id===id);
+  if(!a) return;
+  $('modalNovoAtivoTitle').textContent = 'Editar Ativo';
+  $('editAtivoId').value = a.id;
+  $('aPatrimonio').value = a.patrimonio;
+  $('aCategoria').value = a.cat;
+  $('aFabricante').value = a.fabricante;
+  $('aModelo').value = a.modelo;
+  $('aResponsavel').value = a.resp;
+  $('aLocalizacao').value = a.local;
+  $('aValor').value = a.valor;
+  $('aTipoContabil').value = a.tipo;
+  $('aDescricao').value = a.spec;
+  openModal('modalNovoAtivo');
+}
+
+function salvarAtivo(){
+  requireAdm(()=>{
+    const id = $('editAtivoId').value;
+    const patrimonio = $('aPatrimonio').value.trim();
+    const cat = $('aCategoria').value;
+    if(!patrimonio||!cat){ toast('Preencha patrimônio e categoria','error','⚠️'); return; }
+
+    if(id){
+      const a = ativosInventario.find(x=>x.id===id);
+      if(a){
+        a.patrimonio=$('aPatrimonio').value; a.cat=$('aCategoria').value;
+        a.fabricante=$('aFabricante').value; a.modelo=$('aModelo').value;
+        a.resp=$('aResponsavel').value; a.local=$('aLocalizacao').value;
+        a.valor=parseFloat($('aValor').value)||0; a.tipo=$('aTipoContabil').value;
+        a.spec=$('aDescricao').value;
+      }
+      toast(`Ativo ${patrimonio} atualizado`,'success','✅');
+    } else {
+      const newId='ATI-'+String(Date.now()).slice(-4).padStart(3,'0');
+      ativosInventario.push({
+        id:newId,patrimonio,nome:`${$('aFabricante').value} ${$('aModelo').value}`,
+        cat,fabricante:$('aFabricante').value,modelo:$('aModelo').value,
+        resp:$('aResponsavel').value,local:$('aLocalizacao').value,
+        status:'Ativo',valor:parseFloat($('aValor').value)||0,
+        aquisicao:$('aDataAquisicao').value||'—',garantia:$('aGarantia').value||'—',
+        tipo:$('aTipoContabil').value,serie:'SN-???',spec:$('aDescricao').value,
+      });
+      toast(`Ativo ${patrimonio} cadastrado`,'success','✅');
+    }
+    closeModal('modalNovoAtivo');
+    renderAtivos();
+  });
+}
+
+function registrarMovimentacao(tipo){
+  requireAdm(()=>{
+    const selId = tipo==='entrada'?$('entradaAtivoSel').value:$('saidaAtivoSel').value;
+    if(!selId){ toast('Selecione um ativo','error','⚠️'); return; }
+    const ativo = ativosInventario.find(a=>a.id===selId);
+    if(!ativo) return;
+    const data = tipo==='entrada'?$('entradaData').value:$('saidaData').value;
+    const resp = tipo==='entrada'?$('entradaResp').value:$('saidaResp').value;
+    const obs  = tipo==='entrada'?$('entradaObs').value:$('saidaObs').value;
+    const origem = tipo==='entrada'?$('entradaOrigem').value:$('saidaMotivo').value;
+
+    movimentacoes.unshift({
+      id:'MOV-'+String(Date.now()).slice(-5),
+      tipo, ativoId:ativo.id, ativoNome:ativo.nome,
+      data:data||new Date().toLocaleDateString('pt-BR'),
+      origem, resp, obs,
+    });
+    if(tipo==='saida'){ ativo.status='Baixado'; }
+    else { ativo.status='Ativo'; }
+
+    closeModal(tipo==='entrada'?'modalEntradaAtivo':'modalSaidaAtivo');
+    toast(`Movimentação de ${tipo} registrada para ${ativo.nome}`,'success',tipo==='entrada'?'📥':'📤');
+    renderAtivos();
+  });
+}
+
+// Popula selects dos modais de ativo
+function populaSelectsAtivos(){
+  const atv = ativosInventario.filter(a=>a.status!=='Baixado');
+  ['entradaAtivoSel','saidaAtivoSel'].forEach(id=>{
+    const sel=$(id); if(!sel) return;
+    sel.innerHTML = '<option value="">Selecione o ativo...</option>' +
+      atv.map(a=>`<option value="${a.id}">[${a.patrimonio}] ${a.nome}</option>`).join('');
+  });
+}
+document.addEventListener('click', e=>{
+  const m=e.target.closest('[onclick*="modalEntradaAtivo"],[onclick*="modalSaidaAtivo"]');
+  if(m) setTimeout(populaSelectsAtivos,50);
+});
+
+// =====================================================================
+// INICIALIZAÇÃO
+// =====================================================================
 // Inicializa: tenta carregar dados reais, depois renderiza
 (async ()=>{
   await loadDataJson();
