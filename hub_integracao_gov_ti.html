@@ -426,9 +426,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </div>
     <div class="card">
       <div class="card-title">🎯 Incidentes Abertos por Prioridade</div>
-      <div style="display:flex;align-items:center;gap:16px;">
-        <div style="position:relative;width:160px;height:160px;flex-shrink:0;"><canvas id="chartIncPriority"></canvas></div>
-        <div id="incPriorityLegend" style="flex:1;"></div>
+      <div style="display:flex;align-items:center;gap:18px;height:160px;">
+        <div style="position:relative;width:160px;height:160px;flex-shrink:0;min-width:160px;"><canvas id="chartIncPriority"></canvas></div>
+        <div id="incPriorityLegend" style="flex:1;max-width:160px;"></div>
       </div>
     </div>
   </div>
@@ -3077,13 +3077,19 @@ function renderGeral(){
     initChart('chartIncPriority',{
       type:'doughnut',
       data:{labels:priLabels,datasets:[{data:priData,backgroundColor:priColors,borderWidth:0}]},
-      options:{responsive:false,plugins:{legend:{display:false}},cutout:'68%'}
+      options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},cutout:'68%'}
     });
+    const priTotal = priData.reduce((a,b)=>a+b,0);
     $('incPriorityLegend').innerHTML = priLabels.map((l,i)=>
-      `<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
-        <span style="width:10px;height:10px;border-radius:2px;background:${priColors[i]};display:inline-block;flex-shrink:0;"></span>
-        <span style="font-size:11px;flex:1;">${l}</span>
-        <span style="font-size:13px;font-weight:700;color:${priColors[i]};">${priData[i]}</span>
+      `<div style="margin-bottom:9px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+          <span style="width:9px;height:9px;border-radius:2px;background:${priColors[i]};display:inline-block;flex-shrink:0;"></span>
+          <span style="font-size:11px;white-space:nowrap;">${l}</span>
+          <span style="font-size:13px;font-weight:700;color:${priColors[i]};margin-left:4px;">${priData[i]}</span>
+        </div>
+        <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;">
+          <div style="height:100%;width:${Math.round(priData[i]/priTotal*100)}%;background:${priColors[i]};border-radius:2px;"></div>
+        </div>
        </div>`).join('');
 
     // Budget stacked
