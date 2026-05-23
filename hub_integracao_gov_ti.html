@@ -408,6 +408,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <button class="tab active" data-tab="geral"        style="--tab-color:var(--teal);"    onclick="switchTab('geral',this)"><span class="tab-icon">📊</span> Visão Geral</button>
     <button class="tab"        data-tab="itsm"         style="--tab-color:var(--red);"     onclick="switchTab('itsm',this)"><span class="tab-icon">🚨</span> ITSM</button>
     <button class="tab"        data-tab="mudancas"     style="--tab-color:var(--blue);"    onclick="switchTab('mudancas',this)"><span class="tab-icon">🔄</span> Mudanças & CAB</button>
+    <button class="tab"        data-tab="contratos"    style="--tab-color:var(--blue);"    onclick="switchTab('contratos',this)"><span class="tab-icon">📋</span> Contratos</button>
     <button class="tab"        data-tab="fornecedores" style="--tab-color:var(--teal);"    onclick="switchTab('fornecedores',this)"><span class="tab-icon">🤝</span> Fornecedores</button>
     <button class="tab"        data-tab="budget"       style="--tab-color:var(--amber);"   onclick="switchTab('budget',this)"><span class="tab-icon">💰</span> Budget</button>
     <button class="tab"        data-tab="finops"       style="--tab-color:var(--green);"   onclick="switchTab('finops',this)"><span class="tab-icon">📈</span> FinOps</button>
@@ -979,6 +980,76 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </div>
   </div>
 
+</div>
+
+<!-- ===== CONTRATOS ===== -->
+<div class="tab-panel" id="panel-contratos">
+  <div class="kpi-grid" id="kpiContratos"></div>
+
+  <!-- Alertas de vencimento -->
+  <div id="alertasContratos" style="margin-bottom:12px;"></div>
+
+  <!-- Mini-tabs -->
+  <div class="mini-tabs">
+    <button class="mini-tab active" onclick="switchMiniTab('contratos','todos',this)">📋 Todos os Contratos</button>
+    <button class="mini-tab" onclick="switchMiniTab('contratos','capex',this)">🏗️ CAPEX</button>
+    <button class="mini-tab" onclick="switchMiniTab('contratos','opex',this)">🔄 OPEX</button>
+    <button class="mini-tab" onclick="switchMiniTab('contratos','vencendo',this)">⚠️ Vencendo</button>
+  </div>
+
+  <!-- Todos -->
+  <div class="mini-panel active" id="contratos-todos">
+    <div class="g2" style="margin-bottom:12px;">
+      <div class="card">
+        <div class="card-title">📊 Distribuição por Status</div>
+        <div style="display:flex;justify-content:center;"><div style="position:relative;width:180px;height:180px;"><canvas id="chartCtrStatus" width="180" height="180"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">🏢 Valor por Torre de TI (R$ K)</div>
+        <div style="position:relative;height:180px;"><canvas id="chartCtrTorre"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+        <div class="card-title" style="margin:0;">📋 Carteira de Contratos · <span style="color:var(--text3);font-weight:400;">Clique para detalhar</span></div>
+        <div style="display:flex;gap:6px;">
+          <select class="form-select" style="font-size:10px;padding:4px 8px;" id="ctrFiltroTipo" onchange="renderContratos()">
+            <option value="">Todos os tipos</option><option>CAPEX</option><option>OPEX</option>
+          </select>
+          <select class="form-select" style="font-size:10px;padding:4px 8px;" id="ctrFiltroStatus" onchange="renderContratos()">
+            <option value="">Todos os status</option><option>Ativo</option><option>Em andamento</option>
+          </select>
+        </div>
+      </div>
+      <div class="tbl-wrap"><table class="tbl" id="tblContratosGeral"></table></div>
+    </div>
+  </div>
+
+  <!-- CAPEX -->
+  <div class="mini-panel" id="contratos-capex">
+    <div class="kpi-grid" id="kpiCapex"></div>
+    <div class="card" style="margin-top:4px;">
+      <div class="card-title">🏗️ Contratos CAPEX · Investimentos</div>
+      <div class="tbl-wrap"><table class="tbl" id="tblCapex"></table></div>
+    </div>
+  </div>
+
+  <!-- OPEX -->
+  <div class="mini-panel" id="contratos-opex">
+    <div class="kpi-grid" id="kpiOpex"></div>
+    <div class="card" style="margin-top:4px;">
+      <div class="card-title">🔄 Contratos OPEX · Despesas Operacionais</div>
+      <div class="tbl-wrap"><table class="tbl" id="tblOpex"></table></div>
+    </div>
+  </div>
+
+  <!-- Vencendo -->
+  <div class="mini-panel" id="contratos-vencendo">
+    <div class="card">
+      <div class="card-title">⚠️ Contratos Vencendo · Próximos 180 dias · Ação necessária</div>
+      <div id="listaVencendo"></div>
+    </div>
+  </div>
 </div>
 
 <!-- ===== FORNECEDORES ===== -->
@@ -2036,7 +2107,7 @@ function renderTab(tab){
     itom:renderItom,govai:renderGovai,seguranca:renderSeguranca,compliance:renderCompliance,
     pmo:renderPmo,cmdb:renderCmdb,riscos:renderRiscos,finops:renderFinops,
     mudancas:renderMudancas,continuidade:renderContinuidade,ativos:renderAtivos,
-    itsm:renderItsm,fornecedores:renderFornecedores,budget:renderBudget
+    itsm:renderItsm,contratos:renderContratos,fornecedores:renderFornecedores,budget:renderBudget
   };
   if(fn[tab]) fn[tab]();
 }
@@ -4890,6 +4961,161 @@ const fornecedoresList = [
   {nome:'IBM',segmento:'Mainframe / Hardware',contratos:['z16 Leasing'],valor:1400000,sla:99.9,status:'✅ OK',contato:'ibm@br.ibm.com',critico:true},
   {nome:'SAP Brasil',segmento:'ERP / S4HANA',contratos:['S/4HANA Licença'],valor:620000,sla:98.0,status:'✅ OK',contato:'support@sap.com',critico:true},
 ];
+
+// =====================================================================
+// CONTRATOS — render dedicado
+// =====================================================================
+function renderContratos(){
+  const filTipo   = $('ctrFiltroTipo')?.value   || '';
+  const filStatus = $('ctrFiltroStatus')?.value || '';
+
+  const hoje = new Date();
+  const diasAte = (dataStr)=>{ try{ const[d,m,y]=dataStr.split('/'); return Math.ceil((new Date(+y,+m-1,+d)-hoje)/864e5); }catch(e){ return 999; }};
+
+  const totalVal  = contratos.reduce((s,c)=>s+c.valor,0);
+  const capexVal  = contratos.filter(c=>c.tipo==='CAPEX').reduce((s,c)=>s+c.valor,0);
+  const opexVal   = contratos.filter(c=>c.tipo==='OPEX').reduce((s,c)=>s+c.valor,0);
+  const ativos    = contratos.filter(c=>c.status==='Ativo'||c.status==='Em andamento').length;
+  const venc30    = contratos.filter(c=>{ const d=diasAte(c.fim); return d>=0&&d<=30; }).length;
+  const venc90    = contratos.filter(c=>{ const d=diasAte(c.fim); return d>=0&&d<=90; }).length;
+  const emRisco   = contratos.filter(c=>c.status.includes('⚠')||c.status.includes('Revisão')).length;
+
+  // ── KPIs ───────────────────────────────────────────────────────────
+  $('kpiContratos').innerHTML=[
+    {icon:'📋',label:'Total Contratos',val:contratos.length,sub:`${ativos} ativos / em andamento`,accent:'var(--blue)'},
+    {icon:'💰',label:'Valor Total Carteira',val:`R$ ${(totalVal/1e6).toFixed(1)}M`,sub:`CAPEX: R$ ${(capexVal/1e6).toFixed(1)}M · OPEX: R$ ${(opexVal/1e6).toFixed(1)}M`,accent:'var(--green)'},
+    {icon:'🏗️',label:'CAPEX',val:`R$ ${(capexVal/1e6).toFixed(1)}M`,sub:`${contratos.filter(c=>c.tipo==='CAPEX').length} contratos de investimento`,accent:'var(--blue)'},
+    {icon:'🔄',label:'OPEX',val:`R$ ${(opexVal/1e6).toFixed(1)}M`,sub:`${contratos.filter(c=>c.tipo==='OPEX').length} contratos operacionais`,accent:'var(--teal)'},
+    {icon:'⚠️',label:'Vencendo em 90 dias',val:venc90,sub:`${venc30} vencendo em 30 dias`,accent:venc30>0?'var(--red)':'var(--amber)'},
+    {icon:'🔴',label:'Em Risco / Revisão',val:emRisco,sub:'Ação imediata necessária',accent:emRisco>0?'var(--red)':'var(--green)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // ── Alertas de vencimento ──────────────────────────────────────────
+  const alertList=contratos.filter(c=>{ const d=diasAte(c.fim); return d>=0&&d<=180; })
+    .sort((a,b)=>diasAte(a.fim)-diasAte(b.fim));
+  $('alertasContratos').innerHTML=alertList.length===0?'':
+    `<div class="card" style="border-left:3px solid var(--amber);margin-bottom:12px;">
+      <div class="card-title" style="color:var(--amber);">⚠️ Contratos com vencimento nos próximos 180 dias</div>
+      ${alertList.map(c=>{
+        const dias=diasAte(c.fim);
+        const cor=dias<=30?'var(--red)':dias<=90?'var(--amber)':'var(--blue)';
+        const bg=dias<=30?'rgba(247,95,95,0.06)':dias<=90?'rgba(245,166,35,0.06)':'var(--bg3)';
+        return `<div onclick="abrirContratoDetalhe('${c.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:${bg};border-radius:8px;margin-bottom:6px;cursor:pointer;border:1px solid var(--border);" onmouseover="this.style.borderColor='${cor}'" onmouseout="this.style.borderColor='var(--border)'">
+          <div>
+            <div style="font-size:11px;font-weight:600;">${c.nome}</div>
+            <div style="font-size:10px;color:var(--text3);">${c.fornecedor} · ${c.id} · Vence: ${c.fim}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+            <span style="font-size:11px;font-weight:700;color:${cor};">${dias} dias</span>
+            <span class="badge ${c.tipo==='CAPEX'?'b-blue':'b-teal'}">${c.tipo}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--green);">R$ ${(c.valor/1e3).toFixed(0)}K</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+  // ── Tabela helper ──────────────────────────────────────────────────
+  const tblHtml=(lista)=>`<thead><tr><th>Nº Contrato</th><th>Nome</th><th>Fornecedor</th><th>Tipo</th><th>Valor</th><th>Vigência</th><th>Renovação</th><th>Status</th></tr></thead><tbody>`+
+    lista.sort((a,b)=>b.valor-a.valor).map(c=>{
+      const tc=c.tipo==='CAPEX'?'b-blue':'b-teal';
+      const sc=c.status==='Ativo'?'b-green':c.status==='Em andamento'?'b-blue':(c.status.includes('Revisão')||c.status.includes('⚠'))?'b-amber':'b-gray';
+      const dias=diasAte(c.fim);
+      const vencBadge=dias>=0&&dias<=90?`<span class="badge b-amber" style="margin-left:4px;">${dias}d</span>`:(dias>=0&&dias<=180?`<span class="badge b-blue" style="margin-left:4px;">${dias}d</span>`:'');
+      return `<tr onclick="abrirContratoDetalhe('${c.id}')" style="cursor:pointer;" title="Clique para ver detalhes">
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${c.id}</td>
+        <td><b style="font-size:11px;">${c.nome}</b></td>
+        <td style="font-size:10px;color:var(--text2);">${c.fornecedor}</td>
+        <td><span class="badge ${tc}">${c.tipo}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">R$ ${(c.valor/1e3).toFixed(0)}K</td>
+        <td style="font-size:10px;">${c.inicio}<br><span style="color:var(--text3);">até ${c.fim}</span>${vencBadge}</td>
+        <td style="font-size:10px;color:var(--text2);">${c.renovacao}</td>
+        <td><span class="badge ${sc}">${c.status}</span></td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // ── Tabela principal (filtro) ──────────────────────────────────────
+  const listaFiltrada=contratos.filter(c=>(!filTipo||c.tipo===filTipo)&&(!filStatus||c.status.includes(filStatus)));
+  if($('tblContratosGeral')) $('tblContratosGeral').innerHTML=tblHtml(listaFiltrada);
+
+  // ── CAPEX ─────────────────────────────────────────────────────────
+  const capexList=contratos.filter(c=>c.tipo==='CAPEX');
+  if($('kpiCapex')) $('kpiCapex').innerHTML=[
+    {icon:'🏗️',label:'Contratos CAPEX',val:capexList.length,sub:'investimentos em ativos',accent:'var(--blue)'},
+    {icon:'💰',label:'Total CAPEX',val:`R$ ${(capexVal/1e6).toFixed(2)}M`,sub:`${Math.round(capexVal/totalVal*100)}% do orçamento total`,accent:'var(--blue)'},
+    {icon:'⚠️',label:'Vencendo 90d',val:capexList.filter(c=>{const d=diasAte(c.fim);return d>=0&&d<=90;}).length,sub:'requerem renovação',accent:'var(--amber)'},
+    {icon:'✅',label:'Em dia',val:capexList.filter(c=>c.status==='Ativo'||c.status==='Em andamento').length,sub:'ativos / em andamento',accent:'var(--green)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+  if($('tblCapex')) $('tblCapex').innerHTML=tblHtml(capexList);
+
+  // ── OPEX ──────────────────────────────────────────────────────────
+  const opexList=contratos.filter(c=>c.tipo==='OPEX');
+  if($('kpiOpex')) $('kpiOpex').innerHTML=[
+    {icon:'🔄',label:'Contratos OPEX',val:opexList.length,sub:'despesas operacionais recorrentes',accent:'var(--teal)'},
+    {icon:'💰',label:'Total OPEX',val:`R$ ${(opexVal/1e6).toFixed(2)}M`,sub:`${Math.round(opexVal/totalVal*100)}% do orçamento total`,accent:'var(--teal)'},
+    {icon:'📅',label:'Renovação Automática',val:opexList.filter(c=>c.renovacao==='Automática').length,sub:'contratos com auto-renovação',accent:'var(--blue)'},
+    {icon:'⚠️',label:'Vencendo 90d',val:opexList.filter(c=>{const d=diasAte(c.fim);return d>=0&&d<=90;}).length,sub:'verificar renovação',accent:'var(--amber)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+  if($('tblOpex')) $('tblOpex').innerHTML=tblHtml(opexList);
+
+  // ── Vencendo ──────────────────────────────────────────────────────
+  if($('listaVencendo')){
+    const vencList=contratos.filter(c=>{ const d=diasAte(c.fim); return d>=0&&d<=180; }).sort((a,b)=>diasAte(a.fim)-diasAte(b.fim));
+    $('listaVencendo').innerHTML=vencList.length===0
+      ?'<div style="padding:16px;text-align:center;color:var(--green);">✅ Nenhum contrato vencendo nos próximos 180 dias.</div>'
+      :vencList.map(c=>{
+        const dias=diasAte(c.fim);
+        const cor=dias<=30?'var(--red)':dias<=90?'var(--amber)':'var(--blue)';
+        const urgencia=dias<=30?'URGENTE — vence em breve':dias<=90?'Atenção — renovação próxima':'Planejamento — monitorar';
+        return `<div onclick="abrirContratoDetalhe('${c.id}')" style="display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;border-left:4px solid ${cor};" onmouseover="this.style.background='var(--card)'" onmouseout="this.style.background='var(--bg3)'">
+          <div style="text-align:center;min-width:56px;flex-shrink:0;">
+            <div style="font-size:24px;font-weight:700;color:${cor};line-height:1;">${dias}</div>
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;">dias</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:600;margin-bottom:3px;">${c.nome}</div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:4px;">${c.fornecedor} · ${c.id} · ${c.cat}</div>
+            <div style="font-size:10px;color:var(--text3);">Vigência: ${c.inicio} → <b style="color:${cor};">${c.fim}</b> · Renovação: ${c.renovacao}</div>
+            <div style="font-size:9px;color:${cor};font-weight:600;margin-top:4px;text-transform:uppercase;letter-spacing:0.05em;">⚡ ${urgencia}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:16px;font-weight:700;color:var(--green);">R$ ${(c.valor/1e3).toFixed(0)}K</div>
+            <div style="margin-top:4px;"><span class="badge ${c.tipo==='CAPEX'?'b-blue':'b-teal'}">${c.tipo}</span></div>
+            <div style="margin-top:4px;font-size:10px;color:var(--text3);">Resp: ${c.resp}</div>
+          </div>
+        </div>`;
+      }).join('');
+  }
+
+  // ── Gráficos ──────────────────────────────────────────────────────
+  setTimeout(()=>{
+    // Doughnut status
+    const stMap={};
+    contratos.forEach(c=>{ const k=c.status.includes('⚠')||c.status.includes('Revisão')?'Em Revisão':c.status; stMap[k]=(stMap[k]||0)+1; });
+    const stKeys=Object.keys(stMap);
+    const stCols={'Ativo':'#2dd4a0','Em andamento':'#4f8ef7','Em Revisão':'#f5a623','Encerrado':'#6b7280'};
+    initChart('chartCtrStatus',{type:'doughnut',
+      data:{labels:stKeys,datasets:[{data:stKeys.map(k=>stMap[k]),backgroundColor:stKeys.map(k=>stCols[k]||'#8888bb'),borderWidth:0}]},
+      options:{responsive:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}}},cutout:'60%'}});
+
+    // Bar torre
+    const torraMap={'Infraestrutura':0,'Cloud & SaaS':0,'Segurança':0,'Aplicações & ERP':0,'Projetos & PMO':0,'Suporte':0};
+    contratos.forEach(c=>{
+      const k=c.cat.includes('Cloud')||c.cat.includes('SaaS')?'Cloud & SaaS':
+               c.cat.includes('Segur')?'Segurança':
+               c.cat.includes('ERP')||c.cat.includes('Licença')||c.cat.includes('SaaS')?'Aplicações & ERP':
+               c.cat.includes('Infra')||c.cat.includes('HW')||c.cat.includes('Hardware')?'Infraestrutura':
+               c.cat.includes('Consultor')||c.cat.includes('Projeto')?'Projetos & PMO':'Suporte & Outros';
+      torraMap[k]=(torraMap[k]||0)+c.valor;
+    });
+    const torraEntries=Object.entries(torraMap).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+    initChart('chartCtrTorre',{type:'bar',
+      data:{labels:torraEntries.map(([k])=>k.split(' ')[0]),
+        datasets:[{data:torraEntries.map(([,v])=>Math.round(v/1e3)),
+          backgroundColor:['#4f8ef7','#22d3ee','#f5a623','#a78bfa','#2dd4a0','#8888bb'],borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+  },60);
+}
 
 function renderFornecedores(){
   const totalValor = fornecedoresList.reduce((s,f)=>s+f.valor,0);
