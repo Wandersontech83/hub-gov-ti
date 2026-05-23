@@ -3175,7 +3175,7 @@ function renderGeral(){
   ];
 
   $('modulosNavGrid').innerHTML = modulos.map(m=>`
-    <div class="mod-card" style="--mod-color:${m.cor};" onclick="switchTab('${m.tab}',document.querySelector('[onclick*=\\'switchTab(\\'${m.tab}\\'\\')\\']'))">
+    <div class="mod-card" style="--mod-color:${m.cor};" onclick="switchTab('${m.tab}',document.querySelector('[data-tab=${m.tab}]'))">
       <div class="mod-card-icon">${m.icon}</div>
       <div class="mod-card-name">${m.nome}</div>
       <div class="mod-card-status"><span style="width:6px;height:6px;border-radius:50%;background:${m.statusCor};display:inline-block;"></span>${m.status}</div>
