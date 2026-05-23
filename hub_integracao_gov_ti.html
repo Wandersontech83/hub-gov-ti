@@ -6,6 +6,7 @@
 <title>Portal de Governança de TI · Enterprise</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
   --bg:#07070f;--bg2:#0e0e1a;--bg3:#141422;--card:#18182a;--card2:#1e1e30;
@@ -95,6 +96,17 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .b-purple{background:var(--purple2);color:var(--purple);border:1px solid rgba(167,139,250,0.2);}
 .b-teal{background:var(--teal2);color:var(--teal);border:1px solid rgba(34,211,238,0.2);}
 .b-gray{background:var(--bg3);color:var(--text2);border:1px solid var(--border2);}
+
+/* ACTION BAR */
+.action-bar{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.action-bar .ab-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-right:4px;}
+.btn-export{display:inline-flex;align-items:center;gap:5px;background:var(--green2);color:var(--green);border:1px solid rgba(45,212,160,0.2);font-size:10px;font-weight:600;padding:5px 12px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s;}
+.btn-export:hover{background:rgba(45,212,160,0.15);border-color:rgba(45,212,160,0.4);}
+.btn-n8n{display:inline-flex;align-items:center;gap:5px;background:var(--purple2);color:var(--purple);border:1px solid rgba(167,139,250,0.2);font-size:10px;font-weight:600;padding:5px 12px;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .2s;}
+.btn-n8n:hover{background:rgba(167,139,250,0.15);border-color:rgba(167,139,250,0.4);}
+.btn-n8n.sending{opacity:.6;pointer-events:none;}
+.n8n-toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:14px 18px;font-size:12px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,0.4);animation:toastIn .3s ease;max-width:340px;}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 
 /* TABLES */
 .tbl-wrap{overflow-x:auto;max-height:360px;overflow-y:auto;}
@@ -426,7 +438,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <button class="tab"        data-tab="mapeamento"   style="--tab-color:var(--purple);"  onclick="switchTab('mapeamento',this)"><span class="tab-icon">🗺️</span> Mapeamento</button>
     <button class="tab"        data-tab="n8n"          style="--tab-color:var(--amber);"   onclick="switchTab('n8n',this)"><span class="tab-icon">⚡</span> N8N Workflows</button>
     <button class="tab"        data-tab="historico"    style="--tab-color:var(--green);"   onclick="switchTab('historico',this)"><span class="tab-icon">📜</span> Histórico</button>
-    <button class="tab"        data-tab="config"       style="--tab-color:var(--gray-400);" onclick="switchTab('config',this)"><span class="tab-icon">⚙️</span> Configurações</button>
+    <button class="tab"        data-tab="config"       style="--tab-color:var(--gray-400);" onclick="switchTab('config',this);setTimeout(carregarN8NConfig,50)"><span class="tab-icon">⚙️</span> Configurações</button>
   </div>
 </div>
 
@@ -639,6 +651,73 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <div style="font-size:10px;color:var(--text2);margin-bottom:12px;">Configure para quais módulos do portal cada tipo de dado será enviado</div>
     <div id="modulosConfig"></div>
   </div>
+
+  <!-- N8N INTEGRATION CONFIG -->
+  <div class="card" style="border-color:rgba(167,139,250,0.25);margin-top:0;">
+    <div class="card-title" style="color:var(--purple);">⚡ Integração N8N · Webhooks de Ação</div>
+    <div style="font-size:10px;color:var(--text2);margin-bottom:16px;">
+      Configure as URLs dos webhooks N8N para cada ação do portal. Cada botão "Disparar N8N" fará um POST com payload JSON para o webhook correspondente.
+      <a href="https://n8n.io" target="_blank" style="color:var(--purple);margin-left:4px;">↗ Documentação N8N</a>
+    </div>
+    <div class="g2">
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--text2);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);">🎫 ITSM</div>
+        <div class="form-group">
+          <label class="form-label">🔔 Notificar Time · P1 Abertos</label>
+          <input class="form-input" id="n8nUrlAlertaP1" placeholder="https://seu-n8n.com/webhook/alerta-p1" style="font-size:10px;font-family:'JetBrains Mono',monospace;"/>
+          <div class="form-hint">Payload: {tipo, incidentes_p1[], timestamp, portal}</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">📤 Relatório ITSM · E-mail/Teams</label>
+          <input class="form-input" id="n8nUrlRelItsm" placeholder="https://seu-n8n.com/webhook/relatorio-itsm" style="font-size:10px;font-family:'JetBrains Mono',monospace;"/>
+          <div class="form-hint">Payload: {kpis{}, incidentes[], problemas[], rfcs[]}</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--text2);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);">📋 Contratos</div>
+        <div class="form-group">
+          <label class="form-label">📤 Relatório Contratos · E-mail/Teams</label>
+          <input class="form-input" id="n8nUrlRelContratos" placeholder="https://seu-n8n.com/webhook/relatorio-contratos" style="font-size:10px;font-family:'JetBrains Mono',monospace;"/>
+          <div class="form-hint">Payload: {kpis{}, contratos[], capex_total, opex_total}</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">🔔 Alerta de Vencimentos</label>
+          <input class="form-input" id="n8nUrlAlertaVenc" placeholder="https://seu-n8n.com/webhook/alerta-vencimentos" style="font-size:10px;font-family:'JetBrains Mono',monospace;"/>
+          <div class="form-hint">Payload: {contratos_vencendo[], prazo_dias: 90}</div>
+        </div>
+      </div>
+    </div>
+    <div class="g2" style="margin-top:4px;">
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--text2);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);">🖥️ Ativos</div>
+        <div class="form-group">
+          <label class="form-label">📤 Relatório Ativos · E-mail/Teams</label>
+          <input class="form-input" id="n8nUrlRelAtivos" placeholder="https://seu-n8n.com/webhook/relatorio-ativos" style="font-size:10px;font-family:'JetBrains Mono',monospace;"/>
+          <div class="form-hint">Payload: {kpis{}, inventario[], garantias_vencendo[]}</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:600;color:var(--text2);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);">⚙️ Configurações globais</div>
+        <div class="form-group">
+          <label class="form-label">Identificador do portal (enviado em todos os payloads)</label>
+          <input class="form-input" id="n8nPortalId" placeholder="Portal Gov TI · Empresa" value="Portal Gov TI · Enterprise"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Timeout de requisição (ms)</label>
+          <select class="form-select" id="n8nTimeout">
+            <option value="5000">5 segundos</option>
+            <option value="10000" selected>10 segundos</option>
+            <option value="30000">30 segundos</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+      <button class="btn-primary" onclick="salvarN8NConfig()">💾 Salvar configuração N8N</button>
+      <button class="btn-sm" onclick="testarN8N()">🧪 Testar conexão</button>
+      <span id="n8nSaveStatus" style="font-size:10px;color:var(--green);display:none;">✅ Salvo!</span>
+    </div>
+  </div>
 </div>
 
 
@@ -825,6 +904,15 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- ===== ATIVOS DE TI ===== -->
 <div class="tab-panel" id="panel-ativos">
+
+  <!-- Action Bar Ativos -->
+  <div class="action-bar">
+    <span class="ab-label">⚡ Ações</span>
+    <button class="btn-export" onclick="exportarExcel('ativos')">📥 Exportar Excel · Inventário</button>
+    <button class="btn-export" onclick="exportarExcel('ativos_garantia')">🔧 Exportar · Garantias Vencendo</button>
+    <button class="btn-n8n" id="btnN8nAtiRel" onclick="dispararN8N('relatorio_ativos')">📤 Enviar Relatório Ativos</button>
+  </div>
+
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:14px;" id="kpiAtivos"></div>
 
   <div class="mini-tabs">
@@ -894,6 +982,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- ===== ITSM ===== -->
 <div class="tab-panel" id="panel-itsm">
+
+  <!-- Action Bar ITSM -->
+  <div class="action-bar">
+    <span class="ab-label">⚡ Ações</span>
+    <button class="btn-export" onclick="exportarExcel('itsm')">📥 Exportar Excel · ITSM</button>
+    <button class="btn-n8n" id="btnN8nItsmP1" onclick="dispararN8N('alerta_p1')">🔔 Notificar Time · P1 Abertos</button>
+    <button class="btn-n8n" id="btnN8nItsmRel" onclick="dispararN8N('relatorio_itsm')">📤 Enviar Relatório ITSM</button>
+  </div>
 
   <!-- KPI Hero -->
   <div class="kpi-grid" id="kpiItsm"></div>
@@ -984,6 +1080,16 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- ===== CONTRATOS ===== -->
 <div class="tab-panel" id="panel-contratos">
+
+  <!-- Action Bar Contratos -->
+  <div class="action-bar">
+    <span class="ab-label">⚡ Ações</span>
+    <button class="btn-export" onclick="exportarExcel('contratos')">📥 Exportar Excel · Contratos</button>
+    <button class="btn-export" onclick="exportarExcel('contratos_vencendo')">⚠️ Exportar · Vencendo 90d</button>
+    <button class="btn-n8n" id="btnN8nCtrRel" onclick="dispararN8N('relatorio_contratos')">📤 Enviar Relatório · E-mail/Teams</button>
+    <button class="btn-n8n" id="btnN8nCtrAlerta" onclick="dispararN8N('alerta_vencimentos')">🔔 Alerta Vencimentos</button>
+  </div>
+
   <!-- KPIs -->
   <div class="kpi-grid" id="kpiContratos"></div>
   <!-- Alertas -->
@@ -5153,6 +5259,278 @@ function renderContratos(){
   },60);
 }
 
+// =====================================================================
+// EXCEL EXPORT · SheetJS
+// =====================================================================
+function exportarExcel(modulo){
+  if(typeof XLSX==='undefined'){
+    mostrarToast('❌','SheetJS não carregado. Verifique sua conexão.','var(--red)'); return;
+  }
+  const wb=XLSX.utils.book_new();
+  const hoje=new Date();
+  const dataStr=hoje.toLocaleDateString('pt-BR').replace(/\//g,'-');
+  let nomeArquivo='';
+
+  if(modulo==='contratos'||modulo==='contratos_vencendo'){
+    const cList=enrichContratos();
+    const lista=modulo==='contratos_vencendo'
+      ?cList.filter(c=>c.diasRest>=0&&c.diasRest<=90)
+      :cList;
+
+    // Aba principal
+    const rows=lista.sort((a,b)=>b.valor-a.valor).map(c=>({
+      'ID':c.id,
+      'Nome do Contrato':c.nome,
+      'Fornecedor':c.fornecedor,
+      'Categoria':c.cat,
+      'Tipo':c.tipo,
+      'Verba':c.verba,
+      'Valor (R$)':c.valor,
+      'Consumido (R$)':c.consumido,
+      '% Consumido':c.pctConsumido+'%',
+      'Início':c.inicio,
+      'Fim':c.fim,
+      'Dias Restantes':c.diasRest,
+      'Status Display':c.statusDisplay,
+      'Status':c.status,
+      'Responsável':c.resp,
+      'Renovação':c.renovacao,
+      'Obs':c.obs||''
+    }));
+    const ws=XLSX.utils.json_to_sheet(rows);
+    // Larguras de coluna
+    ws['!cols']=[{wch:12},{wch:36},{wch:24},{wch:18},{wch:8},{wch:12},{wch:14},{wch:14},{wch:12},{wch:12},{wch:12},{wch:14},{wch:12},{wch:16},{wch:16},{wch:14},{wch:40}];
+    XLSX.utils.book_append_sheet(wb,ws,'Contratos');
+
+    // Aba resumo CAPEX/OPEX
+    const resumo=[
+      {'Métrica':'Data do relatório','Valor':hoje.toLocaleString('pt-BR')},
+      {'Métrica':'Total contratos','Valor':cList.length},
+      {'Métrica':'Valor total carteira (R$)','Valor':cList.reduce((s,c)=>s+c.valor,0)},
+      {'Métrica':'Total CAPEX (R$)','Valor':cList.filter(c=>c.tipo==='CAPEX').reduce((s,c)=>s+c.valor,0)},
+      {'Métrica':'Total OPEX (R$)','Valor':cList.filter(c=>c.tipo==='OPEX').reduce((s,c)=>s+c.valor,0)},
+      {'Métrica':'Consumido YTD (R$)','Valor':cList.reduce((s,c)=>s+c.consumido,0)},
+      {'Métrica':'Contratos vigentes','Valor':cList.filter(c=>c.statusDisplay==='Vigente').length},
+      {'Métrica':'Vencendo em 90 dias','Valor':cList.filter(c=>c.statusDisplay==='Próximo').length},
+      {'Métrica':'Em risco/revisão','Valor':cList.filter(c=>c.status.includes('⚠')||c.status.includes('Revisão')).length},
+    ];
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(resumo),'Resumo');
+    nomeArquivo=`Contratos_GovTI_${dataStr}.xlsx`;
+
+  } else if(modulo==='itsm'){
+    // Aba Incidentes
+    const rowsInc=(typeof incidentesItsm!=='undefined'?incidentesItsm:[]).map(i=>({
+      'ID':i.id,'Título':i.titulo,'Prioridade':i.prio,
+      'Status':i.status,'Categoria':i.cat,'Responsável':i.resp,
+      'Equipe':i.equipe,'Abertura':i.abertura,'SLA':i.sla,
+      'Descrição':i.desc||'','Ações':Array.isArray(i.acoes)?i.acoes.join(' | '):''
+    }));
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rowsInc),'Incidentes');
+
+    // Aba Problemas
+    const rowsProb=(typeof problemasItsm!=='undefined'?problemasItsm:[]).map(p=>({
+      'ID':p.id,'Título':p.titulo,'Status':p.status,
+      'Impacto':p.impacto,'CI Afetado':p.ci,'Incidentes Rel.':p.incRel,
+      'Abertura':p.abertura,'Resp.':p.resp,'Solução':p.solucao||''
+    }));
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rowsProb),'Problemas');
+
+    // Aba RFCs
+    const rowsRfc=(typeof mudancasCompletas!=='undefined'?mudancasCompletas:[]).map(m=>({
+      'ID':m.id,'Título':m.titulo,'Tipo':m.tipo,'Status':m.status,
+      'Risco':m.risco,'Prioridade':m.prioridade,'Responsável':m.resp,
+      'Data Solicitação':m.dataSolic,'Janela':m.janela,'CAB':m.cab||''
+    }));
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rowsRfc),'RFCs');
+    nomeArquivo=`ITSM_GovTI_${dataStr}.xlsx`;
+
+  } else if(modulo==='ativos'||modulo==='ativos_garantia'){
+    const lista=modulo==='ativos_garantia'
+      ?ativosInventario.filter(a=>{
+          try{const[d,m,y]=a.garantia.split('/');const g=new Date(+y,+m-1,+d);const diff=(g-hoje)/864e5;return diff>=0&&diff<=180;}
+          catch(e){return false;}
+        })
+      :ativosInventario;
+
+    const rows=lista.map(a=>({
+      'ID':a.id,'Patrimônio':a.patrimonio,'Nome':a.nome,
+      'Categoria':a.cat,'Fabricante':a.fabricante,'Modelo':a.modelo,
+      'Responsável':a.resp,'Local':a.local,'Status':a.status,
+      'Valor (R$)':a.valor,'Aquisição':a.aquisicao,'Garantia até':a.garantia,
+      'Tipo':a.tipo,'Nº Série':a.serie,'Especificações':a.spec||''
+    }));
+    const ws=XLSX.utils.json_to_sheet(rows);
+    ws['!cols']=[{wch:10},{wch:14},{wch:32},{wch:12},{wch:14},{wch:20},{wch:16},{wch:22},{wch:12},{wch:12},{wch:12},{wch:12},{wch:8},{wch:16},{wch:40}];
+    XLSX.utils.book_append_sheet(wb,ws,'Inventário');
+    nomeArquivo=`Ativos_GovTI_${dataStr}.xlsx`;
+  }
+
+  if(nomeArquivo){
+    XLSX.writeFile(wb,nomeArquivo);
+    mostrarToast('✅',`Excel gerado: ${nomeArquivo}`,'var(--green)');
+  }
+}
+
+// =====================================================================
+// N8N INTEGRATION
+// =====================================================================
+function salvarN8NConfig(){
+  const cfg={
+    alerta_p1:      $('n8nUrlAlertaP1')?.value||'',
+    relatorio_itsm: $('n8nUrlRelItsm')?.value||'',
+    relatorio_contratos:$('n8nUrlRelContratos')?.value||'',
+    alerta_vencimentos:$('n8nUrlAlertaVenc')?.value||'',
+    relatorio_ativos:$('n8nUrlRelAtivos')?.value||'',
+    portal_id:      $('n8nPortalId')?.value||'Portal Gov TI · Enterprise',
+    timeout:        parseInt($('n8nTimeout')?.value||'10000')
+  };
+  localStorage.setItem('n8n_config',JSON.stringify(cfg));
+  const st=$('n8nSaveStatus');
+  if(st){st.style.display='inline';setTimeout(()=>st.style.display='none',2500);}
+  mostrarToast('✅','Configuração N8N salva com sucesso!','var(--green)');
+}
+
+function carregarN8NConfig(){
+  try{
+    const cfg=JSON.parse(localStorage.getItem('n8n_config')||'{}');
+    if($('n8nUrlAlertaP1'))    $('n8nUrlAlertaP1').value=cfg.alerta_p1||'';
+    if($('n8nUrlRelItsm'))     $('n8nUrlRelItsm').value=cfg.relatorio_itsm||'';
+    if($('n8nUrlRelContratos'))$('n8nUrlRelContratos').value=cfg.relatorio_contratos||'';
+    if($('n8nUrlAlertaVenc'))  $('n8nUrlAlertaVenc').value=cfg.alerta_vencimentos||'';
+    if($('n8nUrlRelAtivos'))   $('n8nUrlRelAtivos').value=cfg.relatorio_ativos||'';
+    if($('n8nPortalId')&&cfg.portal_id) $('n8nPortalId').value=cfg.portal_id;
+    if($('n8nTimeout')&&cfg.timeout)    $('n8nTimeout').value=String(cfg.timeout);
+  }catch(e){}
+}
+
+async function dispararN8N(acao, dadosExtra){
+  const cfg=JSON.parse(localStorage.getItem('n8n_config')||'{}');
+  const url=cfg[acao]||'';
+  if(!url){
+    mostrarToast('⚠️','Webhook N8N não configurado. Vá em Config → Integração N8N.','var(--amber)'); return;
+  }
+  // Monta payload rico
+  const hoje=new Date();
+  const cList=enrichContratos();
+  const p1List=(typeof incidentesItsm!=='undefined')?incidentesItsm.filter(i=>i.prio==='P1'):[];
+  const payloads={
+    alerta_p1:{
+      tipo:'alerta_p1',
+      portal:cfg.portal_id||'Portal Gov TI',
+      timestamp:hoje.toISOString(),
+      total_p1:p1List.length,
+      incidentes_p1:p1List.map(i=>({id:i.id,titulo:i.titulo,status:i.status,responsavel:i.resp,abertura:i.abertura})),
+      link_portal:window.location.href
+    },
+    relatorio_itsm:{
+      tipo:'relatorio_itsm',
+      portal:cfg.portal_id||'Portal Gov TI',
+      timestamp:hoje.toISOString(),
+      kpis:{
+        total_incidentes:(typeof incidentesItsm!=='undefined')?incidentesItsm.length:0,
+        p1_abertos:p1List.length,
+        p2_abertos:(typeof incidentesItsm!=='undefined')?incidentesItsm.filter(i=>i.prio==='P2').length:0,
+        rfcs_pendentes:(typeof mudancasCompletas!=='undefined')?mudancasCompletas.filter(m=>m.status==='Em revisão'||m.status==='Aprovada').length:0
+      },
+      incidentes:(typeof incidentesItsm!=='undefined')?incidentesItsm:[],
+      problemas:(typeof problemasItsm!=='undefined')?problemasItsm:[],
+      rfcs:(typeof mudancasCompletas!=='undefined')?mudancasCompletas:[]
+    },
+    relatorio_contratos:{
+      tipo:'relatorio_contratos',
+      portal:cfg.portal_id||'Portal Gov TI',
+      timestamp:hoje.toISOString(),
+      kpis:{
+        total:cList.length,
+        valor_total:cList.reduce((s,c)=>s+c.valor,0),
+        capex_total:cList.filter(c=>c.tipo==='CAPEX').reduce((s,c)=>s+c.valor,0),
+        opex_total:cList.filter(c=>c.tipo==='OPEX').reduce((s,c)=>s+c.valor,0),
+        vencendo_90d:cList.filter(c=>c.statusDisplay==='Próximo').length,
+        em_risco:cList.filter(c=>c.status.includes('⚠')||c.status.includes('Revisão')).length
+      },
+      contratos:cList.map(c=>({id:c.id,nome:c.nome,fornecedor:c.fornecedor,tipo:c.tipo,valor:c.valor,consumido:c.consumido,pct_consumido:c.pctConsumido,status:c.statusDisplay,dias_rest:c.diasRest}))
+    },
+    alerta_vencimentos:{
+      tipo:'alerta_vencimentos',
+      portal:cfg.portal_id||'Portal Gov TI',
+      timestamp:hoje.toISOString(),
+      prazo_dias:90,
+      total_vencendo:cList.filter(c=>c.statusDisplay==='Próximo').length,
+      contratos_vencendo:cList.filter(c=>c.diasRest>=0&&c.diasRest<=90).map(c=>({id:c.id,nome:c.nome,fornecedor:c.fornecedor,valor:c.valor,fim:c.fim,dias_restantes:c.diasRest,tipo:c.tipo}))
+    },
+    relatorio_ativos:{
+      tipo:'relatorio_ativos',
+      portal:cfg.portal_id||'Portal Gov TI',
+      timestamp:hoje.toISOString(),
+      kpis:{
+        total:ativosInventario.length,
+        ativos:ativosInventario.filter(a=>a.status==='Ativo').length,
+        em_manutencao:ativosInventario.filter(a=>a.status==='Em manutenção').length,
+        valor_total:ativosInventario.reduce((s,a)=>s+(a.valor||0),0)
+      },
+      inventario:ativosInventario
+    }
+  };
+
+  const payload=payloads[acao]||{tipo:acao,portal:cfg.portal_id,timestamp:hoje.toISOString(),...(dadosExtra||{})};
+  const btnMap={alerta_p1:'btnN8nItsmP1',relatorio_itsm:'btnN8nItsmRel',relatorio_contratos:'btnN8nCtrRel',alerta_vencimentos:'btnN8nCtrAlerta',relatorio_ativos:'btnN8nAtiRel'};
+  const btn=$(btnMap[acao]);
+  if(btn){btn.classList.add('sending');btn.textContent='⏳ Enviando...';}
+  mostrarToast('⏳','Disparando N8N webhook...','var(--purple)');
+
+  try{
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),cfg.timeout||10000);
+    const res=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload),
+      signal:ctrl.signal
+    });
+    clearTimeout(tid);
+    if(res.ok){
+      mostrarToast('✅',`N8N executado com sucesso! (${acao.replace(/_/g,' ')}) · Status ${res.status}`,'var(--green)',5000);
+    } else {
+      mostrarToast('⚠️',`N8N respondeu com status ${res.status}. Verifique o workflow.`,'var(--amber)',5000);
+    }
+  }catch(e){
+    if(e.name==='AbortError'){
+      mostrarToast('❌','Timeout: N8N não respondeu. Verifique a URL e se o workflow está ativo.','var(--red)',6000);
+    } else {
+      mostrarToast('❌',`Erro ao chamar N8N: ${e.message}`,'var(--red)',6000);
+    }
+  }finally{
+    if(btn){
+      btn.classList.remove('sending');
+      const labels={alerta_p1:'🔔 Notificar Time · P1 Abertos',relatorio_itsm:'📤 Enviar Relatório ITSM',relatorio_contratos:'📤 Enviar Relatório · E-mail/Teams',alerta_vencimentos:'🔔 Alerta Vencimentos',relatorio_ativos:'📤 Enviar Relatório Ativos'};
+      btn.textContent=labels[acao]||'📤 Disparar N8N';
+    }
+  }
+}
+
+async function testarN8N(){
+  const cfg=JSON.parse(localStorage.getItem('n8n_config')||'{}');
+  const urls=Object.entries(cfg).filter(([k,v])=>k!=='portal_id'&&k!=='timeout'&&v);
+  if(!urls.length){mostrarToast('⚠️','Nenhuma URL configurada ainda.','var(--amber)');return;}
+  mostrarToast('🧪',`Testando ${urls.length} webhook(s) configurado(s)...`,'var(--purple)');
+  for(const[k,url]of urls){
+    try{
+      const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo:'teste',portal:cfg.portal_id,timestamp:new Date().toISOString(),mensagem:'Teste de conexão do Portal Gov TI'}),signal:AbortSignal.timeout(5000)});
+      mostrarToast('✅',`${k}: OK (${r.status})`,'var(--green)',3000);
+    }catch(e){mostrarToast('❌',`${k}: ${e.message}`,'var(--red)',4000);}
+  }
+}
+
+function mostrarToast(icon,msg,cor,duracao=3500){
+  document.querySelectorAll('.n8n-toast').forEach(t=>t.remove());
+  const t=document.createElement('div');
+  t.className='n8n-toast';
+  t.innerHTML=`<span style="font-size:16px;">${icon}</span><div><div style="font-size:11px;font-weight:600;color:${cor};">${msg}</div></div><span onclick="this.parentElement.remove()" style="cursor:pointer;color:var(--text3);font-size:14px;margin-left:8px;">✕</span>`;
+  t.style.borderLeftColor=cor;t.style.borderLeft=`3px solid ${cor}`;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},duracao);
+}
+
 function renderFornecedores(){
   const totalValor = fornecedoresList.reduce((s,f)=>s+f.valor,0);
   const criticos   = fornecedoresList.filter(f=>f.critico).length;
@@ -5359,7 +5737,7 @@ function renderBudget(){
   buildTicker();
   renderGeral();
   applyAdmProtection();
-  setTimeout(()=>{ injectTrocaSenhaBtn(); renderModulosCheckboxes([]); }, 100);
+  setTimeout(()=>{ injectTrocaSenhaBtn(); renderModulosCheckboxes([]); carregarN8NConfig(); }, 100);
 })();
 </script>
 </body>
