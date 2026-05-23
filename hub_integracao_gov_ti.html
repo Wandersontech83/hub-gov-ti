@@ -57,10 +57,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .tabs-wrap{background:rgba(7,7,15,0.9);border-bottom:1px solid var(--border);position:sticky;top:32px;z-index:99;padding:0 24px;backdrop-filter:blur(20px);}
 .tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
-.tab{display:flex;align-items:center;gap:6px;padding:10px 16px;font-size:11px;font-weight:500;color:var(--text2);border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;flex-shrink:0;}
+.tab{display:flex;align-items:center;gap:4px;padding:8px 11px;font-size:10px;font-weight:500;color:var(--text2);border-bottom:2px solid transparent;cursor:pointer;transition:all 0.2s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;flex-shrink:0;}
 .tab:hover{color:var(--text);}
 .tab.active{color:var(--text);border-bottom-color:var(--tab-color,var(--teal));}
-.tab-icon{font-size:14px;}
+.tab-icon{font-size:13px;}
 
 /* CONTENT */
 .content{padding:20px 24px;position:relative;z-index:1;min-height:calc(100vh - 130px);}
@@ -447,7 +447,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
   <!-- Grid de Módulos Navegáveis -->
   <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;">🗂 Módulos · Clique para navegar</div>
-  <div id="modulosNavGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:10px;margin-bottom:16px;"></div>
+  <div id="modulosNavGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px;margin-bottom:16px;"></div>
 
   <!-- Linha 1: Incidentes Trend + Priority Doughnut -->
   <div class="g2" style="margin-bottom:14px;">
@@ -984,71 +984,49 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- ===== CONTRATOS ===== -->
 <div class="tab-panel" id="panel-contratos">
+  <!-- KPIs -->
   <div class="kpi-grid" id="kpiContratos"></div>
-
-  <!-- Alertas de vencimento -->
+  <!-- Alertas -->
   <div id="alertasContratos" style="margin-bottom:12px;"></div>
-
-  <!-- Mini-tabs -->
-  <div class="mini-tabs">
-    <button class="mini-tab active" onclick="switchMiniTab('contratos','todos',this)">📋 Todos os Contratos</button>
-    <button class="mini-tab" onclick="switchMiniTab('contratos','capex',this)">🏗️ CAPEX</button>
-    <button class="mini-tab" onclick="switchMiniTab('contratos','opex',this)">🔄 OPEX</button>
-    <button class="mini-tab" onclick="switchMiniTab('contratos','vencendo',this)">⚠️ Vencendo</button>
-  </div>
-
-  <!-- Todos -->
-  <div class="mini-panel active" id="contratos-todos">
-    <div class="g2" style="margin-bottom:12px;">
-      <div class="card">
-        <div class="card-title">📊 Distribuição por Status</div>
-        <div style="display:flex;justify-content:center;"><div style="position:relative;width:180px;height:180px;"><canvas id="chartCtrStatus" width="180" height="180"></canvas></div></div>
-      </div>
-      <div class="card">
-        <div class="card-title">🏢 Valor por Torre de TI (R$ K)</div>
-        <div style="position:relative;height:180px;"><canvas id="chartCtrTorre"></canvas></div>
+  <!-- Linha 1: CAPEX/OPEX doughnut + por categoria -->
+  <div class="g2" style="margin-bottom:12px;">
+    <div class="card">
+      <div class="card-title">🔵 CAPEX vs OPEX</div>
+      <div style="display:flex;align-items:center;gap:20px;padding:6px 0;">
+        <div style="position:relative;width:160px;height:160px;flex-shrink:0;"><canvas id="chartCtrCapexOpex" width="160" height="160"></canvas></div>
+        <div id="ctrCapexLegend" style="flex:1;"></div>
       </div>
     </div>
     <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-        <div class="card-title" style="margin:0;">📋 Carteira de Contratos · <span style="color:var(--text3);font-weight:400;">Clique para detalhar</span></div>
-        <div style="display:flex;gap:6px;">
-          <select class="form-select" style="font-size:10px;padding:4px 8px;" id="ctrFiltroTipo" onchange="renderContratos()">
-            <option value="">Todos os tipos</option><option>CAPEX</option><option>OPEX</option>
-          </select>
-          <select class="form-select" style="font-size:10px;padding:4px 8px;" id="ctrFiltroStatus" onchange="renderContratos()">
-            <option value="">Todos os status</option><option>Ativo</option><option>Em andamento</option>
-          </select>
-        </div>
-      </div>
-      <div class="tbl-wrap"><table class="tbl" id="tblContratosGeral"></table></div>
+      <div class="card-title">🏢 Valor por Categoria (R$ M)</div>
+      <div style="position:relative;height:180px;"><canvas id="chartCtrCategoria"></canvas></div>
     </div>
   </div>
-
-  <!-- CAPEX -->
-  <div class="mini-panel" id="contratos-capex">
-    <div class="kpi-grid" id="kpiCapex"></div>
-    <div class="card" style="margin-top:4px;">
-      <div class="card-title">🏗️ Contratos CAPEX · Investimentos</div>
-      <div class="tbl-wrap"><table class="tbl" id="tblCapex"></table></div>
-    </div>
-  </div>
-
-  <!-- OPEX -->
-  <div class="mini-panel" id="contratos-opex">
-    <div class="kpi-grid" id="kpiOpex"></div>
-    <div class="card" style="margin-top:4px;">
-      <div class="card-title">🔄 Contratos OPEX · Despesas Operacionais</div>
-      <div class="tbl-wrap"><table class="tbl" id="tblOpex"></table></div>
-    </div>
-  </div>
-
-  <!-- Vencendo -->
-  <div class="mini-panel" id="contratos-vencendo">
+  <!-- Linha 2: % consumido por contrato + budget breakdown -->
+  <div class="g2" style="margin-bottom:12px;">
     <div class="card">
-      <div class="card-title">⚠️ Contratos Vencendo · Próximos 180 dias · Ação necessária</div>
-      <div id="listaVencendo"></div>
+      <div class="card-title">📊 % Consumido por Contrato</div>
+      <div style="position:relative;height:220px;"><canvas id="chartCtrConsumo"></canvas></div>
     </div>
+    <div class="card">
+      <div class="card-title">💼 Budget · Sustentação · Melhoria · Inovação</div>
+      <div id="ctrBudgetBreakdown" style="padding:8px 0;"></div>
+    </div>
+  </div>
+  <!-- Tabela completa -->
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+      <div class="card-title" style="margin:0;">📋 Todos os Contratos · <span style="color:var(--text3);font-weight:400;">Clique para detalhar</span></div>
+      <div style="display:flex;gap:6px;">
+        <select class="form-select" style="font-size:10px;padding:4px 8px;" id="ctrFiltroTipo" onchange="renderContratos()">
+          <option value="">Todos os tipos</option><option>CAPEX</option><option>OPEX</option>
+        </select>
+        <select class="form-select" style="font-size:10px;padding:4px 8px;" id="ctrFiltroStatus" onchange="renderContratos()">
+          <option value="">Todos os status</option><option>Vigente</option><option>Próximo</option><option>Vencido</option>
+        </select>
+      </div>
+    </div>
+    <div class="tbl-wrap"><table class="tbl" id="tblContratosGeral"></table></div>
   </div>
 </div>
 
@@ -1155,7 +1133,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
   <!-- CONTRATOS -->
   <div class="mini-panel" id="finops-contratos">
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px;" id="kpiContratos"></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px;" id="kpiContratosFinops"></div>
     <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
       <select class="form-select" style="font-size:10px;padding:4px 8px;width:110px;" id="filtroTipoContrato" onchange="renderFinops()">
         <option value="">Todos</option><option value="OPEX">OPEX</option><option value="CAPEX">CAPEX</option>
@@ -3362,6 +3340,9 @@ function renderGeral(){
     { icon:'🔥', nome:'Riscos', tab:'riscos', cor:'var(--red)',
       status:'4 críticos acima do apetite', statusCor:'var(--red)',
       metricas:[ 'KRI médio: 74/100', '2 sem plano de mitigação', 'Próxima revisão: Jun/26' ] },
+    { icon:'📋', nome:'Contratos', tab:'contratos', cor:'var(--blue)',
+      status:`${contratos.filter(c=>c.status==='Ativo'||c.status==='Em andamento').length} ativos`, statusCor:'var(--green)',
+      metricas:[ `R$ ${(contratos.reduce((s,c)=>s+c.valor,0)/1e6).toFixed(1)}M carteira total`, `CAPEX + OPEX · ${contratos.length} contratos`, `${contratos.filter(c=>{ try{const[d,m,y]=c.fim.split('/');return (new Date(+y,+m-1,+d)-new Date())<90*864e5&&(new Date(+y,+m-1,+d)>new Date());}catch(e){return false;}}).length} vencendo em 90 dias` ] },
     { icon:'🎫', nome:'ITSM', tab:'itsm', cor:'var(--red)',
       status:'2 P1 abertos · SLA em risco', statusCor:'var(--red)',
       metricas:[ '23 incidentes abertos', 'MTTR médio: 4h32min', 'FCR: 67% (meta 75%)' ] },
@@ -3487,8 +3468,8 @@ function renderFinops(){
     {icon:'📋',label:'Total Contratos',val:`R$ ${(totalContr/1e6).toFixed(1)}M`,sub:`${contratos.length} contratos ativos`,accent:'var(--purple)'},
   ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
 
-  // --- KPIs Contratos ---
-  $('kpiContratos').innerHTML = [
+  // --- KPIs Contratos (FinOps sub-panel) ---
+  if($('kpiContratosFinops')) $('kpiContratosFinops').innerHTML = [
     {icon:'💳',label:'Total OPEX',val:`R$ ${(opexContr/1e6).toFixed(1)}M`,sub:`${contratos.filter(c=>c.tipo==='OPEX').length} contratos`,accent:'var(--teal)'},
     {icon:'🏗️',label:'Total CAPEX',val:`R$ ${(capexContr/1e6).toFixed(1)}M`,sub:`${contratos.filter(c=>c.tipo==='CAPEX').length} contratos`,accent:'var(--blue)'},
     {icon:'⚠️',label:'Vencendo em 90d',val:vencendo,sub:'requer atenção',accent:vencendo?'var(--amber)':'var(--green)'},
@@ -4963,50 +4944,70 @@ const fornecedoresList = [
 ];
 
 // =====================================================================
-// CONTRATOS — render dedicado
+// CONTRATOS — render dedicado (visual enterprise completo)
 // =====================================================================
+
+// Enriquece dados de contratos com consumido, verba e statusDisplay
+function enrichContratos(){
+  const hoje=new Date();
+  return contratos.map(c=>{
+    const parseDate=s=>{ try{ const[d,m,y]=s.split('/'); return new Date(+y,+m-1,+d); }catch(e){ return hoje; }};
+    const dtI=parseDate(c.inicio), dtF=parseDate(c.fim);
+    const totalDias=Math.max(1,(dtF-dtI)/864e5);
+    const passados=Math.min(totalDias,Math.max(0,(hoje-dtI)/864e5));
+    const pctPass=Math.round(passados/totalDias*100);
+    const consumido=Math.round(c.valor*(passados/totalDias));
+    const diasRest=Math.ceil((dtF-hoje)/864e5);
+    const statusDisplay=diasRest<0?'Vencido':diasRest<=90?'Próximo':'Vigente';
+    const verba=c.cat.includes('Consultor')||c.cat.includes('Projeto')||c.cat.includes('CAPEX')?'Inovação':
+                c.tipo==='CAPEX'&&!c.cat.includes('SaaS')?'Melhoria':'Sustentação';
+    return {...c,consumido,pctConsumido:pctPass,diasRest,statusDisplay,verba};
+  });
+}
+
 function renderContratos(){
   const filTipo   = $('ctrFiltroTipo')?.value   || '';
   const filStatus = $('ctrFiltroStatus')?.value || '';
 
-  const hoje = new Date();
-  const diasAte = (dataStr)=>{ try{ const[d,m,y]=dataStr.split('/'); return Math.ceil((new Date(+y,+m-1,+d)-hoje)/864e5); }catch(e){ return 999; }};
+  const hoje  = new Date();
+  const cList = enrichContratos();
 
-  const totalVal  = contratos.reduce((s,c)=>s+c.valor,0);
-  const capexVal  = contratos.filter(c=>c.tipo==='CAPEX').reduce((s,c)=>s+c.valor,0);
-  const opexVal   = contratos.filter(c=>c.tipo==='OPEX').reduce((s,c)=>s+c.valor,0);
-  const ativos    = contratos.filter(c=>c.status==='Ativo'||c.status==='Em andamento').length;
-  const venc30    = contratos.filter(c=>{ const d=diasAte(c.fim); return d>=0&&d<=30; }).length;
-  const venc90    = contratos.filter(c=>{ const d=diasAte(c.fim); return d>=0&&d<=90; }).length;
-  const emRisco   = contratos.filter(c=>c.status.includes('⚠')||c.status.includes('Revisão')).length;
+  const totalVal  = cList.reduce((s,c)=>s+c.valor,0);
+  const capexVal  = cList.filter(c=>c.tipo==='CAPEX').reduce((s,c)=>s+c.valor,0);
+  const opexVal   = cList.filter(c=>c.tipo==='OPEX').reduce((s,c)=>s+c.valor,0);
+  const totalCons = cList.reduce((s,c)=>s+c.consumido,0);
+  const saldo     = totalVal - totalCons;
+  const ativos    = cList.filter(c=>c.status==='Ativo'||c.status==='Em andamento').length;
+  const vencidos  = cList.filter(c=>c.statusDisplay==='Vencido').length;
+  const proximos  = cList.filter(c=>c.statusDisplay==='Próximo').length;
+  const venc30    = cList.filter(c=>c.diasRest>=0&&c.diasRest<=30).length;
+  const emRisco   = cList.filter(c=>c.status.includes('⚠')||c.status.includes('Revisão')).length;
 
-  // ── KPIs ───────────────────────────────────────────────────────────
-  $('kpiContratos').innerHTML=[
-    {icon:'📋',label:'Total Contratos',val:contratos.length,sub:`${ativos} ativos / em andamento`,accent:'var(--blue)'},
-    {icon:'💰',label:'Valor Total Carteira',val:`R$ ${(totalVal/1e6).toFixed(1)}M`,sub:`CAPEX: R$ ${(capexVal/1e6).toFixed(1)}M · OPEX: R$ ${(opexVal/1e6).toFixed(1)}M`,accent:'var(--green)'},
-    {icon:'🏗️',label:'CAPEX',val:`R$ ${(capexVal/1e6).toFixed(1)}M`,sub:`${contratos.filter(c=>c.tipo==='CAPEX').length} contratos de investimento`,accent:'var(--blue)'},
-    {icon:'🔄',label:'OPEX',val:`R$ ${(opexVal/1e6).toFixed(1)}M`,sub:`${contratos.filter(c=>c.tipo==='OPEX').length} contratos operacionais`,accent:'var(--teal)'},
-    {icon:'⚠️',label:'Vencendo em 90 dias',val:venc90,sub:`${venc30} vencendo em 30 dias`,accent:venc30>0?'var(--red)':'var(--amber)'},
+  // ── KPIs ──────────────────────────────────────────────────────────────
+  if($('kpiContratos')) $('kpiContratos').innerHTML=[
+    {icon:'📋',label:'Total Contratos',val:cList.length,sub:`${ativos} ativos · ${vencidos} vencidos`,accent:'var(--blue)'},
+    {icon:'💰',label:'Valor Total Carteira',val:`R$ ${(totalVal/1e6).toFixed(1)}M`,sub:`CAPEX R$ ${(capexVal/1e6).toFixed(1)}M · OPEX R$ ${(opexVal/1e6).toFixed(1)}M`,accent:'var(--green)'},
+    {icon:'🏗️',label:'CAPEX',val:`R$ ${(capexVal/1e6).toFixed(1)}M`,sub:`${cList.filter(c=>c.tipo==='CAPEX').length} contratos · ${Math.round(capexVal/totalVal*100)}% da carteira`,accent:'var(--blue)'},
+    {icon:'🔄',label:'OPEX',val:`R$ ${(opexVal/1e6).toFixed(1)}M`,sub:`${cList.filter(c=>c.tipo==='OPEX').length} contratos · ${Math.round(opexVal/totalVal*100)}% da carteira`,accent:'var(--teal)'},
+    {icon:'💸',label:'Consumido YTD',val:`R$ ${(totalCons/1e6).toFixed(1)}M`,sub:`${Math.round(totalCons/totalVal*100)}% do orçamento · Saldo R$ ${(saldo/1e6).toFixed(1)}M`,accent:'var(--amber)'},
+    {icon:'✅',label:'Vigentes',val:cList.filter(c=>c.statusDisplay==='Vigente').length,sub:`${proximos} vencendo em 90d · ${vencidos} vencidos`,accent:'var(--green)'},
+    {icon:'⚠️',label:'Vencendo em 90 dias',val:proximos,sub:`${venc30} vencendo em 30 dias · ação urgente`,accent:venc30>0?'var(--red)':'var(--amber)'},
     {icon:'🔴',label:'Em Risco / Revisão',val:emRisco,sub:'Ação imediata necessária',accent:emRisco>0?'var(--red)':'var(--green)'},
   ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
 
-  // ── Alertas de vencimento ──────────────────────────────────────────
-  const alertList=contratos.filter(c=>{ const d=diasAte(c.fim); return d>=0&&d<=180; })
-    .sort((a,b)=>diasAte(a.fim)-diasAte(b.fim));
-  $('alertasContratos').innerHTML=alertList.length===0?'':
+  // ── Alertas de vencimento ─────────────────────────────────────────────
+  const alertList=cList.filter(c=>c.diasRest>=0&&c.diasRest<=180).sort((a,b)=>a.diasRest-b.diasRest);
+  if($('alertasContratos')) $('alertasContratos').innerHTML=alertList.length===0?'':
     `<div class="card" style="border-left:3px solid var(--amber);margin-bottom:12px;">
-      <div class="card-title" style="color:var(--amber);">⚠️ Contratos com vencimento nos próximos 180 dias</div>
+      <div class="card-title" style="color:var(--amber);margin-bottom:8px;">⚠️ Contratos com vencimento nos próximos 180 dias</div>
       ${alertList.map(c=>{
-        const dias=diasAte(c.fim);
-        const cor=dias<=30?'var(--red)':dias<=90?'var(--amber)':'var(--blue)';
-        const bg=dias<=30?'rgba(247,95,95,0.06)':dias<=90?'rgba(245,166,35,0.06)':'var(--bg3)';
+        const cor=c.diasRest<=30?'var(--red)':c.diasRest<=90?'var(--amber)':'var(--blue)';
+        const bg=c.diasRest<=30?'rgba(247,95,95,0.06)':c.diasRest<=90?'rgba(245,166,35,0.06)':'var(--bg3)';
         return `<div onclick="abrirContratoDetalhe('${c.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:${bg};border-radius:8px;margin-bottom:6px;cursor:pointer;border:1px solid var(--border);" onmouseover="this.style.borderColor='${cor}'" onmouseout="this.style.borderColor='var(--border)'">
-          <div>
-            <div style="font-size:11px;font-weight:600;">${c.nome}</div>
-            <div style="font-size:10px;color:var(--text3);">${c.fornecedor} · ${c.id} · Vence: ${c.fim}</div>
-          </div>
+          <div><div style="font-size:11px;font-weight:600;">${c.nome}</div>
+          <div style="font-size:10px;color:var(--text3);">${c.fornecedor} · ${c.id} · Vence: ${c.fim}</div></div>
           <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-            <span style="font-size:11px;font-weight:700;color:${cor};">${dias} dias</span>
+            <span style="font-size:11px;font-weight:700;color:${cor};">${c.diasRest}d</span>
             <span class="badge ${c.tipo==='CAPEX'?'b-blue':'b-teal'}">${c.tipo}</span>
             <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--green);">R$ ${(c.valor/1e3).toFixed(0)}K</span>
           </div>
@@ -5014,106 +5015,141 @@ function renderContratos(){
       }).join('')}
     </div>`;
 
-  // ── Tabela helper ──────────────────────────────────────────────────
-  const tblHtml=(lista)=>`<thead><tr><th>Nº Contrato</th><th>Nome</th><th>Fornecedor</th><th>Tipo</th><th>Valor</th><th>Vigência</th><th>Renovação</th><th>Status</th></tr></thead><tbody>`+
-    lista.sort((a,b)=>b.valor-a.valor).map(c=>{
+  // ── Tabela completa (Consumido + %) ───────────────────────────────────
+  const listaFiltrada=cList.filter(c=>
+    (!filTipo||c.tipo===filTipo)&&
+    (!filStatus||c.statusDisplay===filStatus)
+  );
+  if($('tblContratosGeral')) $('tblContratosGeral').innerHTML=
+    `<thead><tr><th>ID</th><th>Nome</th><th>Fornecedor</th><th>Cat.</th><th>Tipo</th><th>Verba</th><th>Valor</th><th>Consumido</th><th>%</th><th>Vencimento</th><th>Status</th></tr></thead><tbody>`+
+    [...listaFiltrada].sort((a,b)=>b.valor-a.valor).map(c=>{
       const tc=c.tipo==='CAPEX'?'b-blue':'b-teal';
-      const sc=c.status==='Ativo'?'b-green':c.status==='Em andamento'?'b-blue':(c.status.includes('Revisão')||c.status.includes('⚠'))?'b-amber':'b-gray';
-      const dias=diasAte(c.fim);
-      const vencBadge=dias>=0&&dias<=90?`<span class="badge b-amber" style="margin-left:4px;">${dias}d</span>`:(dias>=0&&dias<=180?`<span class="badge b-blue" style="margin-left:4px;">${dias}d</span>`:'');
-      return `<tr onclick="abrirContratoDetalhe('${c.id}')" style="cursor:pointer;" title="Clique para ver detalhes">
+      const vc=c.verba==='Inovação'?'b-purple':c.verba==='Melhoria'?'b-blue':'b-teal';
+      const sd=c.statusDisplay==='Vigente'?'b-green':c.statusDisplay==='Próximo'?'b-amber':'b-red';
+      const pct=Math.min(100,c.pctConsumido);
+      const pctCor=pct>=90?'var(--red)':pct>=70?'var(--amber)':'var(--green)';
+      return `<tr onclick="abrirContratoDetalhe('${c.id}')" style="cursor:pointer;" title="Clique para detalhar">
         <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${c.id}</td>
         <td><b style="font-size:11px;">${c.nome}</b></td>
         <td style="font-size:10px;color:var(--text2);">${c.fornecedor}</td>
+        <td style="font-size:10px;color:var(--text3);">${c.cat}</td>
         <td><span class="badge ${tc}">${c.tipo}</span></td>
+        <td><span class="badge ${vc}">${c.verba}</span></td>
         <td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">R$ ${(c.valor/1e3).toFixed(0)}K</td>
-        <td style="font-size:10px;">${c.inicio}<br><span style="color:var(--text3);">até ${c.fim}</span>${vencBadge}</td>
-        <td style="font-size:10px;color:var(--text2);">${c.renovacao}</td>
-        <td><span class="badge ${sc}">${c.status}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--amber);">R$ ${(c.consumido/1e3).toFixed(0)}K</td>
+        <td><div style="display:flex;align-items:center;gap:5px;">
+          <div style="width:44px;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;">
+            <div style="width:${pct}%;height:100%;background:${pctCor};border-radius:3px;"></div>
+          </div>
+          <span style="font-size:10px;color:${pctCor};font-weight:600;">${c.pctConsumido}%</span>
+        </div></td>
+        <td style="font-size:10px;">${c.fim}<br><span class="badge ${sd}" style="font-size:8px;">${c.statusDisplay}</span></td>
+        <td style="font-size:10px;color:var(--text2);">${c.status}</td>
       </tr>`;
     }).join('')+'</tbody>';
 
-  // ── Tabela principal (filtro) ──────────────────────────────────────
-  const listaFiltrada=contratos.filter(c=>(!filTipo||c.tipo===filTipo)&&(!filStatus||c.status.includes(filStatus)));
-  if($('tblContratosGeral')) $('tblContratosGeral').innerHTML=tblHtml(listaFiltrada);
-
-  // ── CAPEX ─────────────────────────────────────────────────────────
-  const capexList=contratos.filter(c=>c.tipo==='CAPEX');
-  if($('kpiCapex')) $('kpiCapex').innerHTML=[
-    {icon:'🏗️',label:'Contratos CAPEX',val:capexList.length,sub:'investimentos em ativos',accent:'var(--blue)'},
-    {icon:'💰',label:'Total CAPEX',val:`R$ ${(capexVal/1e6).toFixed(2)}M`,sub:`${Math.round(capexVal/totalVal*100)}% do orçamento total`,accent:'var(--blue)'},
-    {icon:'⚠️',label:'Vencendo 90d',val:capexList.filter(c=>{const d=diasAte(c.fim);return d>=0&&d<=90;}).length,sub:'requerem renovação',accent:'var(--amber)'},
-    {icon:'✅',label:'Em dia',val:capexList.filter(c=>c.status==='Ativo'||c.status==='Em andamento').length,sub:'ativos / em andamento',accent:'var(--green)'},
-  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
-  if($('tblCapex')) $('tblCapex').innerHTML=tblHtml(capexList);
-
-  // ── OPEX ──────────────────────────────────────────────────────────
-  const opexList=contratos.filter(c=>c.tipo==='OPEX');
-  if($('kpiOpex')) $('kpiOpex').innerHTML=[
-    {icon:'🔄',label:'Contratos OPEX',val:opexList.length,sub:'despesas operacionais recorrentes',accent:'var(--teal)'},
-    {icon:'💰',label:'Total OPEX',val:`R$ ${(opexVal/1e6).toFixed(2)}M`,sub:`${Math.round(opexVal/totalVal*100)}% do orçamento total`,accent:'var(--teal)'},
-    {icon:'📅',label:'Renovação Automática',val:opexList.filter(c=>c.renovacao==='Automática').length,sub:'contratos com auto-renovação',accent:'var(--blue)'},
-    {icon:'⚠️',label:'Vencendo 90d',val:opexList.filter(c=>{const d=diasAte(c.fim);return d>=0&&d<=90;}).length,sub:'verificar renovação',accent:'var(--amber)'},
-  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
-  if($('tblOpex')) $('tblOpex').innerHTML=tblHtml(opexList);
-
-  // ── Vencendo ──────────────────────────────────────────────────────
-  if($('listaVencendo')){
-    const vencList=contratos.filter(c=>{ const d=diasAte(c.fim); return d>=0&&d<=180; }).sort((a,b)=>diasAte(a.fim)-diasAte(b.fim));
-    $('listaVencendo').innerHTML=vencList.length===0
-      ?'<div style="padding:16px;text-align:center;color:var(--green);">✅ Nenhum contrato vencendo nos próximos 180 dias.</div>'
-      :vencList.map(c=>{
-        const dias=diasAte(c.fim);
-        const cor=dias<=30?'var(--red)':dias<=90?'var(--amber)':'var(--blue)';
-        const urgencia=dias<=30?'URGENTE — vence em breve':dias<=90?'Atenção — renovação próxima':'Planejamento — monitorar';
-        return `<div onclick="abrirContratoDetalhe('${c.id}')" style="display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;border-left:4px solid ${cor};" onmouseover="this.style.background='var(--card)'" onmouseout="this.style.background='var(--bg3)'">
-          <div style="text-align:center;min-width:56px;flex-shrink:0;">
-            <div style="font-size:24px;font-weight:700;color:${cor};line-height:1;">${dias}</div>
-            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;">dias</div>
-          </div>
-          <div style="flex:1;">
-            <div style="font-size:12px;font-weight:600;margin-bottom:3px;">${c.nome}</div>
-            <div style="font-size:10px;color:var(--text2);margin-bottom:4px;">${c.fornecedor} · ${c.id} · ${c.cat}</div>
-            <div style="font-size:10px;color:var(--text3);">Vigência: ${c.inicio} → <b style="color:${cor};">${c.fim}</b> · Renovação: ${c.renovacao}</div>
-            <div style="font-size:9px;color:${cor};font-weight:600;margin-top:4px;text-transform:uppercase;letter-spacing:0.05em;">⚡ ${urgencia}</div>
-          </div>
-          <div style="text-align:right;flex-shrink:0;">
-            <div style="font-size:16px;font-weight:700;color:var(--green);">R$ ${(c.valor/1e3).toFixed(0)}K</div>
-            <div style="margin-top:4px;"><span class="badge ${c.tipo==='CAPEX'?'b-blue':'b-teal'}">${c.tipo}</span></div>
-            <div style="margin-top:4px;font-size:10px;color:var(--text3);">Resp: ${c.resp}</div>
-          </div>
-        </div>`;
-      }).join('');
-  }
-
-  // ── Gráficos ──────────────────────────────────────────────────────
+  // ── Gráficos ──────────────────────────────────────────────────────────
   setTimeout(()=>{
-    // Doughnut status
-    const stMap={};
-    contratos.forEach(c=>{ const k=c.status.includes('⚠')||c.status.includes('Revisão')?'Em Revisão':c.status; stMap[k]=(stMap[k]||0)+1; });
-    const stKeys=Object.keys(stMap);
-    const stCols={'Ativo':'#2dd4a0','Em andamento':'#4f8ef7','Em Revisão':'#f5a623','Encerrado':'#6b7280'};
-    initChart('chartCtrStatus',{type:'doughnut',
-      data:{labels:stKeys,datasets:[{data:stKeys.map(k=>stMap[k]),backgroundColor:stKeys.map(k=>stCols[k]||'#8888bb'),borderWidth:0}]},
-      options:{responsive:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},padding:8}}},cutout:'60%'}});
-
-    // Bar torre
-    const torraMap={'Infraestrutura':0,'Cloud & SaaS':0,'Segurança':0,'Aplicações & ERP':0,'Projetos & PMO':0,'Suporte':0};
-    contratos.forEach(c=>{
-      const k=c.cat.includes('Cloud')||c.cat.includes('SaaS')?'Cloud & SaaS':
-               c.cat.includes('Segur')?'Segurança':
-               c.cat.includes('ERP')||c.cat.includes('Licença')||c.cat.includes('SaaS')?'Aplicações & ERP':
-               c.cat.includes('Infra')||c.cat.includes('HW')||c.cat.includes('Hardware')?'Infraestrutura':
-               c.cat.includes('Consultor')||c.cat.includes('Projeto')?'Projetos & PMO':'Suporte & Outros';
-      torraMap[k]=(torraMap[k]||0)+c.valor;
+    // Doughnut CAPEX vs OPEX
+    initChart('chartCtrCapexOpex',{
+      type:'doughnut',
+      data:{labels:['CAPEX','OPEX'],datasets:[{
+        data:[Math.round(capexVal/1e3),Math.round(opexVal/1e3)],
+        backgroundColor:['#4f8ef7','#22d3ee'],borderWidth:0
+      }]},
+      options:{responsive:false,plugins:{legend:{display:false}},cutout:'62%'}
     });
-    const torraEntries=Object.entries(torraMap).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
-    initChart('chartCtrTorre',{type:'bar',
-      data:{labels:torraEntries.map(([k])=>k.split(' ')[0]),
-        datasets:[{data:torraEntries.map(([,v])=>Math.round(v/1e3)),
-          backgroundColor:['#4f8ef7','#22d3ee','#f5a623','#a78bfa','#2dd4a0','#8888bb'],borderRadius:4}]},
+
+    // CAPEX/OPEX Legend
+    if($('ctrCapexLegend')) $('ctrCapexLegend').innerHTML=`
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div>
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">CAPEX · Investimento</div>
+          <div style="font-size:20px;font-weight:700;color:var(--blue);">R$ ${(capexVal/1e6).toFixed(2)}M</div>
+          <div style="font-size:10px;color:var(--text2);">${cList.filter(c=>c.tipo==='CAPEX').length} contratos · ${Math.round(capexVal/totalVal*100)}%</div>
+          <div style="height:3px;background:var(--blue2);border-radius:2px;margin-top:4px;overflow:hidden;">
+            <div style="width:${Math.round(capexVal/totalVal*100)}%;height:100%;background:var(--blue);border-radius:2px;"></div></div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">OPEX · Operacional</div>
+          <div style="font-size:20px;font-weight:700;color:var(--teal);">R$ ${(opexVal/1e6).toFixed(2)}M</div>
+          <div style="font-size:10px;color:var(--text2);">${cList.filter(c=>c.tipo==='OPEX').length} contratos · ${Math.round(opexVal/totalVal*100)}%</div>
+          <div style="height:3px;background:var(--teal2);border-radius:2px;margin-top:4px;overflow:hidden;">
+            <div style="width:${Math.round(opexVal/totalVal*100)}%;height:100%;background:var(--teal);border-radius:2px;"></div></div>
+        </div>
+        <div style="padding-top:8px;border-top:1px solid var(--border);">
+          <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Saldo disponível</div>
+          <div style="font-size:16px;font-weight:700;color:var(--green);">R$ ${(saldo/1e6).toFixed(2)}M</div>
+          <div style="font-size:10px;color:var(--text2);">${Math.round(saldo/totalVal*100)}% não consumido</div>
+        </div>
+      </div>`;
+
+    // Valor por Categoria (bar)
+    const catMap={};
+    cList.forEach(c=>{
+      const k=c.cat.includes('Cloud')?'Cloud & SaaS':
+               c.cat.includes('Segur')?'Segurança':
+               c.cat.includes('Hardware')||c.cat.includes('HW')?'Hardware':
+               c.cat.includes('Software')||c.cat.includes('Licença')?'Software':
+               c.cat.includes('Infra')?'Infraestrutura':
+               c.cat.includes('Consul')||c.cat.includes('Projeto')?'Consultoria':'SaaS';
+      catMap[k]=(catMap[k]||0)+c.valor;
+    });
+    const catE=Object.entries(catMap).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+    initChart('chartCtrCategoria',{
+      type:'bar',
+      data:{labels:catE.map(([k])=>k),datasets:[{
+        data:catE.map(([,v])=>+(v/1e6).toFixed(2)),
+        backgroundColor:['#4f8ef7','#22d3ee','#2dd4a0','#a78bfa','#f5a623','#f75f5f','#8888bb'],
+        borderRadius:4
+      }]},
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-        scales:{y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+        scales:{y:{ticks:{callback:v=>v+'M'},grid:{color:'rgba(255,255,255,0.04)'}},
+                x:{ticks:{font:{size:9}},grid:{display:false}}}}
+    });
+
+    // % Consumido por Contrato (horizontal bar)
+    const cSorted=[...cList].sort((a,b)=>b.pctConsumido-a.pctConsumido);
+    initChart('chartCtrConsumo',{
+      type:'bar',
+      data:{labels:cSorted.map(c=>c.nome.length>24?c.nome.substring(0,22)+'…':c.nome),
+        datasets:[{
+          data:cSorted.map(c=>c.pctConsumido),
+          backgroundColor:cSorted.map(c=>c.pctConsumido>=90?'#f75f5f':c.pctConsumido>=70?'#f5a623':'#2dd4a0'),
+          borderRadius:3
+        }]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{x:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'}},
+                y:{ticks:{font:{size:9}},grid:{display:false}}}}
+    });
+
+    // Budget Breakdown Sustentação / Melhoria / Inovação
+    const verbas=[
+      {v:'Sustentação',icon:'🔧',cor:'var(--teal)'},
+      {v:'Melhoria',   icon:'⬆️', cor:'var(--blue)'},
+      {v:'Inovação',   icon:'🚀', cor:'var(--purple)'}
+    ];
+    const vTotals=verbas.map(({v,icon,cor})=>({
+      v,icon,cor,
+      total:cList.filter(c=>c.verba===v).reduce((s,c)=>s+c.valor,0),
+      count:cList.filter(c=>c.verba===v).length
+    }));
+    const maxV=Math.max(...vTotals.map(x=>x.total),1);
+    if($('ctrBudgetBreakdown')) $('ctrBudgetBreakdown').innerHTML=vTotals.map(({v,icon,cor,total,count})=>`
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+          <div style="font-size:11px;font-weight:600;">${icon} ${v}</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:10px;color:var(--text3);">${count} contrato${count!==1?'s':''}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:${cor};">R$ ${(total/1e6).toFixed(2)}M</span>
+          </div>
+        </div>
+        <div style="height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;">
+          <div style="width:${Math.round(total/maxV*100)}%;height:100%;background:${cor};border-radius:4px;transition:width .6s ease;"></div>
+        </div>
+        <div style="font-size:9px;color:var(--text3);margin-top:3px;">${Math.round(total/totalVal*100)}% do orçamento total</div>
+      </div>`).join('');
   },60);
 }
 
