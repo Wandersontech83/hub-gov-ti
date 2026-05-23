@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hub de Integração · Governança de TI</title>
+<title>Portal de Governança de TI · Enterprise</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
@@ -357,23 +357,36 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- TICKER -->
 <div class="ticker-wrap">
-  <div class="ticker-label">⚡ hub·int</div>
+  <div class="ticker-label">⚡ gov·ti</div>
   <div class="ticker-track"><div class="ticker-inner" id="tickerEl"></div></div>
 </div>
 
 <!-- HEADER -->
 <div class="header">
   <div class="header-left">
-    <div class="logo">🔌</div>
+    <div class="logo">🏛️</div>
     <div>
-      <h1>Hub de Integração · Governança de TI</h1>
-      <p>SAP · Oracle · ServiceNow · Jira · GLPI · Planilhas · N8N</p>
+      <h1>Portal de Governança de TI · Enterprise</h1>
+      <p style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <span style="color:var(--teal);font-weight:600;font-size:9px;">COBIT</span>
+        <span style="color:var(--text3);">·</span>
+        <span style="color:var(--blue);font-weight:600;font-size:9px;">ITIL v4</span>
+        <span style="color:var(--text3);">·</span>
+        <span style="color:var(--green);font-weight:600;font-size:9px;">ISO 27001</span>
+        <span style="color:var(--text3);">·</span>
+        <span style="color:var(--purple);font-weight:600;font-size:9px;">ISO 42001</span>
+        <span style="color:var(--text3);">·</span>
+        <span style="color:var(--amber);font-weight:600;font-size:9px;">NIST</span>
+        <span style="color:var(--text3);">·</span>
+        <span style="color:var(--pink);font-weight:600;font-size:9px;">LGPD</span>
+        <span style="color:var(--text3);">·</span>
+        <span style="color:var(--text2);font-weight:600;font-size:9px;">TBM</span>
+      </p>
     </div>
   </div>
   <div class="header-right">
-    <div class="badge-live"><div class="dot-live"></div>Conectado</div>
+    <div class="badge-live"><div class="dot-live"></div>Live</div>
     <span id="clock"></span>
-    <button class="btn-primary adm-protected" id="btnNovaFonte" onclick="openModal('modalAddPlat')">+ Nova Fonte</button>
     <button class="btn-sm adm-protected" id="btnSyncAll" onclick="syncAll()">⟳ Sync All</button>
     <button class="btn-adm-lock locked" id="btnAdm" onclick="toggleAdm()">🔒 Admin</button>
   </div>
@@ -391,26 +404,28 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <!-- TABS -->
 <div class="tabs-wrap">
   <div class="tabs">
-    <button class="tab active" data-tab="geral" style="--tab-color:var(--teal);" onclick="switchTab('geral',this)"><span class="tab-icon">📊</span> Visão Geral</button>
-    <button class="tab" data-tab="fontes" style="--tab-color:var(--blue);" onclick="switchTab('fontes',this)"><span class="tab-icon">🔌</span> Fontes de Dados</button>
-    <button class="tab" data-tab="mapeamento" style="--tab-color:var(--purple);" onclick="switchTab('mapeamento',this)"><span class="tab-icon">🗺️</span> Mapeamento</button>
-    <button class="tab" data-tab="n8n" style="--tab-color:var(--amber);" onclick="switchTab('n8n',this)"><span class="tab-icon">⚡</span> N8N Workflows</button>
-    <button class="tab" data-tab="itom" style="--tab-color:var(--teal);" onclick="switchTab('itom',this)"><span class="tab-icon">🛰️</span> ITOM</button>
-    <button class="tab" data-tab="govai" style="--tab-color:var(--purple);" onclick="switchTab('govai',this)"><span class="tab-icon">🤖</span> Gov. IA</button>
-    <button class="tab" data-tab="seguranca" style="--tab-color:var(--amber);" onclick="switchTab('seguranca',this)"><span class="tab-icon">🔐</span> Segurança & IAM</button>
-    <button class="tab" data-tab="compliance" style="--tab-color:var(--green);" onclick="switchTab('compliance',this)"><span class="tab-icon">✅</span> Compliance</button>
-    <button class="tab" data-tab="pmo" style="--tab-color:var(--blue);" onclick="switchTab('pmo',this)"><span class="tab-icon">🚀</span> PMO</button>
-    <button class="tab" data-tab="cmdb" style="--tab-color:var(--teal);" onclick="switchTab('cmdb',this)"><span class="tab-icon">🧩</span> CMDB</button>
-    <button class="tab" data-tab="ativos" style="--tab-color:var(--blue);" onclick="switchTab('ativos',this)"><span class="tab-icon">🖥️</span> Ativos de TI</button>
-    <button class="tab" data-tab="itsm" style="--tab-color:var(--red);" onclick="switchTab('itsm',this)"><span class="tab-icon">🎫</span> ITSM</button>
-    <button class="tab" data-tab="fornecedores" style="--tab-color:var(--teal);" onclick="switchTab('fornecedores',this)"><span class="tab-icon">🤝</span> Fornecedores</button>
-    <button class="tab" data-tab="budget" style="--tab-color:var(--amber);" onclick="switchTab('budget',this)"><span class="tab-icon">📊</span> Budget</button>
-    <button class="tab" data-tab="riscos" style="--tab-color:var(--red);" onclick="switchTab('riscos',this)"><span class="tab-icon">🔥</span> Riscos</button>
-    <button class="tab" data-tab="finops" style="--tab-color:var(--green);" onclick="switchTab('finops',this)"><span class="tab-icon">💰</span> FinOps</button>
-    <button class="tab" data-tab="mudancas" style="--tab-color:var(--blue);" onclick="switchTab('mudancas',this)"><span class="tab-icon">🔄</span> Mudanças & CAB</button>
-    <button class="tab" data-tab="continuidade" style="--tab-color:var(--purple);" onclick="switchTab('continuidade',this)"><span class="tab-icon">🛡️</span> Continuidade</button>
-    <button class="tab" data-tab="historico" style="--tab-color:var(--green);" onclick="switchTab('historico',this)"><span class="tab-icon">📜</span> Histórico</button>
-    <button class="tab" data-tab="config" style="--tab-color:var(--gray-400);" onclick="switchTab('config',this)"><span class="tab-icon">⚙️</span> Configurações</button>
+    <!-- ── EXECUTIVO PRINCIPAL ─────────────────────────── -->
+    <button class="tab active" data-tab="geral"        style="--tab-color:var(--teal);"    onclick="switchTab('geral',this)"><span class="tab-icon">📊</span> Visão Geral</button>
+    <button class="tab"        data-tab="itsm"         style="--tab-color:var(--red);"     onclick="switchTab('itsm',this)"><span class="tab-icon">🚨</span> ITSM</button>
+    <button class="tab"        data-tab="mudancas"     style="--tab-color:var(--blue);"    onclick="switchTab('mudancas',this)"><span class="tab-icon">🔄</span> Mudanças & CAB</button>
+    <button class="tab"        data-tab="fornecedores" style="--tab-color:var(--teal);"    onclick="switchTab('fornecedores',this)"><span class="tab-icon">🤝</span> Fornecedores</button>
+    <button class="tab"        data-tab="budget"       style="--tab-color:var(--amber);"   onclick="switchTab('budget',this)"><span class="tab-icon">💰</span> Budget</button>
+    <button class="tab"        data-tab="finops"       style="--tab-color:var(--green);"   onclick="switchTab('finops',this)"><span class="tab-icon">📈</span> FinOps</button>
+    <button class="tab"        data-tab="riscos"       style="--tab-color:var(--red);"     onclick="switchTab('riscos',this)"><span class="tab-icon">🔥</span> Riscos</button>
+    <button class="tab"        data-tab="compliance"   style="--tab-color:var(--green);"   onclick="switchTab('compliance',this)"><span class="tab-icon">✅</span> Compliance</button>
+    <button class="tab"        data-tab="seguranca"    style="--tab-color:var(--amber);"   onclick="switchTab('seguranca',this)"><span class="tab-icon">🔐</span> Segurança & IAM</button>
+    <button class="tab"        data-tab="govai"        style="--tab-color:var(--purple);"  onclick="switchTab('govai',this)"><span class="tab-icon">🤖</span> Gov. IA</button>
+    <button class="tab"        data-tab="pmo"          style="--tab-color:var(--blue);"    onclick="switchTab('pmo',this)"><span class="tab-icon">🚀</span> PMO & Projetos</button>
+    <button class="tab"        data-tab="cmdb"         style="--tab-color:var(--teal);"    onclick="switchTab('cmdb',this)"><span class="tab-icon">🧩</span> CMDB</button>
+    <button class="tab"        data-tab="ativos"       style="--tab-color:var(--blue);"    onclick="switchTab('ativos',this)"><span class="tab-icon">🖥️</span> Ativos de TI</button>
+    <button class="tab"        data-tab="continuidade" style="--tab-color:var(--purple);"  onclick="switchTab('continuidade',this)"><span class="tab-icon">🛡️</span> Continuidade</button>
+    <!-- ── OPERACIONAL / TÉCNICO ──────────────────────── -->
+    <button class="tab"        data-tab="itom"         style="--tab-color:var(--teal);"    onclick="switchTab('itom',this)"><span class="tab-icon">🛰️</span> ITOM</button>
+    <button class="tab"        data-tab="fontes"       style="--tab-color:var(--blue);"    onclick="switchTab('fontes',this)"><span class="tab-icon">🔌</span> Fontes de Dados</button>
+    <button class="tab"        data-tab="mapeamento"   style="--tab-color:var(--purple);"  onclick="switchTab('mapeamento',this)"><span class="tab-icon">🗺️</span> Mapeamento</button>
+    <button class="tab"        data-tab="n8n"          style="--tab-color:var(--amber);"   onclick="switchTab('n8n',this)"><span class="tab-icon">⚡</span> N8N Workflows</button>
+    <button class="tab"        data-tab="historico"    style="--tab-color:var(--green);"   onclick="switchTab('historico',this)"><span class="tab-icon">📜</span> Histórico</button>
+    <button class="tab"        data-tab="config"       style="--tab-color:var(--gray-400);" onclick="switchTab('config',this)"><span class="tab-icon">⚙️</span> Configurações</button>
   </div>
 </div>
 
@@ -462,14 +477,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </div>
   </div>
 
-  <!-- Linha 3: Status fontes + Módulos -->
+  <!-- Linha 3: Integrações + Histórico executivo -->
   <div class="g2">
     <div class="card">
-      <div class="card-title">🔌 Status das Fontes de Dados</div>
+      <div class="card-title">🔌 Integrações · Status em Tempo Real</div>
       <div id="resumoFontes" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
     </div>
     <div class="card">
-      <div class="card-title">📊 Módulos · Últimas sincronizações</div>
+      <div class="card-title">📋 Log Executivo · Últimas Operações</div>
       <div id="ultimasSyncs" style="max-height:240px;overflow-y:auto;"></div>
     </div>
   </div>
@@ -878,29 +893,92 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- ===== ITSM ===== -->
 <div class="tab-panel" id="panel-itsm">
+
+  <!-- KPI Hero -->
   <div class="kpi-grid" id="kpiItsm"></div>
-  <div class="g2" style="margin-bottom:12px;">
-    <div class="card">
-      <div class="card-title">📈 Volume de Incidentes · Últimos 6 meses</div>
-      <div style="position:relative;height:200px;"><canvas id="chartItsmTrend"></canvas></div>
+
+  <!-- Mini-tabs ITSM -->
+  <div class="mini-tabs">
+    <button class="mini-tab active" onclick="switchMiniTab('itsm','incidentes',this)">🎫 Incidentes</button>
+    <button class="mini-tab" onclick="switchMiniTab('itsm','problemas',this)">🔍 Problemas</button>
+    <button class="mini-tab" onclick="switchMiniTab('itsm','rfcs',this)">🔄 RFCs &amp; Mudanças</button>
+    <button class="mini-tab" onclick="switchMiniTab('itsm','cab',this)">📅 CAB Calendar</button>
+  </div>
+
+  <!-- ── Incidentes ───────────────────────────────── -->
+  <div class="mini-panel active" id="itsm-incidentes">
+    <div class="g2" style="margin-bottom:12px;">
+      <div class="card">
+        <div class="card-title">📈 Volume de Incidentes · Últimos 6 meses</div>
+        <div style="position:relative;height:200px;"><canvas id="chartItsmTrend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">⏱️ SLA por Categoria (%)</div>
+        <div style="position:relative;height:200px;"><canvas id="chartItsmSla"></canvas></div>
+      </div>
     </div>
     <div class="card">
-      <div class="card-title">⏱️ SLA por Categoria</div>
-      <div style="position:relative;height:200px;"><canvas id="chartItsmSla"></canvas></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+        <div class="card-title" style="margin:0;">🎫 Chamados em Aberto · <span style="color:var(--text3);font-weight:400;">Clique na linha para ver detalhes</span></div>
+        <div style="display:flex;gap:8px;">
+          <select class="form-select" style="font-size:10px;padding:4px 8px;width:120px;" id="itsmFiltroPrio" onchange="renderItsm()">
+            <option value="">Todas prioridades</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+          </select>
+          <select class="form-select" style="font-size:10px;padding:4px 8px;width:130px;" id="itsmFiltroStatus" onchange="renderItsm()">
+            <option value="">Todos os status</option><option>Aberto</option><option>Em atendimento</option><option>Aguardando</option>
+          </select>
+        </div>
+      </div>
+      <div class="tbl-wrap"><table class="tbl" id="tblItsm"></table></div>
     </div>
   </div>
-  <div class="card">
-    <div class="card-title">🎫 Incidentes em Aberto</div>
-    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
-      <select class="form-select" style="font-size:10px;padding:4px 8px;width:120px;" id="itsmFiltroPrio" onchange="renderItsm()">
-        <option value="">Todas prioridades</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option>
-      </select>
-      <select class="form-select" style="font-size:10px;padding:4px 8px;width:120px;" id="itsmFiltroStatus" onchange="renderItsm()">
-        <option value="">Todos os status</option><option>Aberto</option><option>Em atendimento</option><option>Aguardando</option>
-      </select>
+
+  <!-- ── Problemas ─────────────────────────────────── -->
+  <div class="mini-panel" id="itsm-problemas">
+    <div class="kpi-grid" id="kpiProblemas"></div>
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-title">🔍 Problemas Abertos · Problem Management (ITIL)</div>
+      <div class="tbl-wrap"><table class="tbl" id="tblProblemas"></table></div>
     </div>
-    <div class="tbl-wrap"><table class="tbl" id="tblItsm"></table></div>
+    <div class="card">
+      <div class="card-title">🧩 Known Error Database · Erros Conhecidos com Workaround</div>
+      <div id="knownErrorsList"></div>
+    </div>
   </div>
+
+  <!-- ── RFCs / Mudanças ───────────────────────────── -->
+  <div class="mini-panel" id="itsm-rfcs">
+    <div class="kpi-grid" id="kpiRfcsItsm"></div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+        <div class="card-title" style="margin:0;">🔄 RFCs · Requisições de Mudança · <span style="color:var(--text3);font-weight:400;">Clique para detalhar</span></div>
+        <div style="display:flex;gap:6px;">
+          <span id="rfcBadgeEmerg" style="font-size:9px;padding:3px 8px;border-radius:20px;background:rgba(247,95,95,0.15);color:var(--red);border:1px solid rgba(247,95,95,0.3);cursor:default;"></span>
+          <span id="rfcBadgeAprov" style="font-size:9px;padding:3px 8px;border-radius:20px;background:rgba(45,212,160,0.1);color:var(--green);border:1px solid rgba(45,212,160,0.25);cursor:default;"></span>
+        </div>
+      </div>
+      <div class="tbl-wrap"><table class="tbl" id="tblRfcsItsm"></table></div>
+    </div>
+  </div>
+
+  <!-- ── CAB Calendar ──────────────────────────────── -->
+  <div class="mini-panel" id="itsm-cab">
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">📅 Próximas Reuniões CAB · Calendário</div>
+        <div id="cabProximasItsm"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">⚡ Mudanças Emergenciais · Últimas ocorrências</div>
+        <div id="cabEmergenciaisItsm"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">📊 Janelas de Mudança aprovadas · Próximos 30 dias</div>
+      <div id="cabJanelasItsm"></div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ===== FORNECEDORES ===== -->
@@ -1241,6 +1319,39 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <button class="modal-close" onclick="closeModal('modalDetalhes')">×</button>
     </div>
     <div class="modal-body" id="modalDetBody"></div>
+  </div>
+</div>
+
+<!-- ===== MODAL: INCIDENTE DETALHE ===== -->
+<div class="modal-overlay" id="modalIncidenciaDetalhe" onclick="if(event.target===this)closeModal('modalIncidenciaDetalhe')">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <div class="modal-title" id="mdIncTitle">🎫 Detalhe do Chamado</div>
+      <button class="modal-close" onclick="closeModal('modalIncidenciaDetalhe')">×</button>
+    </div>
+    <div class="modal-body" id="mdIncBody"></div>
+  </div>
+</div>
+
+<!-- ===== MODAL: FORNECEDOR DETALHE ===== -->
+<div class="modal-overlay" id="modalFornecedorDetalhe" onclick="if(event.target===this)closeModal('modalFornecedorDetalhe')">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <div class="modal-title" id="mdFornTitle">🤝 Detalhe do Fornecedor</div>
+      <button class="modal-close" onclick="closeModal('modalFornecedorDetalhe')">×</button>
+    </div>
+    <div class="modal-body" id="mdFornBody"></div>
+  </div>
+</div>
+
+<!-- ===== MODAL: RFC DETALHE ===== -->
+<div class="modal-overlay" id="modalRfcDetalhe" onclick="if(event.target===this)closeModal('modalRfcDetalhe')">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <div class="modal-title" id="mdRfcTitle">🔄 Detalhe da RFC</div>
+      <button class="modal-close" onclick="closeModal('modalRfcDetalhe')">×</button>
+    </div>
+    <div class="modal-body" id="mdRfcBody"></div>
   </div>
 </div>
 
@@ -1608,7 +1719,7 @@ function startAdmTick(){
 
 // Reaplicar proteção a todos os botões de edição
 function applyAdmProtection(){
-  const ids = ['btnNovaFonte','btnSyncAll'];
+  const ids = ['btnSyncAll'];
   ids.forEach(id=>{ const el=$(id); if(el) el.classList.add('adm-protected'); });
 }
 
@@ -3120,23 +3231,35 @@ function renderGeral(){
   const totalReg = fontes.reduce((s,f)=>s+f.registros,0);
   const totalContr = contratos.reduce((s,c)=>s+c.valor,0);
 
+  const p1Open=(typeof incidentesItsm!=='undefined')?incidentesItsm.filter(i=>i.prio==='P1').length:2;
+  const p2Open=(typeof incidentesItsm!=='undefined')?incidentesItsm.filter(i=>i.prio==='P2').length:2;
+  const totalInc=(typeof incidentesItsm!=='undefined')?incidentesItsm.length:8;
+  const rfcPend=(typeof mudancasCompletas!=='undefined')?mudancasCompletas.filter(m=>m.status==='Em revisão'||m.status==='Aprovada').length:2;
+  const pctBudget=Math.round(budgetAnual.spent/budgetAnual.total*100);
   $('kpiGeral').innerHTML = [
-    {icon:'💰',label:'Budget TI Anual',val:'R$ 12,8M',sub:`Realizado: R$ ${(budgetAnual.spent/1e6).toFixed(1)}M`,accent:'var(--amber)'},
-    {icon:'📋',label:'Contratos Ativos',val:contratos.filter(c=>c.status==='Ativo'||c.status==='Em andamento').length,sub:`Total: R$ ${(totalContr/1e6).toFixed(1)}M`,accent:'var(--blue)'},
-    {icon:'🚨',label:'Incidentes Abertos',val:'23',sub:'P1: 2 · P2: 5 críticos',accent:'var(--red)'},
-    {icon:'✅',label:'Conformidade Média',val:'69%',sub:'7 frameworks ativos',accent:'var(--green)'},
-    {icon:'🔌',label:'Fontes Ativas',val:ativas,sub:`${erros} com erro · ${totalReg.toLocaleString()} registros`,accent:'var(--teal)'},
-    {icon:'🖥️',label:'Ativos Inventariados',val:ativosInventario.filter(a=>a.status!=='Baixado').length,sub:`${ativosInventario.filter(a=>a.status==='Em manutenção').length} em manutenção`,accent:'var(--purple)'},
+    {icon:'🚨',label:'Incidentes P1 Abertos',val:p1Open,sub:`P2: ${p2Open} · Total abertos: ${totalInc}`,accent:'var(--red)'},
+    {icon:'💰',label:'Budget TI Anual',val:'R$ 12,8M',sub:`${pctBudget}% realizado · R$ ${(budgetAnual.spent/1e6).toFixed(1)}M`,accent:'var(--amber)'},
+    {icon:'📋',label:'Contratos Ativos',val:contratos.filter(c=>c.status==='Ativo'||c.status==='Em andamento').length,sub:`Carteira: R$ ${(totalContr/1e6).toFixed(1)}M`,accent:'var(--blue)'},
+    {icon:'✅',label:'Conformidade Média',val:'69%',sub:'COBIT · ITIL · ISO 27001 · NIST',accent:'var(--green)'},
+    {icon:'🔄',label:'RFCs Pendentes',val:rfcPend,sub:`CAB: ${(typeof mudancasCompletas!=='undefined')?mudancasCompletas.filter(m=>m.tipo==='Emergência').length:2} emergenciais`,accent:'var(--purple)'},
+    {icon:'🖥️',label:'Ativos Inventariados',val:ativosInventario.filter(a=>a.status!=='Baixado').length,sub:`${ativosInventario.filter(a=>a.status==='Em manutenção').length} em manutenção`,accent:'var(--teal)'},
   ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
 
-  // Alertas críticos
-  $('alertasHub').innerHTML = [
-    {icon:'🔴',txt:'<b>2 incidentes P1 abertos</b> · SLA em risco · Oracle DB e SAP APP com degradação de performance',cor:'var(--red)'},
-    {icon:'⚠️',txt:'<b>Broadcom VMware — aumento 300%</b> · Contrato CTR-008 vence em 31/12/2026 · Avaliar alternativas',cor:'var(--amber)'},
-    {icon:'⚠️',txt:'<b>3 servidores com disco crítico</b> (>85%) · SRV-FILE01: 89% · SRV-BACKUP01: 94%',cor:'var(--amber)'},
-    {icon:'🔴',txt:'<b>Certificado SSL expirado</b> · api.intranet.empresa.com.br · Expirou em 20/05/2026',cor:'var(--red)'},
-    {icon:'🟡',txt:'<b>Ativo PAT-00530 em manutenção</b> · Impressora HP E60175 · Saída em 20/05/2026',cor:'var(--amber)'},
-  ].map(a=>`<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);"><span style="font-size:14px;">${a.icon}</span><span style="font-size:11px;color:var(--text2);flex:1;line-height:1.5;">${a.txt}</span></div>`).join('');
+  // Alertas críticos executivos (cross-módulo)
+  const _p1s=(typeof incidentesItsm!=='undefined')?incidentesItsm.filter(i=>i.prio==='P1'):[];
+  const _ctrRisk=contratos.filter(c=>c.status.includes('Revisão')||c.status.includes('⚠'));
+  const geralAlertas=[];
+  if(_p1s.length) geralAlertas.push({icon:'🔴',nav:'itsm',txt:`<b>${_p1s.length} incidente(s) P1 em andamento</b> · ${_p1s.map(i=>i.titulo.substring(0,45)+'…').join(' | ')} · <span onclick="navToModule('itsm')" style="color:var(--teal);cursor:pointer;text-decoration:underline;">Ver ITSM →</span>`});
+  geralAlertas.push({icon:'🔴',nav:'seguranca',txt:'<b>Certificado SSL expirado</b> · api.intranet.empresa.com.br · Expirou 20/05/2026 · Renovação urgente'});
+  if(_ctrRisk.length) geralAlertas.push({icon:'⚠️',nav:'budget',txt:`<b>Contrato em risco:</b> ${_ctrRisk.map(c=>c.nome).join(', ')} · ${_ctrRisk[0]?.obs?.substring(0,60)} · <span onclick="navToModule('budget')" style="color:var(--teal);cursor:pointer;text-decoration:underline;">Ver Budget →</span>`});
+  geralAlertas.push({icon:'⚠️',nav:'riscos',txt:'<b>3 servidores com disco crítico</b> (>85%) · SRV-FILE01: 89% · SRV-BACKUP01: 94% · Risco de indisponibilidade'});
+  geralAlertas.push({icon:'⚠️',nav:'compliance',txt:'<b>ISO 27001 — 72% conformidade</b> · 8 controles não implementados · Auditoria externa prevista Jun/2026'});
+  geralAlertas.push({icon:'🟡',nav:'finops',txt:'<b>Forecast acima do budget</b> · Projeção R$ 13,1M vs Budget R$ 12,8M · Desvio +2,3% · Revisão recomendada'});
+  $('alertasHub').innerHTML = geralAlertas.map(a=>`
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+      <span style="font-size:14px;flex-shrink:0;">${a.icon}</span>
+      <span style="font-size:11px;color:var(--text2);flex:1;line-height:1.6;">${a.txt}</span>
+    </div>`).join('');
 
   // Grid de módulos navegáveis
   const vencendo30 = contratos.filter(c=>{ try{ const[d,m,y]=c.fim.split('/'); const dt=new Date(y,m-1,d); return (dt-new Date())<30*864e5&&dt>new Date(); }catch(e){ return false; }}).length;
@@ -4470,6 +4593,14 @@ const incidentesItsm = [
   {id:'INC0042780',titulo:'Notebook sem bateria — colaborador remoto',prio:'P4',status:'Aberto',cat:'Hardware',resp:'G. Nunes',abertura:'19/05/2026 08:00',sla:'OK',slaCor:'var(--green)'},
 ];
 
+// Problemas ITIL (Problem Management)
+const problemasItsm = [
+  {id:'PRB-2026-011',titulo:'Oracle DB Produção — degradação recorrente de performance',incidentes:['INC0042891','INC0042780','INC0042699'],cat:'Banco de Dados',status:'Em investigação',resp:'J. Santos',abertura:'15/05/2026',impacto:'Crítico',workaround:'Reiniciar listener Oracle manualmente',rca:'Pendente — coleta de AWR em andamento'},
+  {id:'PRB-2026-010',titulo:'VPN Gateway — reconexões intermitentes filiais',incidentes:['INC0042876','INC0042801'],cat:'Rede',status:'Workaround ativo',resp:'R. Lima',abertura:'10/05/2026',impacto:'Alto',workaround:'Configurar MTU 1400 nos clientes VPN afetados',rca:'FortiGate firmware bug confirmado — aguarda patch'},
+  {id:'PRB-2026-009',titulo:'SAP performance degradada em períodos de fechamento',incidentes:['INC0042904','INC0042755'],cat:'ERP',status:'Workaround ativo',resp:'M. Oliveira',abertura:'02/05/2026',impacto:'Alto',workaround:'Fechar período em janela de baixa carga (22h-04h)',rca:'Gargalo identificado: índice IX_MARA_001 — recriação agendada'},
+  {id:'PRB-2026-008',titulo:'Power BI — falha de atualização incremental datasets grandes',incidentes:['INC0042799','INC0042740'],cat:'BI',status:'Resolvido',resp:'P. Ramos',abertura:'25/04/2026',impacto:'Médio',workaround:'Refresh completo às 03h via PowerShell',rca:'Bug confirmado Power BI Premium — patch MS aplicado 19/05'},
+];
+
 function renderItsm(){
   const filPrio   = $('itsmFiltroPrio')?.value   || '';
   const filStatus = $('itsmFiltroStatus')?.value || '';
@@ -4478,27 +4609,32 @@ function renderItsm(){
     (!filStatus || i.status===filStatus)
   );
 
-  // KPIs
+  // ── KPIs Hero ──────────────────────────────────────────────────────
   const p1=incidentesItsm.filter(i=>i.prio==='P1').length;
   const p2=incidentesItsm.filter(i=>i.prio==='P2').length;
   const breached=incidentesItsm.filter(i=>i.slaCor==='var(--red)'||i.slaCor==='var(--amber)').length;
+  const probAbertos=problemasItsm.filter(p=>p.status!=='Resolvido').length;
+  const rfcsPend=mudancasCompletas.filter(m=>m.status==='Em revisão'||m.status==='Aprovada').length;
   $('kpiItsm').innerHTML = [
-    {icon:'🎫',label:'Total Incidentes Abertos',val:incidentesItsm.length,sub:`P1: ${p1} · P2: ${p2}`,accent:'var(--blue)'},
-    {icon:'🚨',label:'P1 Críticos',val:p1,sub:'SLA em risco — ação imediata',accent:'var(--red)'},
-    {icon:'⚠️',label:'P2 Altos',val:p2,sub:'Monitoramento ativo',accent:'var(--amber)'},
-    {icon:'⏰',label:'SLAs em Risco',val:breached,sub:'Abaixo do threshold',accent:'var(--red)'},
-    {icon:'✅',label:'FCR (1ª chamada)',val:'67%',sub:'meta: 75%',accent:'var(--green)'},
-    {icon:'⚡',label:'MTTR Médio',val:'4h32min',sub:'P1: 2h15 · P2: 6h40',accent:'var(--purple)'},
+    {icon:'🎫',label:'Chamados Abertos',val:incidentesItsm.length,sub:`P1: ${p1} · P2: ${p2} · P3/P4: ${incidentesItsm.length-p1-p2}`,accent:'var(--blue)'},
+    {icon:'🚨',label:'P1 Críticos',val:p1,sub:'Ação imediata — SLA em risco',accent:'var(--red)'},
+    {icon:'⚠️',label:'P2 Altos',val:p2,sub:'Monitoramento ativo 24h',accent:'var(--amber)'},
+    {icon:'⏰',label:'SLA em Risco',val:breached,sub:'Abaixo do threshold definido',accent:'var(--red)'},
+    {icon:'⚡',label:'MTTR Médio',val:'4h32min',sub:'P1: 2h15 · P2: 6h40 · meta: 4h',accent:'var(--purple)'},
+    {icon:'✅',label:'FCR · 1ª Resolução',val:'67%',sub:'meta: 75% · -8pp',accent:'var(--green)'},
+    {icon:'🔍',label:'Problemas Abertos',val:probAbertos,sub:'Em investigação / workaround',accent:'var(--teal)'},
+    {icon:'🔄',label:'RFCs Pendentes',val:rfcsPend,sub:'Aguardando CAB / aprovação',accent:'var(--blue)'},
   ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
 
-  // Tabela
-  $('tblItsm').innerHTML = `<thead><tr><th>ID</th><th>Título</th><th>Prioridade</th><th>Status</th><th>Categoria</th><th>Responsável</th><th>Abertura</th><th>SLA restante</th></tr></thead><tbody>`+
+  // ── Tabela Incidentes (clickable) ──────────────────────────────────
+  $('tblItsm').innerHTML = `<thead><tr><th>ID</th><th>Título</th><th>Prio</th><th>Status</th><th>Categoria</th><th>Responsável</th><th>Abertura</th><th>SLA Restante</th></tr></thead><tbody>`+
     lista.map(i=>{
       const pc=i.prio==='P1'?'b-red':i.prio==='P2'?'b-amber':i.prio==='P3'?'b-blue':'b-teal';
       const sc=i.status==='Em atendimento'?'b-blue':i.status==='Aguardando'?'b-amber':'b-green';
-      return `<tr>
+      const rowBg=i.prio==='P1'?'background:rgba(247,95,95,0.04);':'';
+      return `<tr onclick="openIncidente('${i.id}')" style="cursor:pointer;${rowBg}" title="Clique para ver detalhes completos">
         <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${i.id}</td>
-        <td style="font-size:11px;max-width:280px;">${i.titulo}</td>
+        <td style="font-size:11px;max-width:260px;">${i.titulo}</td>
         <td><span class="badge ${pc}">${i.prio}</span></td>
         <td><span class="badge ${sc}">${i.status}</span></td>
         <td style="font-size:10px;">${i.cat}</td>
@@ -4508,7 +4644,134 @@ function renderItsm(){
       </tr>`;
     }).join('')+'</tbody>';
 
-  // Gráficos
+  // ── Problemas ──────────────────────────────────────────────────────
+  if($('kpiProblemas')){
+    const pAbertos=problemasItsm.filter(p=>p.status!=='Resolvido').length;
+    const pCriticos=problemasItsm.filter(p=>p.impacto==='Crítico').length;
+    $('kpiProblemas').innerHTML=[
+      {icon:'🔍',label:'Problemas Abertos',val:pAbertos,sub:'Em investigação ou com workaround',accent:'var(--teal)'},
+      {icon:'🔴',label:'Impacto Crítico',val:pCriticos,sub:'Requerem resolução prioritária',accent:'var(--red)'},
+      {icon:'🧩',label:'Known Errors',val:problemasItsm.filter(p=>p.workaround).length,sub:'Com workaround documentado',accent:'var(--blue)'},
+      {icon:'✅',label:'Resolvidos (mês)',val:problemasItsm.filter(p=>p.status==='Resolvido').length,sub:'Root Cause identificado',accent:'var(--green)'},
+    ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+  }
+  if($('tblProblemas')){
+    $('tblProblemas').innerHTML=`<thead><tr><th>ID</th><th>Problema</th><th>Categoria</th><th>Incidentes Assoc.</th><th>Status</th><th>Impacto</th><th>RCA</th></tr></thead><tbody>`+
+      problemasItsm.map(p=>{
+        const ic=p.impacto==='Crítico'?'b-red':p.impacto==='Alto'?'b-amber':'b-blue';
+        const sc=p.status==='Em investigação'?'b-blue':p.status==='Workaround ativo'?'b-amber':p.status==='Resolvido'?'b-green':'b-gray';
+        return `<tr>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--teal);">${p.id}</td>
+          <td style="font-size:11px;max-width:240px;">${p.titulo}</td>
+          <td style="font-size:10px;">${p.cat}</td>
+          <td style="font-size:10px;font-family:'JetBrains Mono',monospace;">${p.incidentes.length} chamado(s)</td>
+          <td><span class="badge ${sc}">${p.status}</span></td>
+          <td><span class="badge ${ic}">${p.impacto}</span></td>
+          <td style="font-size:10px;color:var(--text2);max-width:180px;">${p.rca}</td>
+        </tr>`;
+      }).join('')+'</tbody>';
+  }
+  if($('knownErrorsList')){
+    $('knownErrorsList').innerHTML=problemasItsm.filter(p=>p.workaround).map(p=>`
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:6px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--teal);">${p.id}</span>
+            <span style="font-size:11px;font-weight:600;">${p.titulo}</span>
+          </div>
+          <span class="badge ${p.impacto==='Crítico'?'b-red':p.impacto==='Alto'?'b-amber':'b-blue'}">${p.impacto}</span>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;">Workaround documentado</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.5;">🔧 ${p.workaround}</div>
+      </div>`).join('');
+  }
+
+  // ── RFCs ───────────────────────────────────────────────────────────
+  if($('kpiRfcsItsm')){
+    const emerg=mudancasCompletas.filter(m=>m.tipo==='Emergência').length;
+    const aprov=mudancasCompletas.filter(m=>m.status==='Aprovada').length;
+    const impl=mudancasCompletas.filter(m=>m.status==='Implementada').length;
+    if($('rfcBadgeEmerg')) $('rfcBadgeEmerg').textContent=`⚡ ${emerg} Emergenciais`;
+    if($('rfcBadgeAprov')) $('rfcBadgeAprov').textContent=`✅ ${aprov} Aprovadas`;
+    $('kpiRfcsItsm').innerHTML=[
+      {icon:'🔄',label:'Total RFCs',val:mudancasCompletas.length,sub:'no ciclo atual',accent:'var(--blue)'},
+      {icon:'⚡',label:'Emergenciais',val:emerg,sub:'mudanças fora do ciclo CAB',accent:'var(--red)'},
+      {icon:'✅',label:'Aprovadas (CAB)',val:aprov,sub:'aguardando janela de mudança',accent:'var(--green)'},
+      {icon:'🔧',label:'Implementadas',val:impl,sub:'concluídas com sucesso',accent:'var(--teal)'},
+    ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+  }
+  if($('tblRfcsItsm')){
+    $('tblRfcsItsm').innerHTML=`<thead><tr><th>RFC ID</th><th>Título</th><th>Tipo</th><th>Risco</th><th>Sistema Afetado</th><th>Janela</th><th>Impacto</th><th>Status</th></tr></thead><tbody>`+
+      mudancasCompletas.map(m=>{
+        const tc=m.tipo==='Emergência'?'b-red':m.tipo==='Normal'?'b-blue':'b-teal';
+        const rc=m.risco==='Alto'?'b-red':m.risco==='Médio'?'b-amber':'b-green';
+        const sc=m.status==='Aprovada'?'b-green':m.status==='Em revisão'?'b-amber':m.status==='Implementada'?'b-teal':'b-gray';
+        const ic=m.impacto==='Crítico'?'b-red':m.impacto==='Alto'?'b-amber':'b-blue';
+        return `<tr onclick="openRfcDetalhe('${m.id}')" style="cursor:pointer;" title="Clique para detalhes">
+          <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${m.id}</td>
+          <td style="font-size:11px;max-width:220px;">${m.titulo}</td>
+          <td><span class="badge ${tc}">${m.tipo}</span></td>
+          <td><span class="badge ${rc}">${m.risco}</span></td>
+          <td style="font-size:10px;">${m.sistema}</td>
+          <td style="font-size:10px;font-family:'JetBrains Mono',monospace;">${m.janela}</td>
+          <td><span class="badge ${ic}">${m.impacto}</span></td>
+          <td><span class="badge ${sc}">${m.status}</span></td>
+        </tr>`;
+      }).join('')+'</tbody>';
+  }
+
+  // ── CAB Calendar ───────────────────────────────────────────────────
+  if($('cabProximasItsm')){
+    const cabSessions=[
+      {data:'29/05/2026 14h00',tipo:'CAB Regular',pauta:'RFC-2026-041 · RFC-2026-042 · RFC-2026-040',local:'Sala de Conf. TI (remoto Teams)',status:'Confirmada'},
+      {data:'05/06/2026 14h00',tipo:'CAB Regular',pauta:'2 RFCs em revisão — pauta a definir',local:'Sala de Conf. TI',status:'Agendada'},
+      {data:'19/06/2026 14h00',tipo:'CAB Regular',pauta:'Abertura para novas RFCs',local:'Sala de Conf. TI',status:'Agendada'},
+    ];
+    $('cabProximasItsm').innerHTML=cabSessions.map(s=>`
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;border-left:3px solid ${s.status==='Confirmada'?'var(--green)':'var(--blue)'};">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <span style="font-size:12px;font-weight:700;color:var(--text1);">${s.data}</span>
+          <span class="badge ${s.status==='Confirmada'?'b-green':'b-blue'}">${s.status}</span>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:3px;">${s.tipo} · ${s.local}</div>
+        <div style="font-size:10px;color:var(--text3);">📋 ${s.pauta}</div>
+      </div>`).join('');
+  }
+  if($('cabEmergenciaisItsm')){
+    const emList=mudancasCompletas.filter(m=>m.tipo==='Emergência');
+    $('cabEmergenciaisItsm').innerHTML=emList.map(m=>`
+      <div style="background:rgba(247,95,95,0.06);border:1px solid rgba(247,95,95,0.2);border-radius:10px;padding:12px 14px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);">⚡ ${m.id}</span>
+          <span class="badge b-teal">${m.status}</span>
+        </div>
+        <div style="font-size:11px;font-weight:600;margin-bottom:3px;">${m.titulo}</div>
+        <div style="font-size:10px;color:var(--text2);">Sistema: ${m.sistema} · Janela: ${m.janela} · Gestor: ${m.gestor}</div>
+      </div>`).join('');
+  }
+  if($('cabJanelasItsm')){
+    const janelas=mudancasCompletas.filter(m=>m.status==='Aprovada'||m.status==='Em revisão');
+    $('cabJanelasItsm').innerHTML=janelas.length===0?'<div style="color:var(--text3);font-size:11px;padding:12px;">Nenhuma janela agendada no período.</div>':
+      janelas.map(m=>{
+        const ic=m.impacto==='Crítico'?'ib-critico':m.impacto==='Alto'?'ib-alto':'ib-medio';
+        return `<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 12px;background:var(--bg3);border-radius:8px;margin-bottom:6px;border:1px solid var(--border);">
+          <div style="flex-shrink:0;text-align:center;min-width:70px;">
+            <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;">Janela</div>
+            <div style="font-size:10px;font-weight:700;color:var(--blue);font-family:'JetBrains Mono',monospace;">${m.janela}</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:11px;font-weight:600;margin-bottom:2px;">${m.titulo}</div>
+            <div style="font-size:10px;color:var(--text2);">${m.sistema} · Gestor: ${m.gestor}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+            <span class="impact-badge ${ic}">${m.impacto}</span>
+            <span class="badge b-green">${m.status}</span>
+          </div>
+        </div>`;
+      }).join('');
+  }
+
+  // ── Gráficos ───────────────────────────────────────────────────────
   setTimeout(()=>{
     initChart('chartItsmTrend',{type:'bar',
       data:{labels:['Dez/25','Jan/26','Fev/26','Mar/26','Abr/26','Mai/26'],
@@ -4516,8 +4779,8 @@ function renderItsm(){
           {label:'P1+P2',data:[12,15,9,14,11,7],backgroundColor:'rgba(247,95,95,0.7)',borderRadius:3},
           {label:'P3+P4',data:[66,77,56,69,60,51],backgroundColor:'rgba(79,142,247,0.5)',borderRadius:3},
         ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{x:{stacked:true},y:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'}}}}});
-
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},
+        scales:{x:{stacked:true},y:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'}}}}});
     initChart('chartItsmSla',{type:'bar',
       data:{labels:['Infra','ERP','Rede','IAM','BI','Hardware','Comunicação'],
         datasets:[{label:'SLA %',data:[94,87,91,96,88,99,92],
@@ -4525,6 +4788,93 @@ function renderItsm(){
       options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},
         scales:{x:{min:80,max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'}},y:{grid:{display:false}}}}});
   },50);
+}
+
+// Abrir modal detalhe incidente
+function openIncidente(id){
+  const i=incidentesItsm.find(x=>x.id===id);
+  if(!i) return;
+  const pc=i.prio==='P1'?'b-red':i.prio==='P2'?'b-amber':i.prio==='P3'?'b-blue':'b-teal';
+  const sc=i.status==='Em atendimento'?'b-blue':i.status==='Aguardando'?'b-amber':'b-green';
+  const prb=problemasItsm.find(p=>p.incidentes.includes(i.id));
+  $('mdIncTitle').innerHTML=`🎫 ${i.id} · <span class="badge ${pc}">${i.prio}</span>`;
+  $('mdIncBody').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+      ${[
+        ['Título do Chamado',`<span style="font-size:13px;font-weight:600;">${i.titulo}</span>`],
+        ['Prioridade',`<span class="badge ${pc}" style="font-size:11px;padding:4px 10px;">${i.prio}</span>`],
+        ['Status Atual',`<span class="badge ${sc}" style="font-size:11px;padding:4px 10px;">${i.status}</span>`],
+        ['Categoria',i.cat],
+        ['Responsável Técnico',i.resp],
+        ['Data de Abertura',i.abertura],
+        ['SLA Restante',`<span style="font-size:16px;font-weight:700;color:${i.slaCor};">${i.sla}</span>`],
+        ['MTTR Meta',i.prio==='P1'?'2h':'i.prio==="P2"?4h:8h'],
+      ].map(([l,v])=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">${l}</div>
+        <div style="font-size:12px;">${v}</div>
+      </div>`).join('')}
+    </div>
+    ${prb?`<div style="background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.2);border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+      <div style="font-size:10px;color:var(--teal);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🔍 Problema Relacionado</div>
+      <div style="font-size:11px;font-weight:600;margin-bottom:4px;">${prb.id} · ${prb.titulo}</div>
+      <div style="font-size:10px;color:var(--text2);">RCA: ${prb.rca}</div>
+      <div style="font-size:10px;color:var(--green);margin-top:4px;">🔧 Workaround: ${prb.workaround}</div>
+    </div>`:''}
+    <div style="background:var(--bg3);border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📋 Histórico de Ações</div>
+      ${[
+        {time:i.abertura,acao:'Chamado registrado pelo usuário / ServiceNow',resp:'Sistema'},
+        {time:'Auto',acao:`Prioridade ${i.prio} atribuída automaticamente — SLA ativado`,resp:'Automação'},
+        {time:'Auto',acao:`Chamado atribuído para ${i.resp} — Categoria: ${i.cat}`,resp:'Roteamento'},
+        {time:'Último',acao:`Status atualizado: ${i.status}`,resp:i.resp},
+      ].map(h=>`<div style="display:flex;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);">
+        <div style="font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;white-space:nowrap;min-width:80px;">${h.time}</div>
+        <div style="flex:1;font-size:10px;color:var(--text2);">${h.acao}</div>
+        <div style="font-size:9px;color:var(--text3);white-space:nowrap;">${h.resp}</div>
+      </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-primary adm-protected" onclick="requireAdm(()=>{ closeModal('modalIncidenciaDetalhe'); toast('Edição de chamado — funcionalidade em desenvolvimento','info','🔧'); })">✏️ Atualizar</button>
+      <button class="btn-sm" onclick="closeModal('modalIncidenciaDetalhe')">Fechar</button>
+    </div>`;
+  openModal('modalIncidenciaDetalhe');
+}
+
+// Abrir modal detalhe RFC
+function openRfcDetalhe(id){
+  const m=mudancasCompletas.find(x=>x.id===id);
+  if(!m) return;
+  const tc=m.tipo==='Emergência'?'b-red':m.tipo==='Normal'?'b-blue':'b-teal';
+  const rc=m.risco==='Alto'?'b-red':m.risco==='Médio'?'b-amber':'b-green';
+  const sc=m.status==='Aprovada'?'b-green':m.status==='Em revisão'?'b-amber':m.status==='Implementada'?'b-teal':'b-gray';
+  $('mdRfcTitle').innerHTML=`🔄 ${m.id} · <span class="badge ${tc}">${m.tipo}</span>`;
+  $('mdRfcBody').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+      ${[
+        ['Título da Mudança',`<span style="font-size:12px;font-weight:600;">${m.titulo}</span>`],
+        ['Tipo de Mudança',`<span class="badge ${tc}" style="font-size:11px;">${m.tipo}</span>`],
+        ['Nível de Risco',`<span class="badge ${rc}" style="font-size:11px;">${m.risco}</span>`],
+        ['Status RFC',`<span class="badge ${sc}" style="font-size:11px;">${m.status}</span>`],
+        ['Impacto Operacional',`<span class="impact-badge ${m.impacto==='Crítico'?'ib-critico':m.impacto==='Alto'?'ib-alto':'ib-medio'}">${m.impacto}</span>`],
+        ['Sistema Afetado',m.sistema],
+        ['Janela de Mudança',`<span style="color:var(--blue);font-weight:600;">${m.janela}</span>`],
+        ['Reunião CAB',m.cab],
+        ['Gestor Responsável',m.gestor],
+        ['CI Relacionado',m.ci],
+      ].map(([l,v])=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">${l}</div>
+        <div style="font-size:12px;">${v}</div>
+      </div>`).join('')}
+    </div>
+    ${m.deps.length?`<div style="background:var(--bg3);border-radius:8px;padding:10px;margin-bottom:14px;">
+      <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">🔗 Dependências (CIs Impactados)</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">${m.deps.map(d=>`<span class="badge b-purple">${d}</span>`).join('')}</div>
+    </div>`:''}
+    <div style="display:flex;gap:8px;">
+      <button class="btn-primary adm-protected" onclick="requireAdm(()=>{ closeModal('modalRfcDetalhe'); toast('Edição de RFC — funcionalidade em desenvolvimento','info','🔧'); })">✏️ Atualizar RFC</button>
+      <button class="btn-sm" onclick="closeModal('modalRfcDetalhe')">Fechar</button>
+    </div>`;
+  openModal('modalRfcDetalhe');
 }
 
 // =====================================================================
@@ -4556,18 +4906,19 @@ function renderFornecedores(){
     {icon:'⭐',label:'SLA Médio',val:`${(fornecedoresList.reduce((s,f)=>s+f.sla,0)/fornecedoresList.length).toFixed(1)}%`,sub:'média da carteira',accent:'var(--purple)'},
   ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
 
-  // Tabela
-  $('tblFornecedores').innerHTML = `<thead><tr><th>Fornecedor</th><th>Segmento</th><th>Contratos</th><th>Valor Total</th><th>SLA %</th><th>Status</th><th>Missão Crítica</th></tr></thead><tbody>`+
-    fornecedoresList.sort((a,b)=>b.valor-a.valor).map(f=>{
+  // Tabela (clicável)
+  $('tblFornecedores').innerHTML = `<thead><tr><th>Fornecedor</th><th>Segmento</th><th>Contratos</th><th>Valor Total</th><th>SLA %</th><th>Status</th><th>Crítico</th></tr></thead><tbody>`+
+    [...fornecedoresList].sort((a,b)=>b.valor-a.valor).map(f=>{
       const slaC=f.sla>=99?'var(--green)':f.sla>=97?'var(--amber)':'var(--red)';
-      return `<tr>
+      const slab=f.sla>=99?'b-green':f.sla>=97?'b-amber':'b-red';
+      return `<tr onclick="openFornecedorDetalhe('${f.nome}')" style="cursor:pointer;" title="Clique para ver contratos e detalhes">
         <td style="font-weight:600;">${f.nome}</td>
         <td style="font-size:10px;color:var(--text3);">${f.segmento}</td>
         <td style="font-size:10px;">${f.contratos.join(' · ')}</td>
         <td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">R$ ${(f.valor/1000).toFixed(0)}K</td>
-        <td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:${slaC};">${f.sla}%</td>
+        <td><span class="badge ${slab}">${f.sla}%</span></td>
         <td>${f.status}</td>
-        <td style="text-align:center;">${f.critico?'⭐ Crítico':'—'}</td>
+        <td style="text-align:center;">${f.critico?'<span class="badge b-amber">⭐ Crítico</span>':'<span style="color:var(--text3);">—</span>'}</td>
       </tr>`;
     }).join('')+'</tbody>';
 
@@ -4587,6 +4938,51 @@ function renderFornecedores(){
       options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},
         scales:{x:{min:90,max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'}},y:{grid:{display:false}}}}});
   },50);
+}
+
+// Abrir modal detalhe fornecedor
+function openFornecedorDetalhe(nome){
+  const f=fornecedoresList.find(x=>x.nome===nome);
+  if(!f) return;
+  const slab=f.sla>=99?'b-green':f.sla>=97?'b-amber':'b-red';
+  const ctrs=contratos.filter(c=>c.fornecedor.toLowerCase().includes(f.nome.split(' ')[0].toLowerCase())||f.contratos.some(cn=>c.nome.includes(cn.split(' ')[0])));
+  $('mdFornTitle').innerHTML=`🤝 ${f.nome} ${f.critico?'<span class="badge b-amber">⭐ Crítico</span>':''}`;
+  $('mdFornBody').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+      ${[
+        ['Segmento',f.segmento],
+        ['SLA Contratual',`<span class="badge ${slab}" style="font-size:12px;padding:4px 10px;">${f.sla}%</span>`],
+        ['Valor Total Carteira',`<span style="font-size:16px;font-weight:700;color:var(--green);">R$ ${(f.valor/1e3).toFixed(0)}K</span>`],
+        ['Status Operacional',f.status],
+        ['Missão Crítica',f.critico?'<span style="color:var(--amber);">⭐ Sim — Fornecedor crítico</span>':'Não'],
+        ['Contato Comercial',`<span style="font-size:10px;color:var(--blue);">${f.contato}</span>`],
+      ].map(([l,v])=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">${l}</div>
+        <div style="font-size:12px;">${v}</div>
+      </div>`).join('')}
+    </div>
+    <div style="background:var(--bg3);border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">📋 Contratos Vigentes · Clique para detalhar</div>
+      ${ctrs.length?ctrs.map(c=>{
+        const tc=c.tipo==='CAPEX'?'b-blue':'b-teal';
+        const sc=c.status==='Ativo'?'b-green':c.status==='Em andamento'?'b-blue':'b-amber';
+        return `<div onclick="closeModal('modalFornecedorDetalhe');abrirContratoDetalhe('${c.id}')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg2);border-radius:8px;margin-bottom:6px;cursor:pointer;border:1px solid var(--border);transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div>
+            <div style="font-size:11px;font-weight:600;">${c.nome}</div>
+            <div style="font-size:10px;color:var(--text3);">${c.id} · Vigência: ${c.inicio} – ${c.fim}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="badge ${tc}">${c.tipo}</span>
+            <span class="badge ${sc}">${c.status}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);font-size:12px;">R$ ${(c.valor/1e3).toFixed(0)}K</span>
+          </div>
+        </div>`;
+      }).join(''):`<div style="color:var(--text3);font-size:11px;padding:8px;">Nenhum contrato detalhado vinculado.</div>`}
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-sm" onclick="closeModal('modalFornecedorDetalhe')">Fechar</button>
+    </div>`;
+  openModal('modalFornecedorDetalhe');
 }
 
 // =====================================================================
@@ -4640,24 +5036,25 @@ function renderBudget(){
     <span style="font-size:12px;font-weight:700;color:${r.cor};">${r.val}</span>
   </div>`).join('');
 
-  // Tabela contratos
-  $('tblBudgetContratos').innerHTML = `<thead><tr><th>Contrato</th><th>Fornecedor</th><th>Tipo</th><th>Valor</th><th>% do Budget</th><th>Status</th></tr></thead><tbody>`+
-    contratos.sort((a,b)=>b.valor-a.valor).map(c=>{
+  // Tabela contratos (clicável → modal detalhe)
+  $('tblBudgetContratos').innerHTML = `<thead><tr><th>Contrato</th><th>Fornecedor</th><th>Tipo</th><th>Valor</th><th>% Budget</th><th>Vigência</th><th>Status</th></tr></thead><tbody>`+
+    [...contratos].sort((a,b)=>b.valor-a.valor).map(c=>{
       const pct=Math.round(c.valor/budgetAnual.total*100);
       const tc=c.tipo==='CAPEX'?'b-blue':'b-teal';
-      const sc=c.status==='Ativo'?'b-green':c.status==='Em andamento'?'b-blue':'b-amber';
-      return `<tr>
-        <td style="font-weight:600;">${c.nome}</td>
-        <td style="font-size:10px;color:var(--text3);">${c.fornecedor}</td>
+      const sc=c.status==='Ativo'?'b-green':c.status==='Em andamento'?'b-blue':(c.status.includes('Revisão')||c.status.includes('⚠'))?'b-amber':'b-gray';
+      return `<tr onclick="abrirContratoDetalhe('${c.id}')" style="cursor:pointer;" title="Clique para ver detalhes completos">
+        <td><b style="font-size:11px;">${c.nome}</b><div style="font-size:9px;color:var(--text3);font-family:'JetBrains Mono',monospace;">${c.id}</div></td>
+        <td style="font-size:10px;color:var(--text2);">${c.fornecedor}</td>
         <td><span class="badge ${tc}">${c.tipo}</span></td>
         <td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">R$ ${(c.valor/1000).toFixed(0)}K</td>
         <td>
-          <div style="display:flex;align-items:center;gap:6px;">
-            <div style="flex:1;height:4px;border-radius:2px;background:var(--bg3);overflow:hidden;">
+          <div style="display:flex;align-items:center;gap:5px;">
+            <div style="flex:1;min-width:60px;height:4px;border-radius:2px;background:var(--bg3);overflow:hidden;">
               <div style="height:100%;width:${Math.min(pct*5,100)}%;background:${c.tipo==='CAPEX'?'var(--blue)':'var(--teal)'};border-radius:2px;"></div></div>
             <span style="font-size:10px;font-weight:600;">${pct}%</span>
           </div>
         </td>
+        <td style="font-size:10px;font-family:'JetBrains Mono',monospace;">${c.fim}</td>
         <td><span class="badge ${sc}">${c.status}</span></td>
       </tr>`;
     }).join('')+'</tbody>';
