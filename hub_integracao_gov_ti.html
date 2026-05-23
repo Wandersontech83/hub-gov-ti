@@ -271,6 +271,77 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .locked-overlay::after{content:'🔒 Modo Admin necessário';position:absolute;inset:0;background:rgba(7,7,15,0.7);border-radius:inherit;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);cursor:not-allowed;backdrop-filter:blur(2px);}
 .adm-protected{opacity:0.4;pointer-events:none;cursor:not-allowed;filter:grayscale(0.5);}
 @keyframes adm-shake{0%,100%{transform:translateX(0);}20%,60%{transform:translateX(-6px);}40%,80%{transform:translateX(6px);}}
+
+/* ===== ENTERPRISE VISUAL REFINEMENTS ===== */
+.tab-panel.active{animation:panelIn 0.22s ease;}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.card{transition:border-color 0.2s,box-shadow 0.2s;}
+.card:hover{border-color:var(--border2);box-shadow:0 4px 24px rgba(0,0,0,0.28);}
+.kpi{transition:transform 0.15s,border-color 0.15s,box-shadow 0.15s;}
+.kpi:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(0,0,0,0.36);}
+.tbl tbody tr{transition:background 0.1s;}
+.plat-card{transition:border-color 0.18s,transform 0.18s,box-shadow 0.18s;}
+.plat-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,0.35);}
+
+/* MINI-TABS (uso interno por painel) */
+.mini-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:14px;overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap;}
+.mini-tabs::-webkit-scrollbar{display:none;}
+.mini-tab{padding:8px 16px;font-size:10px;font-weight:600;color:var(--text2);border-bottom:2px solid transparent;cursor:pointer;transition:all 0.18s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;letter-spacing:0.04em;text-transform:uppercase;}
+.mini-tab:hover{color:var(--text);}
+.mini-tab.active{color:var(--teal);border-bottom-color:var(--teal);}
+.mini-panel{display:none;animation:panelIn 0.18s ease;}
+.mini-panel.active{display:block;}
+
+/* COPILOT CHAT */
+.chat-wrap{display:flex;flex-direction:column;height:380px;background:var(--bg2);border-radius:12px;border:1px solid var(--border);overflow:hidden;}
+.chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin;}
+.chat-messages::-webkit-scrollbar{width:3px;}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--border2);}
+.chat-msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:12px;line-height:1.55;animation:panelIn 0.2s ease;}
+.chat-msg.user{background:var(--teal2);border:1px solid rgba(34,211,238,0.2);align-self:flex-end;border-radius:12px 12px 2px 12px;color:var(--text);}
+.chat-msg.bot{background:var(--card2);border:1px solid var(--border2);align-self:flex-start;border-radius:2px 12px 12px 12px;}
+.chat-msg.bot b{color:var(--teal);}
+.chat-input-row{display:flex;gap:8px;padding:10px 12px;background:var(--bg3);border-top:1px solid var(--border);}
+.chat-input{flex:1;background:var(--card);border:1px solid var(--border2);color:var(--text);font-family:inherit;font-size:12px;padding:8px 12px;border-radius:8px;outline:none;transition:border-color 0.2s;}
+.chat-input:focus{border-color:rgba(34,211,238,0.4);}
+.chat-suggestions{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;background:var(--bg3);border-top:1px solid var(--border);}
+.chat-pill{font-size:10px;padding:4px 10px;border-radius:20px;border:1px solid var(--border2);background:var(--card);color:var(--text2);cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+.chat-pill:hover{background:var(--teal2);border-color:rgba(34,211,238,0.3);color:var(--teal);}
+
+/* TIMELINE CAB */
+.cab-timeline{position:relative;padding-left:28px;}
+.cab-timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--teal),var(--blue),transparent);}
+.cab-event{position:relative;margin-bottom:14px;}
+.cab-event::before{content:'';position:absolute;left:-22px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--card2);border:2px solid var(--teal);transition:border-color 0.2s;}
+.cab-event:hover::before{border-color:var(--amber);}
+.cab-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;transition:border-color 0.18s;}
+.cab-card:hover{border-color:var(--border2);}
+
+/* IMPACT BADGE */
+.impact-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:0.06em;}
+.ib-critico{background:rgba(247,95,95,0.2);color:var(--red);border:1px solid rgba(247,95,95,0.3);}
+.ib-alto{background:rgba(245,166,35,0.15);color:var(--amber);border:1px solid rgba(245,166,35,0.3);}
+.ib-medio{background:rgba(79,142,247,0.15);color:var(--blue);border:1px solid rgba(79,142,247,0.3);}
+.ib-baixo{background:rgba(107,114,128,0.15);color:var(--gray-400);border:1px solid rgba(107,114,128,0.3);}
+
+/* SCORE RING */
+.score-ring{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;position:relative;}
+.score-ring::before{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--card);}
+.score-ring span{position:relative;z-index:1;}
+
+/* DRILL-DOWN */
+.drill-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.drill-back{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);font-size:11px;padding:4px 10px;border-radius:7px;cursor:pointer;transition:all 0.15s;}
+.drill-back:hover{color:var(--text);border-color:var(--teal);}
+.drill-crumb{font-size:11px;color:var(--text3);}
+.drill-crumb b{color:var(--teal);}
+
+/* FINANCEIRO — TORRE */
+.torre-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;transition:border-color 0.18s,transform 0.15s;cursor:pointer;}
+.torre-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.torre-bar{height:6px;border-radius:3px;margin-top:8px;overflow:hidden;background:var(--bg2);}
+.torre-bar-fill{height:100%;border-radius:3px;transition:width 0.8s ease;}
+
 .adm-shake{animation:adm-shake 0.35s ease;}
 </style>
 </head>
@@ -553,12 +624,83 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- ===== GOV IA ===== -->
 <div class="tab-panel" id="panel-govai">
-  <div class="kpi-grid" id="kpiGovai"></div>
-  <div class="g2">
-    <div class="card"><div class="card-title">Inventário de modelos de IA</div><div class="tbl-wrap"><table class="tbl" id="tblModelos"></table></div></div>
-    <div class="card"><div class="card-title">Conformidade ISO 42001 por domínio</div><div id="ia42001"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px;" id="kpiGovai"></div>
+
+  <div class="mini-tabs">
+    <button class="mini-tab active" onclick="switchMiniTab('govai','copilot',this)">🤖 Copilot IA</button>
+    <button class="mini-tab" onclick="switchMiniTab('govai','modelos',this)">📦 Modelos</button>
+    <button class="mini-tab" onclick="switchMiniTab('govai','iso42001',this)">✅ ISO 42001</button>
+    <button class="mini-tab" onclick="switchMiniTab('govai','riscos',this)">⚠️ Riscos IA</button>
+    <button class="mini-tab" onclick="switchMiniTab('govai','tokens',this)">📊 Consumo</button>
   </div>
-  <div class="card"><div class="card-title">Consumo de tokens · Últimos 30 dias</div><div id="iaTokens"></div></div>
+
+  <!-- COPILOT IA -->
+  <div class="mini-panel active" id="govai-copilot">
+    <div class="g2">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="card" style="padding:10px 14px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--purple2),var(--purple3));border:1px solid rgba(167,139,250,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;">🤖</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;">Copilot de Governança TI</div>
+              <div style="font-size:10px;color:var(--text2);">Consulte dados do portal em linguagem natural</div>
+            </div>
+            <div class="badge-live" style="margin-left:auto;"><div class="dot-live"></div>Online</div>
+          </div>
+          <div class="chat-wrap" id="chatWrap">
+            <div class="chat-messages" id="chatMessages">
+              <div class="chat-msg bot">👋 Olá! Sou o <b>Copilot de Governança TI</b>. Posso responder perguntas sobre contratos, budget, incidentes, compliance, ativos, riscos e muito mais. Como posso ajudar?</div>
+            </div>
+            <div class="chat-suggestions" id="chatSuggestions">
+              <button class="chat-pill" onclick="enviarPerguntaIA(this.textContent)">Valor total dos contratos?</button>
+              <button class="chat-pill" onclick="enviarPerguntaIA(this.textContent)">Quanto em CAPEX?</button>
+              <button class="chat-pill" onclick="enviarPerguntaIA(this.textContent)">Contratos vencendo em 90 dias?</button>
+              <button class="chat-pill" onclick="enviarPerguntaIA(this.textContent)">Incidentes P1 abertos?</button>
+              <button class="chat-pill" onclick="enviarPerguntaIA(this.textContent)">Maior fornecedor por consumo?</button>
+              <button class="chat-pill" onclick="enviarPerguntaIA(this.textContent)">Ativos em manutenção?</button>
+              <button class="chat-pill" onclick="enviarPerguntaIA(this.textContent)">Riscos críticos sem mitigação?</button>
+              <button class="chat-pill" onclick="enviarPerguntaIA(this.textContent)">Domínio COBIT menor maturidade?</button>
+            </div>
+            <div class="chat-input-row">
+              <input class="chat-input" id="chatInput" placeholder="Faça uma pergunta sobre governança de TI..." onkeydown="if(event.key==='Enter')enviarPerguntaIA($('chatInput').value)"/>
+              <button class="btn-primary" style="padding:7px 14px;font-size:12px;" onclick="enviarPerguntaIA($('chatInput').value)">Enviar ↵</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📊 Conformidade ISO 42001 por domínio</div>
+        <div id="ia42001"></div>
+        <div style="margin-top:12px;"><div class="card-title">📈 Score geral de conformidade IA</div>
+          <div style="position:relative;height:180px;"><canvas id="chartIaScore"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODELOS -->
+  <div class="mini-panel" id="govai-modelos">
+    <div class="card"><div class="card-title">Inventário de modelos de IA · Homologados e em produção</div><div class="tbl-wrap"><table class="tbl" id="tblModelos"></table></div></div>
+  </div>
+
+  <!-- ISO 42001 -->
+  <div class="mini-panel" id="govai-iso42001">
+    <div class="g2" style="margin-bottom:12px;">
+      <div class="card"><div class="card-title">Controles ISO 42001 por domínio</div><div id="ia42001Controles"></div></div>
+      <div class="card"><div class="card-title">Score de conformidade IA</div><div style="position:relative;height:220px;"><canvas id="chartIa42001Radar"></canvas></div></div>
+    </div>
+    <div class="card"><div class="card-title">📋 Planos de ação ISO 42001 · Gaps e evidências</div><div class="tbl-wrap"><table class="tbl" id="tblIa42001Gap"></table></div></div>
+  </div>
+
+  <!-- RISCOS IA -->
+  <div class="mini-panel" id="govai-riscos">
+    <div class="card"><div class="card-title">⚠️ Mapa de riscos de IA · Privacidade · Fairness · Robustez</div><div class="tbl-wrap"><table class="tbl" id="tblRiscosIa"></table></div></div>
+  </div>
+
+  <!-- CONSUMO -->
+  <div class="mini-panel" id="govai-tokens">
+    <div class="card"><div class="card-title">📊 Consumo de tokens · Últimos 30 dias</div><div id="iaTokens"></div></div>
+  </div>
 </div>
 
 <!-- ===== SEGURANÇA & IAM ===== -->
@@ -596,69 +738,130 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- ===== CMDB ===== -->
 <div class="tab-panel" id="panel-cmdb">
-  <div class="kpi-grid" id="kpiCmdb"></div>
-  <div class="g2">
-    <div class="card"><div class="card-title">Inventário de ativos · Configuration Items</div><div class="tbl-wrap"><table class="tbl" id="tblCis"></table></div></div>
-    <div class="card"><div class="card-title">Dependências críticas · Mapa de impacto</div><div id="cmdbDeps"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px;" id="kpiCmdb"></div>
+
+  <div class="mini-tabs" id="cmdbMiniTabs">
+    <button class="mini-tab active" onclick="switchMiniTab('cmdb','cis',this)">🗂 CIs</button>
+    <button class="mini-tab" onclick="switchMiniTab('cmdb','apps',this)">📦 Aplicações</button>
+    <button class="mini-tab" onclick="switchMiniTab('cmdb','servicos',this)">⚙️ Serviços</button>
+    <button class="mini-tab" onclick="switchMiniTab('cmdb','deps',this)">🔗 Relacionamentos</button>
+    <button class="mini-tab" onclick="switchMiniTab('cmdb','impacto',this)">💥 Análise de Impacto</button>
+    <button class="mini-tab" onclick="switchMiniTab('cmdb','lifecycle',this)">📅 Lifecycle</button>
   </div>
-  <div class="card"><div class="card-title">Lifecycle · EOL e renovação</div><div class="tbl-wrap"><table class="tbl" id="tblLifecycle"></table></div></div>
+
+  <div class="mini-panel active" id="cmdb-cis">
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+      <select class="form-select" style="font-size:10px;padding:4px 8px;width:140px;" id="cmdbFiltroCrit" onchange="renderCmdb()">
+        <option value="">Todas criticidades</option>
+        <option value="P1">P1 Crítico</option><option value="P2">P2 Alto</option>
+        <option value="P3">P3 Médio</option><option value="P4">P4 Baixo</option>
+      </select>
+      <select class="form-select" style="font-size:10px;padding:4px 8px;width:130px;" id="cmdbFiltroTipo" onchange="renderCmdb()">
+        <option value="">Todos os tipos</option>
+        <option>Servidor</option><option>Banco de Dados</option><option>Aplicação</option>
+        <option>Rede</option><option>Storage</option><option>Serviço</option>
+      </select>
+    </div>
+    <div class="card"><div class="tbl-wrap"><table class="tbl" id="tblCis"></table></div></div>
+  </div>
+
+  <div class="mini-panel" id="cmdb-apps">
+    <div class="card"><div class="card-title">Aplicações registradas no CMDB</div><div class="tbl-wrap"><table class="tbl" id="tblCmdbApps"></table></div></div>
+  </div>
+
+  <div class="mini-panel" id="cmdb-servicos">
+    <div class="card"><div class="card-title">Serviços de TI · Catálogo operacional</div><div class="tbl-wrap"><table class="tbl" id="tblCmdbServicos"></table></div></div>
+  </div>
+
+  <div class="mini-panel" id="cmdb-deps">
+    <div class="g2">
+      <div class="card"><div class="card-title">🔗 Dependências críticas · Mapa de impacto</div><div id="cmdbDeps"></div></div>
+      <div class="card"><div class="card-title">📊 Distribuição por tipo de CI</div><div style="position:relative;height:200px;"><canvas id="chartCmdbDist"></canvas></div></div>
+    </div>
+  </div>
+
+  <div class="mini-panel" id="cmdb-impacto">
+    <div style="margin-bottom:10px;padding:10px 12px;background:var(--amber3);border:1px solid rgba(245,166,35,0.2);border-radius:8px;font-size:11px;color:var(--amber);">
+      ⚡ Selecione um CI na tabela acima para simular o impacto de um incidente ou mudança sobre o ambiente.
+    </div>
+    <div class="g2">
+      <div class="card"><div class="card-title">🔥 CIs com incidentes P1/P2 abertos</div><div id="cmdbIncAtivos"></div></div>
+      <div class="card"><div class="card-title">🔄 RFCs em aberto que afetam CIs críticos</div><div id="cmdbRfcAtivos"></div></div>
+    </div>
+    <div class="card"><div class="card-title">📉 Análise de impacto por criticidade</div><div id="cmdbImpactoAnalise"></div></div>
+  </div>
+
+  <div class="mini-panel" id="cmdb-lifecycle">
+    <div class="card"><div class="card-title">📅 Lifecycle · EOL e renovação de CIs</div><div class="tbl-wrap"><table class="tbl" id="tblLifecycle"></table></div></div>
+  </div>
 </div>
 
 <!-- ===== ATIVOS DE TI ===== -->
 <div class="tab-panel" id="panel-ativos">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:14px;" id="kpiAtivos"></div>
 
-  <!-- KPIs de Ativos -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;" id="kpiAtivos"></div>
+  <div class="mini-tabs">
+    <button class="mini-tab active" onclick="switchMiniTab('ativos','inventario',this)">📋 Inventário</button>
+    <button class="mini-tab" onclick="switchMiniTab('ativos','moviment',this)">🔄 Movimentações</button>
+    <button class="mini-tab" onclick="switchMiniTab('ativos','manutencao',this)">🔧 Manutenção</button>
+    <button class="mini-tab" onclick="switchMiniTab('ativos','contratos',this)">📎 Contratos Vinculados</button>
+  </div>
 
-  <!-- Gráfico distribuição + Movimentações -->
-  <div class="g2" style="margin-bottom:14px;">
-    <div class="card">
-      <div class="card-title">Distribuição por categoria</div>
-      <div style="position:relative;height:200px;display:flex;align-items:center;justify-content:center;">
-        <canvas id="chartAtivosCategoria" style="max-width:200px;max-height:200px;"></canvas>
-        <div id="ativosCategLegend" style="margin-left:20px;flex:1;"></div>
+  <!-- Inventário -->
+  <div class="mini-panel active" id="ativos-inventario">
+    <div class="g2" style="margin-bottom:14px;">
+      <div class="card">
+        <div class="card-title">Distribuição por categoria</div>
+        <div style="position:relative;height:200px;display:flex;align-items:center;justify-content:center;">
+          <canvas id="chartAtivosCategoria" style="max-width:180px;max-height:180px;"></canvas>
+          <div id="ativosCategLegend" style="margin-left:16px;flex:1;"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Status operacional · Ativos por situação</div>
+        <div style="position:relative;height:200px;"><canvas id="chartAtivosStatus"></canvas></div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-title">📥 Movimentações · Entrada e Saída</div>
-      <div style="position:relative;height:200px;"><canvas id="chartAtivosMoviment"></canvas></div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+      <button class="btn-primary adm-protected" onclick="requireAdm(()=>openModal('modalNovoAtivo'))">➕ Cadastrar Ativo</button>
+      <select class="form-select" style="font-size:10px;padding:4px 8px;width:150px;" id="filtroCategAtivo" onchange="renderAtivos()">
+        <option value="">Todas as categorias</option>
+        <option>Servidor</option><option>Rede</option><option>Notebook</option>
+        <option>Storage</option><option>Telefonia</option><option>Impressora</option><option>Outro</option>
+      </select>
+      <select class="form-select" style="font-size:10px;padding:4px 8px;width:130px;" id="filtroStatusAtivo" onchange="renderAtivos()">
+        <option value="">Todos os status</option>
+        <option>Ativo</option><option>Em manutenção</option><option>Baixado</option><option>Emprestado</option>
+      </select>
     </div>
+    <div class="card"><div class="tbl-wrap"><table class="tbl" id="tblAtivos"></table></div></div>
   </div>
 
-  <!-- Ações -->
-  <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-    <button class="btn-primary adm-protected" onclick="requireAdm(()=>openModal('modalEntradaAtivo'))">📥 Registrar Entrada</button>
-    <button class="btn-danger adm-protected" onclick="requireAdm(()=>openModal('modalSaidaAtivo'))">📤 Registrar Saída</button>
-    <button class="btn-sm adm-protected" onclick="requireAdm(()=>openModal('modalNovoAtivo'))">➕ Cadastrar Ativo</button>
-    <select class="form-select" style="font-size:10px;padding:5px 8px;width:160px;" id="filtroCategAtivo" onchange="renderAtivos()">
-      <option value="">Todas as categorias</option>
-      <option value="Servidor">Servidor</option>
-      <option value="Rede">Rede</option>
-      <option value="Desktop">Desktop / Notebook</option>
-      <option value="Storage">Storage</option>
-      <option value="Telefonia">Telefonia</option>
-      <option value="Impressora">Impressora</option>
-      <option value="Outro">Outro</option>
-    </select>
-    <select class="form-select" style="font-size:10px;padding:5px 8px;width:140px;" id="filtroStatusAtivo" onchange="renderAtivos()">
-      <option value="">Todos os status</option>
-      <option value="Ativo">Ativo</option>
-      <option value="Em manutenção">Em manutenção</option>
-      <option value="Baixado">Baixado</option>
-      <option value="Emprestado">Emprestado</option>
-    </select>
+  <!-- Movimentações -->
+  <div class="mini-panel" id="ativos-moviment">
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <button class="btn-primary adm-protected" onclick="requireAdm(()=>openModal('modalEntradaAtivo'))">📥 Entrada</button>
+      <button class="btn-danger adm-protected" onclick="requireAdm(()=>openModal('modalSaidaAtivo'))">📤 Saída / Baixa</button>
+    </div>
+    <div class="g2" style="margin-bottom:12px;">
+      <div class="card"><div class="card-title">📥 Movimentações · Entrada e Saída mensal</div><div style="position:relative;height:200px;"><canvas id="chartAtivosMoviment"></canvas></div></div>
+      <div class="card"><div class="card-title">Resumo de movimentações</div><div id="ativosMovResumo"></div></div>
+    </div>
+    <div class="card"><div class="card-title">Histórico completo de movimentações</div><div class="tbl-wrap" style="max-height:300px;"><table class="tbl" id="tblMovimentAtivos"></table></div></div>
   </div>
 
-  <!-- Tabela de Ativos -->
-  <div class="card" style="margin-bottom:14px;">
-    <div class="card-title">Inventário de ativos · Documentação completa</div>
-    <div class="tbl-wrap"><table class="tbl" id="tblAtivos"></table></div>
+  <!-- Manutenção -->
+  <div class="mini-panel" id="ativos-manutencao">
+    <div class="g2" style="margin-bottom:12px;">
+      <div class="card"><div class="card-title">🔧 Ativos em manutenção</div><div id="ativosManuAtual"></div></div>
+      <div class="card"><div class="card-title">📅 Garantias — vencimento próximo</div><div id="ativosGarantias"></div></div>
+    </div>
+    <div class="card"><div class="card-title">Histórico de manutenções</div><div class="tbl-wrap"><table class="tbl" id="tblManutencoes"></table></div></div>
   </div>
 
-  <!-- Histórico de Movimentações -->
-  <div class="card">
-    <div class="card-title">📋 Histórico de Movimentações (Entrada / Saída)</div>
-    <div class="tbl-wrap" style="max-height:280px;"><table class="tbl" id="tblMovimentAtivos"></table></div>
+  <!-- Contratos Vinculados -->
+  <div class="mini-panel" id="ativos-contratos">
+    <div class="card"><div class="card-title">📎 Ativos vinculados a contratos de TI</div><div class="tbl-wrap"><table class="tbl" id="tblAtivosContratos"></table></div></div>
   </div>
 </div>
 
@@ -674,62 +877,154 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <!-- ===== FINOPS ===== -->
 <div class="tab-panel" id="panel-finops">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:14px;" id="kpiBudget"></div>
 
-  <!-- ── SEÇÃO: BUDGET TI ── -->
-  <div class="sec-div" style="margin-top:0;">💰 Budget de TI · Visão CAPEX / OPEX</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;" id="kpiBudget"></div>
-  <div class="g2" style="margin-bottom:14px;">
-    <div class="card">
-      <div class="card-title">CAPEX vs OPEX · Distribuição Anual</div>
-      <div style="position:relative;height:200px;display:flex;align-items:center;justify-content:center;">
-        <canvas id="chartCapexOpex" style="max-width:200px;max-height:200px;"></canvas>
-        <div id="capexOpexLegend" style="margin-left:20px;"></div>
+  <div class="mini-tabs">
+    <button class="mini-tab active" onclick="switchMiniTab('finops','overview',this)">💰 Overview</button>
+    <button class="mini-tab" onclick="switchMiniTab('finops','contratos',this)">📋 Contratos</button>
+    <button class="mini-tab" onclick="switchMiniTab('finops','torres',this)">🏢 Por Torre</button>
+    <button class="mini-tab" onclick="switchMiniTab('finops','fornecedores',this)">🤝 Fornecedores</button>
+    <button class="mini-tab" onclick="switchMiniTab('finops','cloud',this)">☁️ Cloud</button>
+    <button class="mini-tab" onclick="switchMiniTab('finops','riscos',this)">⚠️ Riscos Financeiros</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="mini-panel active" id="finops-overview">
+    <div class="g2" style="margin-bottom:14px;">
+      <div class="card">
+        <div class="card-title">CAPEX vs OPEX · Distribuição da carteira de contratos</div>
+        <div style="position:relative;height:200px;display:flex;align-items:center;justify-content:center;">
+          <canvas id="chartCapexOpex" style="max-width:180px;max-height:180px;"></canvas>
+          <div id="capexOpexLegend" style="margin-left:16px;flex:1;"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Realizado vs Planejado · Mensal (R$ K)</div>
+        <div style="position:relative;height:200px;"><canvas id="chartBudgetMensal"></canvas></div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-title">Realizado vs Planejado · Mensal (R$ K)</div>
-      <div style="position:relative;height:200px;"><canvas id="chartBudgetMensal"></canvas></div>
-    </div>
-  </div>
-
-  <!-- ── SEÇÃO: CONTRATOS ── -->
-  <div class="sec-div">📋 Contratos de TI · Clique na linha para ver detalhes</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;" id="kpiContratos"></div>
-  <div class="card" style="margin-bottom:14px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-      <div class="card-title" style="margin-bottom:0;">Carteira de contratos ativos</div>
-      <div style="display:flex;gap:6px;">
-        <select class="form-select" style="font-size:10px;padding:4px 8px;width:120px;" id="filtroTipoContrato" onchange="renderFinops()">
-          <option value="">Todos</option>
-          <option value="OPEX">OPEX</option>
-          <option value="CAPEX">CAPEX</option>
-        </select>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Saldo disponível por mês</div>
+        <div style="position:relative;height:160px;"><canvas id="chartSaldo"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Forecast anual · Projeção de encerramento</div>
+        <div id="finopsForecast"></div>
       </div>
     </div>
-    <div class="tbl-wrap"><table class="tbl" id="tblContratos"></table></div>
   </div>
 
-  <!-- ── SEÇÃO: CLOUD / FINOPS ── -->
-  <div class="sec-div">☁️ FinOps Cloud · Custos por provedor</div>
-  <div class="kpi-grid" id="kpiFinops"></div>
-  <div class="g2" style="margin-top:12px;">
-    <div class="card"><div class="card-title">Custos cloud · Por provedor</div><div id="finopsCloud"></div></div>
-    <div class="card">
-      <div class="card-title">Gasto mensal por provedor (R$ K)</div>
-      <div style="position:relative;height:200px;"><canvas id="chartCloudSpend"></canvas></div>
+  <!-- CONTRATOS -->
+  <div class="mini-panel" id="finops-contratos">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px;" id="kpiContratos"></div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+      <select class="form-select" style="font-size:10px;padding:4px 8px;width:110px;" id="filtroTipoContrato" onchange="renderFinops()">
+        <option value="">Todos</option><option value="OPEX">OPEX</option><option value="CAPEX">CAPEX</option>
+      </select>
+      <select class="form-select" style="font-size:10px;padding:4px 8px;width:120px;" id="filtroStatusContrato" onchange="renderFinops()">
+        <option value="">Todos os status</option><option>Ativo</option><option>Em andamento</option>
+      </select>
+    </div>
+    <div class="card"><div class="tbl-wrap"><table class="tbl" id="tblContratos"></table></div></div>
+  </div>
+
+  <!-- POR TORRE -->
+  <div class="mini-panel" id="finops-torres">
+    <div class="g2" style="margin-bottom:12px;">
+      <div class="card"><div class="card-title">Budget por torre de TI</div><div style="position:relative;height:220px;"><canvas id="chartBudgetTorre"></canvas></div></div>
+      <div class="card"><div class="card-title">Detalhamento por torre</div><div id="finopsTorres"></div></div>
     </div>
   </div>
-  <div class="card" style="margin-top:12px;"><div class="card-title">Detalhamento · Centro de custo e otimizações</div><div class="tbl-wrap"><table class="tbl" id="tblFinops"></table></div></div>
+
+  <!-- FORNECEDORES -->
+  <div class="mini-panel" id="finops-fornecedores">
+    <div class="g2" style="margin-bottom:12px;">
+      <div class="card"><div class="card-title">Consumo por fornecedor</div><div style="position:relative;height:220px;"><canvas id="chartFornecedores"></canvas></div></div>
+      <div class="card"><div class="card-title">Top fornecedores</div><div id="finopsFornecedores"></div></div>
+    </div>
+  </div>
+
+  <!-- CLOUD -->
+  <div class="mini-panel" id="finops-cloud">
+    <div class="kpi-grid" id="kpiFinops"></div>
+    <div class="g2" style="margin-top:12px;">
+      <div class="card"><div class="card-title">Custos cloud · Por provedor</div><div id="finopsCloud"></div></div>
+      <div class="card"><div class="card-title">Gasto mensal por provedor (R$ K)</div><div style="position:relative;height:200px;"><canvas id="chartCloudSpend"></canvas></div></div>
+    </div>
+    <div class="card" style="margin-top:12px;"><div class="card-title">Detalhamento · Centro de custo e otimizações</div><div class="tbl-wrap"><table class="tbl" id="tblFinops"></table></div></div>
+  </div>
+
+  <!-- RISCOS FINANCEIROS -->
+  <div class="mini-panel" id="finops-riscos">
+    <div class="card"><div class="card-title">⚠️ Riscos financeiros identificados</div><div id="finopsRiscosFinanc"></div></div>
+  </div>
 </div>
 
 <!-- ===== MUDANÇAS & CAB ===== -->
 <div class="tab-panel" id="panel-mudancas">
-  <div class="kpi-grid" id="kpiMud"></div>
-  <div class="g2">
-    <div class="card"><div class="card-title">RFCs em andamento · Calendário CAB</div><div class="tbl-wrap"><table class="tbl" id="tblMudancas"></table></div></div>
-    <div class="card"><div class="card-title">Taxa de sucesso · Rollbacks · Tendência</div><div id="mudTendencia"></div></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px;" id="kpiMud"></div>
+
+  <div class="mini-tabs">
+    <button class="mini-tab active" onclick="switchMiniTab('mudancas','rfcs',this)">📝 RFCs</button>
+    <button class="mini-tab" onclick="switchMiniTab('mudancas','cab',this)">🗓 Calendário CAB</button>
+    <button class="mini-tab" onclick="switchMiniTab('mudancas','emergenciais',this)">🚨 Emergenciais</button>
+    <button class="mini-tab" onclick="switchMiniTab('mudancas','janelas',this)">🪟 Janelas</button>
+    <button class="mini-tab" onclick="switchMiniTab('mudancas','timeline',this)">📅 Timeline</button>
   </div>
-  <div class="card"><div class="card-title">Janelas de manutenção · Próximas 2 semanas</div><div id="mudJanelas"></div></div>
+
+  <!-- RFCs -->
+  <div class="mini-panel active" id="mudancas-rfcs">
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+      <select class="form-select" style="font-size:10px;padding:4px 8px;width:130px;" id="mudFiltroStatus" onchange="renderMudancas()">
+        <option value="">Todos os status</option>
+        <option>Em revisão</option><option>Aprovada</option><option>Reprovada</option>
+        <option>Implementada</option><option>Pendente CAB</option>
+      </select>
+      <select class="form-select" style="font-size:10px;padding:4px 8px;width:120px;" id="mudFiltroRisco" onchange="renderMudancas()">
+        <option value="">Todos os riscos</option>
+        <option>Alto</option><option>Médio</option><option>Baixo</option>
+      </select>
+      <button class="btn-primary adm-protected" onclick="requireAdm(()=>toast('Nova RFC — em breve','info','📝'))">+ Nova RFC</button>
+    </div>
+    <div class="card"><div class="tbl-wrap"><table class="tbl" id="tblMudancas"></table></div></div>
+  </div>
+
+  <!-- Calendário CAB -->
+  <div class="mini-panel" id="mudancas-cab">
+    <div class="g2">
+      <div class="card"><div class="card-title">📊 Métricas CAB · Sucesso vs Rollback</div><div id="mudTendencia"></div></div>
+      <div class="card"><div class="card-title">🔄 Mudanças por status</div><div style="position:relative;height:200px;"><canvas id="chartMudStatus"></canvas></div></div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <div class="card-title">📋 Próximos CABs · Pautas e aprovações</div>
+      <div id="cabPautas"></div>
+    </div>
+  </div>
+
+  <!-- Emergenciais -->
+  <div class="mini-panel" id="mudancas-emergenciais">
+    <div style="padding:10px 12px;background:var(--red3);border:1px solid rgba(247,95,95,0.2);border-radius:8px;font-size:11px;color:var(--red);margin-bottom:12px;">
+      🚨 Mudanças emergenciais requerem aprovação de 2 gestores e devem ser retroativamente inseridas no CAB em 72h.
+    </div>
+    <div class="card"><div class="tbl-wrap"><table class="tbl" id="tblEmergenciais"></table></div></div>
+  </div>
+
+  <!-- Janelas -->
+  <div class="mini-panel" id="mudancas-janelas">
+    <div class="g2">
+      <div class="card"><div class="card-title">🪟 Janelas de manutenção · Próximas 2 semanas</div><div id="mudJanelas"></div></div>
+      <div class="card"><div class="card-title">🔗 CIs afetados por mudanças abertas</div><div id="mudCisAfetados"></div></div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="mini-panel" id="mudancas-timeline">
+    <div class="card">
+      <div class="card-title">📅 Timeline de mudanças · Status cronológico</div>
+      <div id="mudTimeline" class="cab-timeline"></div>
+    </div>
+  </div>
 </div>
 
 <!-- ===== CONTINUIDADE ===== -->
@@ -2577,6 +2872,86 @@ async function loadDataJson(){
 }
 
 // =====================================================================
+// MINI-TABS — switch interno por painel
+// =====================================================================
+function switchMiniTab(panel, tab, el){
+  const prefix = panel+'-';
+  document.querySelectorAll('#panel-'+panel+' .mini-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#panel-'+panel+' .mini-tab').forEach(t=>t.classList.remove('active'));
+  const target = document.getElementById(prefix+tab);
+  if(target){ target.classList.add('active'); }
+  if(el){ el.classList.add('active'); }
+}
+
+// =====================================================================
+// DADOS — CMDB ENTERPRISE
+// =====================================================================
+const cmdbApps = [
+  {id:'APP-001',nome:'SAP S/4HANA',tipo:'ERP',owner:'J. Santos',criticidade:'P1',sla:'99.9%',status:'Produção',vers:'2023 FPS2',cis:['CI-001','CI-002','CI-003'],contrato:'CTR-001',incAbertos:2,deps:'Oracle DB, SRV-SAP-APP01, SRV-SAP-DB01'},
+  {id:'APP-002',nome:'Oracle EBS Financeiro',tipo:'ERP',owner:'M. Oliveira',criticidade:'P1',sla:'99.9%',status:'Produção',vers:'12.2.10',cis:['CI-002'],contrato:'CTR-001',incAbertos:1,deps:'Oracle DB, SRV-ORADB01'},
+  {id:'APP-003',nome:'ServiceNow ITSM',tipo:'ITSM/SaaS',owner:'C. Mendes',criticidade:'P2',sla:'99.5%',status:'Produção',vers:'Washington DC',cis:[],contrato:'CTR-003',incAbertos:0,deps:'Azure AD, API Gateway'},
+  {id:'APP-004',nome:'Portal RH · SuccessFactors',tipo:'HCM/SaaS',owner:'A. Lima',criticidade:'P2',sla:'99.0%',status:'Produção',vers:'2H2025',cis:[],contrato:'CTR-002',incAbertos:0,deps:'Azure AD, SSO'},
+  {id:'APP-005',nome:'Intranet Corporativa',tipo:'Portal',owner:'P. Costa',criticidade:'P3',sla:'98.0%',status:'Produção',vers:'SharePoint Online',cis:[],contrato:'CTR-002',incAbertos:0,deps:'M365, Azure AD'},
+  {id:'APP-006',nome:'BI · Power BI Premium',tipo:'Analytics',owner:'M. Oliveira',criticidade:'P3',sla:'99.0%',status:'Produção',vers:'Jan/2026',cis:[],contrato:'CTR-002',incAbertos:0,deps:'Azure, SAP, Oracle'},
+];
+
+const cmdbServicos = [
+  {id:'SVC-001',nome:'Email Corporativo',tipo:'Colaboração',owner:'M. Oliveira',criticidade:'P2',sla:'99.5%',status:'Ativo',rto:'2h',rpo:'4h',users:2800,apps:'M365 Exchange Online'},
+  {id:'SVC-002',nome:'ERP Financeiro',tipo:'Core Business',owner:'J. Santos',criticidade:'P1',sla:'99.9%',status:'Ativo',rto:'1h',rpo:'15min',users:450,apps:'SAP S/4HANA + Oracle EBS'},
+  {id:'SVC-003',nome:'VPN Corporativa',tipo:'Rede/Segurança',owner:'R. Silva',criticidade:'P1',sla:'99.9%',status:'Ativo',rto:'30min',rpo:'N/A',users:1200,apps:'FortiGate SSL-VPN'},
+  {id:'SVC-004',nome:'ITSM / Service Desk',tipo:'Suporte',owner:'C. Mendes',criticidade:'P2',sla:'99.0%',status:'Ativo',rto:'2h',rpo:'1h',users:3200,apps:'ServiceNow ITSM'},
+  {id:'SVC-005',nome:'Backup & Recovery',tipo:'Infraestrutura',owner:'J. Santos',criticidade:'P1',sla:'99.0%',status:'Degradado',rto:'4h',rpo:'1h',users:0,apps:'Veeam Backup B&R'},
+  {id:'SVC-006',nome:'DNS Interno',tipo:'Infraestrutura',owner:'R. Silva',criticidade:'P1',sla:'99.99%',status:'Ativo',rto:'15min',rpo:'N/A',users:0,apps:'Windows DNS / Active Directory'},
+];
+
+// =====================================================================
+// DADOS — MODELOS IA COMPLETOS
+// =====================================================================
+const iaModelosCompleto = [
+  {id:'MDL-001',nome:'Agente Contratos',tipo:'LLM',base:'Claude 3.5 Sonnet',owner:'C. Mendes',status:'Produção',risco:'Baixo',iso42001:'96%',lgpd:'OK',fairness:'OK',robustez:'Alta',privacidade:'OK',tokens:'420K/mês',datasets:'Base de contratos SAP/Oracle',etica:'Aprovado',homologacao:'22/01/2026',score:94},
+  {id:'MDL-002',nome:'Classificador de Incidentes',tipo:'ML Classificação',base:'BERT Fine-tuned',owner:'J. Santos',status:'Produção',risco:'Médio',iso42001:'82%',lgpd:'OK',fairness:'Em revisão',robustez:'Média',privacidade:'OK',tokens:'—',datasets:'Histórico ServiceNow 5 anos',etica:'Aprovado',homologacao:'10/03/2026',score:79},
+  {id:'MDL-003',nome:'Preditor de Falhas ITOM',tipo:'ML Preditivo',base:'XGBoost',owner:'J. Santos',status:'Homologação',risco:'Médio',iso42001:'75%',lgpd:'OK',fairness:'OK',robustez:'Alta',privacidade:'OK',tokens:'—',datasets:'Métricas ITOM 3 anos',etica:'Pendente',homologacao:'Pendente',score:72},
+  {id:'MDL-004',nome:'Analista FinOps',tipo:'LLM',base:'GPT-4o',owner:'M. Oliveira',status:'Produção',risco:'Alto',iso42001:'68%',lgpd:'Revisar',fairness:'OK',robustez:'Alta',privacidade:'Revisar',tokens:'2.1M/mês',datasets:'Dados financeiros ERP',etica:'Em revisão',homologacao:'Pendente',score:61},
+  {id:'MDL-005',nome:'Resumidor de Auditorias',tipo:'LLM',base:'Claude 3 Haiku',owner:'P. Costa',status:'Homologação',risco:'Baixo',iso42001:'88%',lgpd:'OK',fairness:'OK',robustez:'Média',privacidade:'OK',tokens:'180K/mês',datasets:'Relatórios de auditoria',etica:'Aprovado',homologacao:'—',score:85},
+];
+
+const iaControles42001 = [
+  {dominio:'Contexto da organização',score:88,controles:5,ok:4,nok:1,cor:'var(--green)'},
+  {dominio:'Liderança e comprometimento',score:92,controles:4,ok:4,nok:0,cor:'var(--green)'},
+  {dominio:'Planejamento do sistema IA',score:76,controles:8,ok:6,nok:2,cor:'var(--amber)'},
+  {dominio:'Suporte e recursos',score:81,controles:6,ok:5,nok:1,cor:'var(--amber)'},
+  {dominio:'Operação do sistema IA',score:70,controles:12,ok:8,nok:4,cor:'var(--amber)'},
+  {dominio:'Avaliação de desempenho',score:65,controles:7,ok:5,nok:2,cor:'var(--red)'},
+  {dominio:'Melhoria contínua',score:58,controles:5,ok:3,nok:2,cor:'var(--red)'},
+  {dominio:'Transparência e explicabilidade',score:72,controles:9,ok:7,nok:2,cor:'var(--amber)'},
+];
+
+// =====================================================================
+// DADOS — MUDANÇAS ENTERPRISE
+// =====================================================================
+const mudancasCompletas = [
+  {id:'RFC-2026-042',titulo:'Upgrade Oracle DB 19c → 21c',tipo:'Normal',risco:'Alto',cab:'29/05/2026',janela:'Dom 01/06 02h–06h',status:'Aprovada',gestor:'J. Santos',sistema:'Oracle EBS, SAP',impacto:'Crítico',ci:'CI-002',deps:['APP-001','APP-002']},
+  {id:'RFC-2026-041',titulo:'Deploy FortiGate 7.6 firmware',tipo:'Normal',risco:'Médio',cab:'29/05/2026',janela:'Qui 28/05 01h–03h',status:'Aprovada',gestor:'R. Silva',sistema:'Fortinet FortiGate 600F',impacto:'Alto',ci:'CI-010',deps:['SVC-003']},
+  {id:'RFC-2026-040',titulo:'Migração DNS para Azure DNS',tipo:'Normal',risco:'Médio',cab:'22/05/2026',janela:'Sáb 31/05 23h–01h',status:'Em revisão',gestor:'R. Silva',sistema:'DNS Interno / AD',impacto:'Alto',ci:'CI-005',deps:['SVC-006']},
+  {id:'RFC-2026-039',titulo:'Patch crítico Windows Server',tipo:'Padrão',risco:'Baixo',cab:'15/05/2026',janela:'Seg 26/05 23h–02h',status:'Implementada',gestor:'J. Santos',sistema:'SRV-DC01, SRV-WEB01',impacto:'Médio',ci:'CI-005',deps:[]},
+  {id:'RFC-2026-038',titulo:'Expansão storage NetApp',tipo:'Normal',risco:'Médio',cab:'08/05/2026',janela:'Dom 18/05 01h–04h',status:'Implementada',gestor:'C. Mendes',sistema:'NetApp AFF A400',impacto:'Médio',ci:'CI-004',deps:['APP-001']},
+  {id:'RFC-2026-E01',titulo:'Restauração base Oracle PROD',tipo:'Emergência',risco:'Alto',cab:'Retroativo',janela:'Seg 20/05 14h30',status:'Implementada',gestor:'J. Santos',sistema:'Oracle DB Produção',impacto:'Crítico',ci:'CI-002',deps:['APP-002']},
+  {id:'RFC-2026-E02',titulo:'Bloqueio SSL gateway expirado',tipo:'Emergência',risco:'Alto',cab:'Retroativo',janela:'Ter 21/05 09h15',status:'Implementada',gestor:'R. Silva',sistema:'API Gateway',impacto:'Alto',ci:'CI-003',deps:['APP-001']},
+];
+
+// =====================================================================
+// DADOS — TORRES DE TI (Budget)
+// =====================================================================
+const torresBudget = [
+  {torre:'Infraestrutura',budget:3800000,realizado:1750000,cat:'HW+DC',cor:'var(--blue)'},
+  {torre:'Cloud & SaaS',budget:3200000,realizado:1650000,cat:'OPEX Cloud',cor:'var(--teal)'},
+  {torre:'Segurança',budget:1600000,realizado:820000,cat:'HW+SW+Serviços',cor:'var(--amber)'},
+  {torre:'Aplicações & ERP',budget:2200000,realizado:780000,cat:'Licenças+Manutenção',cor:'var(--purple)'},
+  {torre:'Projetos & PMO',budget:1200000,realizado:320000,cat:'CAPEX projetos',cor:'var(--green)'},
+  {torre:'Suporte & Operações',budget:800000,realizado:380000,cat:'OPEX pessoal+tools',cor:'var(--pink)'},
+];
+
+// =====================================================================
 // CHART.JS — CONFIGURAÇÃO GLOBAL
 // =====================================================================
 if(typeof Chart !== 'undefined'){
@@ -3145,6 +3520,804 @@ document.addEventListener('click', e=>{
   const m=e.target.closest('[onclick*="modalEntradaAtivo"],[onclick*="modalSaidaAtivo"]');
   if(m) setTimeout(populaSelectsAtivos,50);
 });
+
+// =====================================================================
+// RENDER — CMDB ENTERPRISE
+// =====================================================================
+function renderCmdb(){
+  const filtCrit = $('cmdbFiltroCrit')?.value || '';
+  const filtTipo = $('cmdbFiltroTipo')?.value || '';
+
+  // KPIs
+  $('kpiCmdb').innerHTML = [
+    {icon:'🧩',label:'Total de CIs',val:'1.284',sub:'12 tipos cadastrados',accent:'var(--teal)'},
+    {icon:'📦',label:'Aplicações',val:cmdbApps.length,sub:`${cmdbApps.filter(a=>a.status==='Produção').length} em produção`,accent:'var(--blue)'},
+    {icon:'⚙️',label:'Serviços',val:cmdbServicos.length,sub:`${cmdbServicos.filter(s=>s.status!=='Ativo').length} degradados`,accent:'var(--purple)'},
+    {icon:'🔗',label:'Dependências críticas',val:'17',sub:'sem teste de falha',accent:'var(--red)'},
+    {icon:'⚰️',label:'Ativos EOL',val:'31',sub:'renovação necessária',accent:'var(--amber)'},
+    {icon:'📊',label:'Cobertura CMDB',val:'87%',sub:'meta: 95%',accent:'var(--green)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // CIs table
+  let cis = cmdbCis; // existing data
+  if(filtCrit) cis = cis.filter(c=>c.criticidade===filtCrit);
+  if(filtTipo) cis = cis.filter(c=>c.tipo===filtTipo);
+  $('tblCis').innerHTML = `<thead><tr><th>ID</th><th>Nome CI</th><th>Tipo</th><th>Criticidade</th><th>Owner</th><th>Dependências</th><th>EOL</th><th>Inc. Abertos</th><th>Status</th></tr></thead><tbody>`+
+    cis.map(c=>{
+      const pc=c.criticidade==='P1'?'b-red':'b-amber';
+      const sc=c.status==='Crítico'?'b-red':'b-green';
+      const incCount = mudancasCompletas.filter(m=>m.ci===c.id).length;
+      return `<tr onclick="verDetalheCI('${c.id}')" style="cursor:pointer;">
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--teal);">${c.id}</td>
+        <td><b>${c.nome}</b></td><td>${c.tipo}</td>
+        <td><span class="badge ${pc}">${c.criticidade}</span></td>
+        <td>${c.owner}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${c.deps}</td>
+        <td style="font-size:10px;color:${c.eol!=='—'?'var(--amber)':'var(--text3)'};">${c.eol}</td>
+        <td style="text-align:center;"><span style="color:${incCount>0?'var(--red)':'var(--text3)'};">${incCount||'—'}</span></td>
+        <td><span class="badge ${sc}">${c.status}</span></td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // Aplicações
+  $('tblCmdbApps').innerHTML = `<thead><tr><th>ID</th><th>Aplicação</th><th>Tipo</th><th>Owner</th><th>Criticidade</th><th>SLA</th><th>Versão</th><th>Contrato</th><th>Inc. Abertos</th><th>Status</th></tr></thead><tbody>`+
+    cmdbApps.map(a=>{
+      const pc=a.criticidade==='P1'?'b-red':'b-amber';
+      const sc=a.status==='Produção'?'b-green':'b-blue';
+      return `<tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${a.id}</td>
+        <td><b>${a.nome}</b><div style="font-size:9px;color:var(--text3);">${a.deps}</div></td>
+        <td>${a.tipo}</td><td>${a.owner}</td>
+        <td><span class="badge ${pc}">${a.criticidade}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${a.sla}</td>
+        <td style="font-size:10px;">${a.vers}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${a.contrato}</td>
+        <td style="text-align:center;"><span style="color:${a.incAbertos>0?'var(--red)':'var(--text3)'};">${a.incAbertos||'—'}</span></td>
+        <td><span class="badge ${sc}">${a.status}</span></td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // Serviços
+  $('tblCmdbServicos').innerHTML = `<thead><tr><th>ID</th><th>Serviço</th><th>Tipo</th><th>Owner</th><th>Criticidade</th><th>SLA</th><th>RTO</th><th>RPO</th><th>Usuários</th><th>Status</th></tr></thead><tbody>`+
+    cmdbServicos.map(s=>{
+      const pc=s.criticidade==='P1'?'b-red':'b-amber';
+      const sc=s.status==='Ativo'?'b-green':s.status==='Degradado'?'b-red':'b-amber';
+      return `<tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--teal);">${s.id}</td>
+        <td><b>${s.nome}</b><div style="font-size:9px;color:var(--text3);">${s.apps}</div></td>
+        <td>${s.tipo}</td><td>${s.owner}</td>
+        <td><span class="badge ${pc}">${s.criticidade}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${s.sla}</td>
+        <td style="font-family:'JetBrains Mono',monospace;color:var(--teal);">${s.rto}</td>
+        <td style="font-family:'JetBrains Mono',monospace;color:var(--green);">${s.rpo}</td>
+        <td style="font-family:'JetBrains Mono',monospace;">${s.users||'—'}</td>
+        <td><span class="badge ${sc}">${s.status}</span></td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // Dependências
+  $('cmdbDeps').innerHTML = cmdbCis.slice(0,6).map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border-radius:8px;margin-bottom:6px;border:1px solid var(--border);">
+    <div style="font-size:18px;">🔗</div>
+    <div style="flex:1;">
+      <div style="font-size:11px;font-weight:500;">${c.nome}</div>
+      <div style="font-size:9px;color:var(--text3);">${c.deps} dep. · ${c.tipo}</div>
+    </div>
+    <span class="badge ${c.criticidade==='P1'?'b-red':'b-amber'}">${c.criticidade}</span>
+  </div>`).join('');
+
+  // Impacto — CIs com incidentes
+  $('cmdbIncAtivos').innerHTML = cmdbApps.filter(a=>a.incAbertos>0).map(a=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--red3);border:1px solid rgba(247,95,95,0.2);border-radius:8px;margin-bottom:6px;">
+      <span style="font-size:16px;">🔥</span>
+      <div style="flex:1;">
+        <div style="font-size:11px;font-weight:500;">${a.nome}</div>
+        <div style="font-size:10px;color:var(--text2);">${a.incAbertos} incidente(s) aberto(s) · ${a.criticidade}</div>
+      </div>
+      <span class="impact-badge ib-critico">IMPACTO</span>
+    </div>`).join('');
+
+  $('cmdbRfcAtivos').innerHTML = mudancasCompletas.filter(m=>m.status!=='Implementada').map(m=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--bg3);border-radius:8px;margin-bottom:6px;border-left:3px solid ${m.risco==='Alto'?'var(--red)':'var(--amber)'};">
+      <div style="flex:1;">
+        <div style="font-size:11px;font-weight:500;">${m.id} · ${m.titulo}</div>
+        <div style="font-size:10px;color:var(--text3);">CI: ${m.ci} · Janela: ${m.janela}</div>
+      </div>
+      <span class="impact-badge ${m.impacto==='Crítico'?'ib-critico':m.impacto==='Alto'?'ib-alto':'ib-medio'}">${m.impacto}</span>
+    </div>`).join('');
+
+  $('cmdbImpactoAnalise').innerHTML = [
+    {label:'CIs P1 afetados por RFCs abertas',val:2,cor:'var(--red)'},
+    {label:'Aplicações com incidentes ativos',val:3,cor:'var(--red)'},
+    {label:'Serviços degradados',val:cmdbServicos.filter(s=>s.status!=='Ativo').length,cor:'var(--amber)'},
+    {label:'CIs sem owner definido',val:8,cor:'var(--amber)'},
+    {label:'CIs com EOL nos próximos 6 meses',val:5,cor:'var(--amber)'},
+    {label:'Aplicações sem plano DRP',val:1,cor:'var(--blue)'},
+  ].map(i=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border-radius:8px;margin-bottom:6px;">
+    <span style="width:28px;height:28px;border-radius:50%;background:${i.cor}22;border:1px solid ${i.cor}44;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${i.cor};">${i.val}</span>
+    <span style="font-size:11px;">${i.label}</span>
+  </div>`).join('');
+
+  // Lifecycle
+  $('tblLifecycle').innerHTML = `<thead><tr><th>CI</th><th>Tipo</th><th>EOL</th><th>Ação necessária</th><th>Prioridade</th></tr></thead><tbody>`+
+    cmdbCis.filter(c=>c.eol!=='—').concat([
+      {id:'CI-0008',nome:'Windows Server 2012 R2',tipo:'SO',eol:'Out/2025',criticidade:'P1'},
+      {id:'CI-0009',nome:'Cisco ASA 5505',tipo:'Firewall',eol:'Já EOL',criticidade:'P1'},
+    ]).map(c=>`<tr>
+      <td><b>${c.nome}</b></td><td>${c.tipo}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--amber);">${c.eol}</td>
+      <td style="font-size:11px;">Planejar substituição ou upgrade urgente</td>
+      <td><span class="badge ${c.criticidade==='P1'?'b-red':'b-amber'}">${c.criticidade}</span></td>
+    </tr>`).join('')+'</tbody>';
+
+  // Gráfico distribuição
+  setTimeout(()=>{
+    const tipos={};
+    cmdbCis.forEach(c=>{tipos[c.tipo]=(tipos[c.tipo]||0)+1;});
+    initChart('chartCmdbDist',{
+      type:'doughnut',
+      data:{labels:Object.keys(tipos),datasets:[{data:Object.values(tipos),backgroundColor:['#4f8ef7','#22d3ee','#2dd4a0','#f5a623','#f75f5f','#a78bfa'],borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},cutout:'55%'}
+    });
+  },50);
+}
+
+function verDetalheCI(id){
+  const ci = cmdbCis.find(c=>c.id===id);
+  if(!ci) return;
+  $('modalDetTitle').innerHTML = `🧩 ${ci.nome}`;
+  $('modalDetBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      ${[['ID',ci.id],['Tipo',ci.tipo],['Criticidade',`<span class="badge ${ci.criticidade==='P1'?'b-red':'b-amber'}">${ci.criticidade}</span>`],
+        ['Owner',ci.owner],['Dependências',ci.deps],['EOL',ci.eol||'—'],
+        ['Status',`<span class="badge ${ci.status==='Crítico'?'b-red':'b-green'}">${ci.status}</span>`],
+        ['RFCs abertas',mudancasCompletas.filter(m=>m.ci===id&&m.status!=='Implementada').length||'—'],
+      ].map(([l,v])=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">${l}</div>
+        <div style="font-size:12px;">${v}</div></div>`).join('')}
+    </div>
+    <div style="font-size:10px;font-weight:600;color:var(--text2);text-transform:uppercase;margin-bottom:8px;">Aplicações que dependem deste CI</div>
+    ${cmdbApps.filter(a=>a.cis&&a.cis.includes(id)).map(a=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">
+      <span class="badge b-blue">${a.criticidade}</span>
+      <b style="font-size:11px;">${a.nome}</b>
+      <span style="font-size:10px;color:var(--text2);margin-left:auto;">${a.status}</span>
+    </div>`).join('')||'<div style="font-size:11px;color:var(--text3);">Nenhuma aplicação vinculada</div>'}
+    <div style="margin-top:12px;display:flex;gap:8px;">
+      <button class="btn-sm" onclick="closeModal('modalDetalhes')">Fechar</button>
+    </div>`;
+  openModal('modalDetalhes');
+}
+
+// =====================================================================
+// RENDER — ATIVOS ENTERPRISE (sub-painéis)
+// =====================================================================
+function renderAtivosExtra(){
+  // Painel manutenção
+  const emManut = ativosInventario.filter(a=>a.status==='Em manutenção');
+  if($('ativosManuAtual')) $('ativosManuAtual').innerHTML = emManut.length
+    ? emManut.map(a=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--amber3);border:1px solid rgba(245,166,35,0.2);border-radius:8px;margin-bottom:6px;">
+        <span style="font-size:18px;">🔧</span>
+        <div style="flex:1;">
+          <div style="font-size:11px;font-weight:600;">${a.nome}</div>
+          <div style="font-size:10px;color:var(--text3);">${a.patrimonio} · ${a.local}</div>
+        </div>
+        <div style="text-align:right;"><div style="font-size:10px;color:var(--amber);">Em manutenção</div><div style="font-size:9px;color:var(--text3);">${a.fabricante}</div></div>
+      </div>`).join('')
+    : '<div style="font-size:11px;color:var(--text3);padding:8px 0;">Nenhum ativo em manutenção no momento ✅</div>';
+
+  // Garantias vencendo
+  if($('ativosGarantias')){
+    const hoje = new Date();
+    const venc90 = ativosInventario.filter(a=>{
+      if(a.garantia==='Expirada'||a.garantia==='—') return true;
+      try{ const [d,m,y]=a.garantia.split('/'); const dt=new Date(y,m-1,d); return (dt-hoje)<90*864e5; }catch(e){ return false; }
+    }).slice(0,5);
+    $('ativosGarantias').innerHTML = venc90.map(a=>{
+      const exp = a.garantia==='Expirada';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border-radius:8px;margin-bottom:6px;border-left:3px solid ${exp?'var(--red)':'var(--amber)'};">
+        <div style="flex:1;"><div style="font-size:11px;font-weight:500;">${a.nome}</div>
+        <div style="font-size:9px;color:var(--text3);">${a.patrimonio}</div></div>
+        <div style="font-size:10px;font-weight:600;color:${exp?'var(--red)':'var(--amber)'};">${a.garantia}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Manutenções tabela
+  if($('tblManutencoes')) $('tblManutencoes').innerHTML = `<thead><tr><th>Ativo</th><th>Patrimônio</th><th>Entrada</th><th>Motivo</th><th>Responsável</th><th>Observações</th></tr></thead><tbody>`+
+    movimentacoes.filter(m=>m.tipo==='saida').map(m=>`<tr>
+      <td><b>${m.ativoNome}</b></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${ativosInventario.find(a=>a.id===m.ativoId)?.patrimonio||'—'}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${m.data}</td>
+      <td style="font-size:11px;">${m.origem||'—'}</td>
+      <td>${m.resp}</td>
+      <td style="font-size:10px;color:var(--text2);">${m.obs}</td>
+    </tr>`).join('')+'</tbody>';
+
+  // Resumo movimentações
+  if($('ativosMovResumo')) $('ativosMovResumo').innerHTML = [
+    {icon:'📥',label:'Entradas totais',val:movimentacoes.filter(m=>m.tipo==='entrada').length,cor:'var(--green)'},
+    {icon:'📤',label:'Saídas / Baixas',val:movimentacoes.filter(m=>m.tipo==='saida').length,cor:'var(--amber)'},
+    {icon:'🖥️',label:'Ativos ativos',val:ativosInventario.filter(a=>a.status==='Ativo').length,cor:'var(--teal)'},
+    {icon:'⚰️',label:'Baixados',val:ativosInventario.filter(a=>a.status==='Baixado').length,cor:'var(--gray-500)'},
+  ].map(i=>`<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:8px;margin-bottom:8px;">
+    <span style="font-size:20px;">${i.icon}</span>
+    <div style="flex:1;"><div style="font-size:11px;">${i.label}</div></div>
+    <div style="font-size:20px;font-weight:700;color:${i.cor};">${i.val}</div>
+  </div>`).join('');
+
+  // Ativos x contratos
+  if($('tblAtivosContratos')) $('tblAtivosContratos').innerHTML = `<thead><tr><th>Ativo</th><th>Patrimônio</th><th>Tipo</th><th>Contrato vinculado</th><th>Fornecedor</th><th>Vigência</th><th>Valor contrato</th></tr></thead><tbody>`+
+    ativosInventario.filter(a=>a.status!=='Baixado').map(a=>{
+      const ctr = contratos.find(c=>a.tipo===c.tipo && (c.cat.toLowerCase().includes(a.cat.toLowerCase())||a.cat.toLowerCase().includes(c.cat.toLowerCase().split('/')[0])));
+      return `<tr>
+        <td><b>${a.nome}</b></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;">${a.patrimonio}</td>
+        <td><span class="badge ${a.tipo==='CAPEX'?'b-blue':'b-teal'}">${a.tipo}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${ctr?.id||'—'} ${ctr?'· '+ctr.nome:''}</td>
+        <td style="font-size:11px;">${ctr?.fornecedor||a.fabricante||'—'}</td>
+        <td style="font-size:10px;">${ctr?ctr.inicio+' → '+ctr.fim:'—'}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);">${ctr?'R$ '+(ctr.valor/1000).toFixed(0)+'K':'—'}</td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // Gráfico status
+  setTimeout(()=>{
+    const statusMap={'Ativo':0,'Em manutenção':0,'Baixado':0,'Emprestado':0};
+    ativosInventario.forEach(a=>{ if(statusMap[a.status]!==undefined) statusMap[a.status]++; });
+    initChart('chartAtivosStatus',{
+      type:'bar',
+      data:{
+        labels:Object.keys(statusMap),
+        datasets:[{data:Object.values(statusMap),backgroundColor:['#2dd4a0','#f5a623','#6b7280','#4f8ef7'],borderRadius:4}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+  },50);
+}
+
+// =====================================================================
+// RENDER — MUDANÇAS ENTERPRISE
+// =====================================================================
+function renderMudancas(){
+  const filtSt = $('mudFiltroStatus')?.value||'';
+  const filtRi = $('mudFiltroRisco')?.value||'';
+
+  const rfcs = mudancasCompletas.filter(m=>
+    (!filtSt||m.status===filtSt) && (!filtRi||m.risco===filtRi)
+  );
+
+  // KPIs
+  $('kpiMud').innerHTML = [
+    {icon:'📝',label:'RFCs total',val:mudancasCompletas.length,sub:`${mudancasCompletas.filter(m=>m.status==='Em revisão'||m.status==='Pendente CAB').length} pendentes CAB`,accent:'var(--blue)'},
+    {icon:'✅',label:'Taxa de sucesso',val:'98.1%',sub:'último trimestre',accent:'var(--green)'},
+    {icon:'↩️',label:'Rollbacks',val:'3',sub:'último mês',accent:'var(--amber)'},
+    {icon:'🚨',label:'Emergenciais',val:mudancasCompletas.filter(m=>m.tipo==='Emergência').length,sub:'este mês',accent:'var(--red)'},
+    {icon:'🗓️',label:'Próximo CAB',val:'29/05',sub:'quinta-feira 14h',accent:'var(--teal)'},
+    {icon:'⚠️',label:'Alto risco',val:mudancasCompletas.filter(m=>m.risco==='Alto').length,sub:'requer atenção',accent:'var(--amber)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // RFCs table
+  $('tblMudancas').innerHTML = `<thead><tr><th>RFC</th><th>Título</th><th>Tipo</th><th>Risco</th><th>Impacto</th><th>Sistema</th><th>CI</th><th>CAB</th><th>Janela</th><th>Status</th><th>Gestor</th></tr></thead><tbody>`+
+    rfcs.map(m=>{
+      const rc=m.risco==='Alto'?'b-red':m.risco==='Médio'?'b-amber':'b-green';
+      const sc=m.status==='Aprovada'?'b-green':m.status==='Implementada'?'b-teal':m.status==='Em revisão'?'b-amber':m.status==='Reprovada'?'b-red':'b-blue';
+      const tc=m.tipo==='Emergência'?'b-red':m.tipo==='Padrão'?'b-gray':'b-blue';
+      const ic=m.impacto==='Crítico'?'ib-critico':m.impacto==='Alto'?'ib-alto':m.impacto==='Médio'?'ib-medio':'ib-baixo';
+      return `<tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${m.id}</td>
+        <td><b style="font-size:11px;">${m.titulo}</b></td>
+        <td><span class="badge ${tc}">${m.tipo}</span></td>
+        <td><span class="badge ${rc}">${m.risco}</span></td>
+        <td><span class="impact-badge ${ic}">${m.impacto}</span></td>
+        <td style="font-size:10px;">${m.sistema}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--teal);">${m.ci}</td>
+        <td style="font-size:10px;">${m.cab}</td>
+        <td style="font-size:10px;font-family:'JetBrains Mono',monospace;">${m.janela}</td>
+        <td><span class="badge ${sc}">${m.status}</span></td>
+        <td style="font-size:11px;">${m.gestor}</td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // Emergenciais
+  if($('tblEmergenciais')) $('tblEmergenciais').innerHTML = `<thead><tr><th>RFC</th><th>Título</th><th>Sistema</th><th>Impacto</th><th>Risco</th><th>Janela</th><th>Gestor</th><th>Status</th></tr></thead><tbody>`+
+    mudancasCompletas.filter(m=>m.tipo==='Emergência').map(m=>`<tr>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--red);">${m.id}</td>
+      <td><b>${m.titulo}</b></td><td style="font-size:11px;">${m.sistema}</td>
+      <td><span class="impact-badge ${m.impacto==='Crítico'?'ib-critico':'ib-alto'}">${m.impacto}</span></td>
+      <td><span class="badge b-red">${m.risco}</span></td>
+      <td style="font-size:10px;font-family:'JetBrains Mono',monospace;">${m.janela}</td>
+      <td>${m.gestor}</td>
+      <td><span class="badge b-teal">${m.status}</span></td>
+    </tr>`).join('')+'</tbody>';
+
+  // CAB pautas
+  if($('cabPautas')) $('cabPautas').innerHTML = [
+    {data:'29/05/2026 14h00',rfcs:['RFC-2026-042','RFC-2026-041'],tipo:'CAB Regular'},
+    {data:'12/06/2026 14h00',rfcs:['RFC-2026-040'],tipo:'CAB Regular'},
+  ].map(c=>`<div style="background:var(--bg3);border-radius:10px;padding:12px 14px;margin-bottom:8px;border:1px solid var(--border);">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <span style="font-size:12px;font-weight:600;">📅 CAB ${c.tipo} · ${c.data}</span>
+    </div>
+    ${c.rfcs.map(id=>{const m=mudancasCompletas.find(x=>x.id===id); return m?`<div style="font-size:11px;padding:5px 8px;background:var(--bg2);border-radius:6px;margin-bottom:4px;">• ${m.id} · ${m.titulo} · <span style="color:${m.risco==='Alto'?'var(--red)':'var(--amber)'};">${m.risco}</span></div>`:'';}).join('')}
+  </div>`).join('');
+
+  // Timeline
+  if($('mudTimeline')) $('mudTimeline').innerHTML = mudancasCompletas.slice().reverse().map(m=>`
+    <div class="cab-event">
+      <div class="cab-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${m.id}</span>
+          <span class="badge ${m.status==='Implementada'?'b-teal':m.status==='Aprovada'?'b-green':m.status==='Em revisão'?'b-amber':'b-red'}">${m.status}</span>
+          <span class="impact-badge ${m.risco==='Alto'?'ib-critico':m.risco==='Médio'?'ib-alto':'ib-baixo'}" style="margin-left:auto;">${m.risco}</span>
+        </div>
+        <div style="font-size:12px;font-weight:500;margin-bottom:2px;">${m.titulo}</div>
+        <div style="font-size:10px;color:var(--text3);">${m.sistema} · ${m.janela} · ${m.gestor}</div>
+      </div>
+    </div>`).join('');
+
+  // CIs afetados
+  if($('mudCisAfetados')){
+    const abertas = mudancasCompletas.filter(m=>m.status!=='Implementada');
+    $('mudCisAfetados').innerHTML = abertas.map(m=>
+      `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border-radius:8px;margin-bottom:6px;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--teal);min-width:60px;">${m.ci}</span>
+        <div style="flex:1;font-size:11px;">${m.sistema}</div>
+        <span class="badge ${m.status==='Aprovada'?'b-green':'b-amber'}">${m.status}</span>
+      </div>`).join('');
+  }
+
+  // Tendência
+  $('mudTendencia').innerHTML = ['Jan','Fev','Mar','Abr','Mai'].map((m,i)=>{
+    const ok=[52,58,61,55,58][i]; const rb=[2,1,3,2,3][i];
+    return `<div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-size:11px;">${m}/26</span>
+        <span style="font-size:10px;color:var(--text3);">${ok} ok · <span style="color:var(--amber);">${rb} rollback</span></span>
+      </div>
+      <div class="prog-wrap"><div class="prog-bar" style="width:${Math.round(ok/(ok+rb)*100)}%;background:var(--green);"></div></div>
+    </div>`;
+  }).join('');
+
+  // Janelas
+  $('mudJanelas').innerHTML = [
+    {dt:'Seg 26/05 23h–02h',tipo:'Padrão',cis:'SRV-WEB01, SRV-PROXY01',risco:'Baixo'},
+    {dt:'Qua 28/05 01h–03h',tipo:'Padrão',cis:'SW-CORE-01, SW-DIST-02',risco:'Médio'},
+    {dt:'Dom 01/06 02h–06h',tipo:'Crítico',cis:'Oracle DB, SAP APP',risco:'Alto'},
+    {dt:'Seg 02/06 23h–01h',tipo:'Padrão',cis:'FortiGate firewall',risco:'Médio'},
+  ].map(j=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg3);border-radius:8px;margin-bottom:6px;border-left:3px solid ${j.risco==='Alto'?'var(--red)':j.risco==='Médio'?'var(--amber)':'var(--green)'};">
+    <div style="min-width:140px;font-family:'JetBrains Mono',monospace;font-size:10px;">${j.dt}</div>
+    <div style="flex:1;font-size:11px;">${j.cis}</div>
+    <span class="badge ${j.risco==='Alto'?'b-red':j.risco==='Médio'?'b-amber':'b-green'}">${j.risco}</span>
+  </div>`).join('');
+
+  // Gráfico status
+  setTimeout(()=>{
+    const stMap={'Em revisão':0,'Aprovada':0,'Implementada':0,'Pendente CAB':0,'Emergência':0};
+    mudancasCompletas.forEach(m=>{
+      if(m.tipo==='Emergência') stMap['Emergência']++;
+      else if(stMap[m.status]!==undefined) stMap[m.status]++;
+    });
+    initChart('chartMudStatus',{
+      type:'doughnut',
+      data:{labels:Object.keys(stMap),datasets:[{data:Object.values(stMap),backgroundColor:['#f5a623','#2dd4a0','#22d3ee','#4f8ef7','#f75f5f'],borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},cutout:'60%'}
+    });
+  },50);
+}
+
+// =====================================================================
+// RENDER — GOV. IA COMPLETO + COPILOT
+// =====================================================================
+function renderGovai(){
+  $('kpiGovai').innerHTML = [
+    {icon:'🤖',label:'Modelos em produção',val:iaModelosCompleto.filter(m=>m.status==='Produção').length,sub:`${iaModelosCompleto.filter(m=>m.status==='Homologação').length} em homologação`,accent:'var(--purple)'},
+    {icon:'✅',label:'Score ISO 42001',val:'76%',sub:'média dos modelos',accent:'var(--green)'},
+    {icon:'⚠️',label:'Riscos altos IA',val:iaModelosCompleto.filter(m=>m.risco==='Alto').length,sub:'requer atenção',accent:'var(--red)'},
+    {icon:'🔒',label:'LGPD compliance',val:Math.round(iaModelosCompleto.filter(m=>m.lgpd==='OK').length/iaModelosCompleto.length*100)+'%',sub:'dos modelos conformes',accent:'var(--teal)'},
+    {icon:'📊',label:'Tokens/mês total',val:'2,7M',sub:'custo estimado R$ 8.4K',accent:'var(--blue)'},
+    {icon:'🧠',label:'Aprovação ética',val:iaModelosCompleto.filter(m=>m.etica==='Aprovado').length+'/'+iaModelosCompleto.length,sub:'modelos aprovados',accent:'var(--amber)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // Modelos tabela
+  $('tblModelos').innerHTML = `<thead><tr><th>ID</th><th>Modelo</th><th>Tipo</th><th>Base</th><th>Owner</th><th>Status</th><th>Risco</th><th>ISO 42001</th><th>LGPD</th><th>Fairness</th><th>Ética</th><th>Score</th></tr></thead><tbody>`+
+    iaModelosCompleto.map(m=>{
+      const sc=m.status==='Produção'?'b-green':'b-blue';
+      const rc=m.risco==='Alto'?'b-red':m.risco==='Médio'?'b-amber':'b-green';
+      const score=m.score;
+      const scoreCor=score>=90?'var(--green)':score>=70?'var(--amber)':'var(--red)';
+      return `<tr onclick="verDetalheModelo('${m.id}')" style="cursor:pointer;">
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--purple);">${m.id}</td>
+        <td><b style="font-size:11px;">${m.nome}</b></td>
+        <td style="font-size:10px;">${m.tipo}</td>
+        <td style="font-size:10px;color:var(--text2);">${m.base}</td>
+        <td>${m.owner}</td>
+        <td><span class="badge ${sc}">${m.status}</span></td>
+        <td><span class="badge ${rc}">${m.risco}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;color:${parseFloat(m.iso42001)>=80?'var(--green)':'var(--amber)'};">${m.iso42001}</td>
+        <td><span class="badge ${m.lgpd==='OK'?'b-green':'b-amber'}">${m.lgpd}</span></td>
+        <td><span class="badge ${m.fairness==='OK'?'b-green':'b-amber'}">${m.fairness}</span></td>
+        <td><span class="badge ${m.etica==='Aprovado'?'b-green':'b-amber'}">${m.etica}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:${scoreCor};">${score}</td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // ISO 42001 por domínio
+  $('ia42001').innerHTML = iaControles42001.map(d=>{
+    const pct=d.score;
+    const c=pct>=85?'var(--green)':pct>=70?'var(--amber)':'var(--red)';
+    return `<div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;">
+        <span style="font-size:11px;">${d.dominio}</span>
+        <span style="font-size:10px;font-family:'JetBrains Mono',monospace;color:${c};">${pct}%</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:${c};"></div></div>
+      <div style="font-size:9px;color:var(--text3);margin-top:2px;">${d.ok}/${d.controles} controles OK · ${d.nok} pendentes</div>
+    </div>`;
+  }).join('');
+
+  // ISO 42001 controles (mini-panel)
+  if($('ia42001Controles')) $('ia42001Controles').innerHTML = $('ia42001').innerHTML;
+
+  // Tokens
+  $('iaTokens').innerHTML = iaModelosCompleto.filter(m=>m.tokens!=='—').map(m=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--bg3);border-radius:8px;margin-bottom:6px;">
+      <div style="font-size:18px;">🤖</div>
+      <div style="flex:1;">
+        <div style="font-size:11px;font-weight:500;">${m.nome}</div>
+        <div style="font-size:10px;color:var(--text3);">${m.base}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:12px;font-weight:700;color:var(--purple);">${m.tokens}</div>
+        <div style="font-size:9px;color:var(--text3);">tokens/mês</div>
+      </div>
+    </div>`).join('');
+
+  // Riscos IA table
+  if($('tblRiscosIa')) $('tblRiscosIa').innerHTML = `<thead><tr><th>Modelo</th><th>Risco</th><th>Privacidade</th><th>Fairness</th><th>Robustez</th><th>Datasets</th><th>Impacto regulatório</th><th>Ação</th></tr></thead><tbody>`+
+    iaModelosCompleto.map(m=>`<tr>
+      <td><b>${m.nome}</b></td>
+      <td><span class="badge ${m.risco==='Alto'?'b-red':m.risco==='Médio'?'b-amber':'b-green'}">${m.risco}</span></td>
+      <td><span class="badge ${m.privacidade==='OK'?'b-green':'b-amber'}">${m.privacidade}</span></td>
+      <td><span class="badge ${m.fairness==='OK'?'b-green':'b-amber'}">${m.fairness}</span></td>
+      <td>${m.robustez}</td>
+      <td style="font-size:10px;color:var(--text2);">${m.datasets}</td>
+      <td style="font-size:10px;">${m.risco==='Alto'?'🔴 LGPD / ANPD':'🟡 Monitorar'}</td>
+      <td><span class="badge ${m.etica==='Aprovado'?'b-green':'b-amber'}">${m.etica}</span></td>
+    </tr>`).join('')+'</tbody>';
+
+  // Gaps ISO 42001
+  if($('tblIa42001Gap')) $('tblIa42001Gap').innerHTML = `<thead><tr><th>Domínio</th><th>Score</th><th>Gap</th><th>Controles OK/Total</th><th>Prioridade</th></tr></thead><tbody>`+
+    iaControles42001.sort((a,b)=>a.score-b.score).map(d=>`<tr>
+      <td><b>${d.dominio}</b></td>
+      <td style="font-family:'JetBrains Mono',monospace;color:${d.score>=80?'var(--green)':d.score>=65?'var(--amber)':'var(--red)'};">${d.score}%</td>
+      <td style="font-family:'JetBrains Mono',monospace;color:var(--red);">${100-d.score}%</td>
+      <td style="font-family:'JetBrains Mono',monospace;">${d.ok}/${d.controles}</td>
+      <td><span class="badge ${d.score<65?'b-red':d.score<80?'b-amber':'b-green'}">${d.score<65?'Alta':d.score<80?'Média':'Baixa'}</span></td>
+    </tr>`).join('')+'</tbody>';
+
+  // Gráficos
+  setTimeout(()=>{
+    initChart('chartIaScore',{
+      type:'bar',
+      data:{
+        labels:iaModelosCompleto.map(m=>m.nome.split(' ')[0]+' '+m.nome.split(' ')[1]||m.nome),
+        datasets:[{label:'Score conformidade',data:iaModelosCompleto.map(m=>m.score),backgroundColor:iaModelosCompleto.map(m=>m.score>=90?'#2dd4a0':m.score>=70?'#f5a623':'#f75f5f'),borderRadius:4}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+    initChart('chartIa42001Radar',{
+      type:'radar',
+      data:{
+        labels:iaControles42001.map(d=>d.dominio.split(' ').slice(0,2).join(' ')),
+        datasets:[
+          {label:'Score atual',data:iaControles42001.map(d=>d.score),backgroundColor:'rgba(167,139,250,0.15)',borderColor:'#a78bfa',pointBackgroundColor:'#a78bfa'},
+          {label:'Meta (90)',data:Array(iaControles42001.length).fill(90),backgroundColor:'rgba(79,142,247,0.05)',borderColor:'rgba(79,142,247,0.4)',borderDash:[5,5],pointRadius:0},
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,scales:{r:{grid:{color:'rgba(255,255,255,0.08)'},ticks:{backdropColor:'transparent',color:'#8888bb'}}},plugins:{legend:{position:'bottom'}}}
+    });
+  },50);
+}
+
+function verDetalheModelo(id){
+  const m = iaModelosCompleto.find(x=>x.id===id);
+  if(!m) return;
+  const score=m.score;
+  const scoreCor=score>=90?'var(--green)':score>=70?'var(--amber)':'var(--red)';
+  $('modalDetTitle').innerHTML = `🤖 ${m.nome}`;
+  $('modalDetBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      ${[['ID',m.id],['Tipo',m.tipo],['Base',m.base],['Owner',m.owner],
+        ['Status',`<span class="badge ${m.status==='Produção'?'b-green':'b-blue'}">${m.status}</span>`],
+        ['Risco',`<span class="badge ${m.risco==='Alto'?'b-red':m.risco==='Médio'?'b-amber':'b-green'}">${m.risco}</span>`],
+        ['ISO 42001',`<b style="color:${parseFloat(m.iso42001)>=80?'var(--green)':'var(--amber)'};">${m.iso42001}</b>`],
+        ['LGPD',`<span class="badge ${m.lgpd==='OK'?'b-green':'b-amber'}">${m.lgpd}</span>`],
+        ['Fairness',`<span class="badge ${m.fairness==='OK'?'b-green':'b-amber'}">${m.fairness}</span>`],
+        ['Privacidade',`<span class="badge ${m.privacidade==='OK'?'b-green':'b-amber'}">${m.privacidade}</span>`],
+        ['Robustez',m.robustez],['Tokens/mês',m.tokens],
+        ['Homologado em',m.homologacao],['Aprovação ética',`<span class="badge ${m.etica==='Aprovado'?'b-green':'b-amber'}">${m.etica}</span>`],
+      ].map(([l,v])=>`<div style="background:var(--bg3);border-radius:8px;padding:10px;">
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:3px;">${l}</div>
+        <div style="font-size:12px;">${v}</div></div>`).join('')}
+    </div>
+    <div style="background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:12px;">
+      <div style="font-size:9px;color:var(--text3);text-transform:uppercase;margin-bottom:5px;">Datasets utilizados</div>
+      <div style="font-size:12px;">${m.datasets}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg3);border-radius:8px;">
+      <div style="font-size:10px;color:var(--text2);">Score de conformidade geral</div>
+      <div style="font-size:24px;font-weight:700;color:${scoreCor};margin-left:auto;">${score}<span style="font-size:13px;font-weight:400;">/100</span></div>
+    </div>
+    <div style="margin-top:12px;"><button class="btn-sm" onclick="closeModal('modalDetalhes')">Fechar</button></div>`;
+  openModal('modalDetalhes');
+}
+
+// =====================================================================
+// COPILOT IA — Processamento de perguntas
+// =====================================================================
+const chatHistory = [];
+
+function enviarPerguntaIA(pergunta){
+  if(!pergunta || !pergunta.trim()) return;
+  $('chatInput').value = '';
+  adicionarMensagemChat(pergunta, 'user');
+  setTimeout(()=>{
+    const resp = processarPerguntaIA(pergunta.trim());
+    adicionarMensagemChat(resp, 'bot');
+  }, 400);
+}
+
+function adicionarMensagemChat(texto, tipo){
+  const msgs = $('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg '+tipo;
+  div.innerHTML = texto;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  chatHistory.push({tipo, texto});
+}
+
+function processarPerguntaIA(p){
+  const q = p.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  const totalContr = contratos.reduce((s,c)=>s+c.valor,0);
+  const opexContr  = contratos.filter(c=>c.tipo==='OPEX').reduce((s,c)=>s+c.valor,0);
+  const capexContr = contratos.filter(c=>c.tipo==='CAPEX').reduce((s,c)=>s+c.valor,0);
+  const hoje = new Date();
+  const venc90 = contratos.filter(c=>{ try{ const[d,m,y]=c.fim.split('/'); const dt=new Date(y,m-1,d); return (dt-hoje)<90*864e5&&dt>hoje; }catch(e){ return false; }});
+  const venc30 = contratos.filter(c=>{ try{ const[d,m,y]=c.fim.split('/'); const dt=new Date(y,m-1,d); return (dt-hoje)<30*864e5&&dt>hoje; }catch(e){ return false; }});
+
+  // Contratos — valor total
+  if((q.includes('contrato')&&q.includes('valor'))||(q.includes('total dos contratos'))||(q.includes('contratos ativos'))){
+    return `💰 <b>Carteira de contratos TI</b><br><br>
+      <b style="color:var(--green);font-size:15px;">R$ ${totalContr.toLocaleString('pt-BR')}</b> em ${contratos.length} contratos.<br><br>
+      <b>OPEX:</b> R$ ${opexContr.toLocaleString('pt-BR')} em ${contratos.filter(c=>c.tipo==='OPEX').length} contratos<br>
+      <b>CAPEX:</b> R$ ${capexContr.toLocaleString('pt-BR')} em ${contratos.filter(c=>c.tipo==='CAPEX').length} contratos<br><br>
+      Top: ${contratos.sort((a,b)=>b.valor-a.valor).slice(0,2).map(c=>`<b>${c.nome}</b> (R$ ${(c.valor/1000).toFixed(0)}K)`).join(', ')}`;
+  }
+
+  // CAPEX
+  if(q.includes('capex')&&!q.includes('opex')){
+    return `🏗️ <b>CAPEX de TI</b><br><br>
+      Carteira de contratos CAPEX: <b style="color:var(--blue);">R$ ${capexContr.toLocaleString('pt-BR')}</b><br>
+      Budget CAPEX anual: <b>R$ ${(budgetAnual.capex).toLocaleString('pt-BR')}</b><br>
+      Contratos CAPEX: ${contratos.filter(c=>c.tipo==='CAPEX').map(c=>`<br>• ${c.nome} (R$ ${(c.valor/1000).toFixed(0)}K)`).join('')}`;
+  }
+
+  // OPEX
+  if(q.includes('opex')&&!q.includes('capex')){
+    return `🔄 <b>OPEX de TI</b><br><br>
+      Carteira de contratos OPEX: <b style="color:var(--teal);">R$ ${opexContr.toLocaleString('pt-BR')}</b><br>
+      Budget OPEX anual: <b>R$ ${(budgetAnual.opex).toLocaleString('pt-BR')}</b><br>
+      Representa <b>${Math.round(budgetAnual.opex/budgetAnual.total*100)}%</b> do budget total.`;
+  }
+
+  // Budget / saldo
+  if(q.includes('budget')||q.includes('saldo')||q.includes('resta de')){
+    const saldo = budgetAnual.total - budgetAnual.spent;
+    const pct = Math.round(budgetAnual.spent/budgetAnual.total*100);
+    return `💰 <b>Budget TI 2026</b><br><br>
+      Total aprovado: <b>R$ ${(budgetAnual.total/1e6).toFixed(1)}M</b><br>
+      Realizado (Mai): <b style="color:var(--amber);">R$ ${(budgetAnual.spent/1e6).toFixed(1)}M (${pct}%)</b><br>
+      Saldo disponível: <b style="color:var(--green);">R$ ${(saldo/1e6).toFixed(1)}M</b><br>
+      Forecast encerramento: <b style="color:var(--red);">R$ 13,1M (+2,3% acima do budget)</b>`;
+  }
+
+  // Contratos vencendo em 30 dias
+  if(q.includes('venc')&&q.includes('30')){
+    return venc30.length
+      ? `📋 <b>${venc30.length} contrato(s) vencendo em 30 dias:</b><br><br>`+venc30.map(c=>`• <b>${c.nome}</b> — vence ${c.fim}<br>  Fornecedor: ${c.fornecedor} · Valor: R$ ${(c.valor/1000).toFixed(0)}K<br>  Renovação: ${c.renovacao}`).join('<br><br>')
+      : '✅ Nenhum contrato vencendo nos próximos 30 dias.';
+  }
+
+  // Contratos vencendo em 90 dias
+  if((q.includes('venc'))||(q.includes('contrato')&&q.includes('dias'))){
+    return venc90.length
+      ? `⚠️ <b>${venc90.length} contrato(s) vencendo em 90 dias:</b><br><br>`+venc90.map(c=>`• <b>${c.nome}</b> — vence <b style="color:var(--amber);">${c.fim}</b><br>  ${c.fornecedor} · R$ ${(c.valor/1000).toFixed(0)}K · ${c.renovacao}`).join('<br><br>')
+      : '✅ Nenhum contrato com vencimento crítico nos próximos 90 dias.';
+  }
+
+  // Incidentes P1
+  if((q.includes('incidente')&&q.includes('p1'))||(q.includes('p1 aberto'))){
+    return `🚨 <b>Incidentes P1 em aberto: 2</b><br><br>
+      • <b>INC0042891</b> — Oracle DB Produção com degradação<br>
+        SLA restante: <span style="color:var(--red);">2h15min</span> · Responsável: J. Santos<br><br>
+      • <b>INC0042904</b> — SAP APP performance <50%<br>
+        SLA restante: <span style="color:var(--amber);">4h30min</span> · Responsável: M. Oliveira<br><br>
+      Total incidentes abertos hoje: <b>23</b> (P1:2 · P2:5 · P3:16)`;
+  }
+
+  // Fornecedor maior consumo
+  if(q.includes('fornecedor')&&(q.includes('maior')||q.includes('consumo'))){
+    const top = contratos.sort((a,b)=>b.valor-a.valor)[0];
+    return `🤝 <b>Maior fornecedor por valor contratado:</b><br><br>
+      <b style="color:var(--teal);">${top.fornecedor}</b><br>
+      Contrato: ${top.nome}<br>
+      Valor: <b style="color:var(--green);">R$ ${top.valor.toLocaleString('pt-BR')}</b><br>
+      Tipo: ${top.tipo} · Vencimento: ${top.fim}`;
+  }
+
+  // COBIT menor maturidade
+  if(q.includes('cobit')||(q.includes('dominio')&&q.includes('menor'))){
+    const baixo = compFrameworks?.sort((a,b)=>a.score-b.score)[0];
+    return baixo
+      ? `📊 <b>Framework com menor conformidade:</b><br><br>
+          <b style="color:var(--red);">ISO 42001 — 45%</b><br>
+          Em seguida: TBM (55%) e NIST CSF (68%)<br><br>
+          Recomendação: priorizar ações corretivas em ISO 42001 e TBM no próximo trimestre.`
+      : `📊 COBIT 2019 — score atual: <b style="color:var(--teal);">78%</b> (meta: 90%)<br>Domínio com menor maturidade: <b>EDM05 · Transparência</b> (62%)`;
+  }
+
+  // Ativos em manutenção
+  if(q.includes('ativo')&&q.includes('manut')){
+    const em = ativosInventario.filter(a=>a.status==='Em manutenção');
+    return em.length
+      ? `🔧 <b>${em.length} ativo(s) em manutenção:</b><br><br>`+em.map(a=>`• <b>${a.nome}</b> (${a.patrimonio})<br>  Local: ${a.local} · Responsável: ${a.resp}`).join('<br><br>')
+      : '✅ Nenhum ativo em manutenção no momento.';
+  }
+
+  // Riscos críticos sem mitigação
+  if(q.includes('risco')&&(q.includes('critico')||q.includes('mitigacao')||q.includes('sem plano'))){
+    return `🔥 <b>Riscos críticos sem plano de mitigação ativo:</b><br><br>
+      • <b>RSC-003</b> — Backup sem suporte (KRI: 95/100)<br>
+        Status: <span style="color:var(--red);">Urgente</span><br><br>
+      • <b>RSC-004</b> — PAM sem rotação de senhas (KRI: 88/100)<br>
+        Status: <span style="color:var(--red);">Urgente</span><br><br>
+      Total riscos críticos acima do apetite: <b>4</b>`;
+  }
+
+  // Mudanças CAB maior impacto
+  if(q.includes('mudanca')&&q.includes('impacto')){
+    const m = mudancasCompletas.filter(x=>x.impacto==='Crítico')[0];
+    return m
+      ? `🔄 <b>Mudança com maior impacto:</b><br><br>
+          <b style="color:var(--red);">${m.id}</b> — ${m.titulo}<br>
+          Impacto: <b>Crítico</b> · Risco: ${m.risco}<br>
+          Sistema: ${m.sistema}<br>
+          Janela: ${m.janela} · Gestor: ${m.gestor}<br>
+          Status: ${m.status}`
+      : '✅ Nenhuma mudança crítica pendente.';
+  }
+
+  // Fallback
+  return `🤖 <b>Pergunta registrada.</b> Não encontrei dados específicos para "<i>${p}</i>".<br><br>
+    Posso responder sobre:<br>
+    • Contratos · CAPEX · OPEX · Budget<br>
+    • Incidentes · P1/P2 · SLA<br>
+    • Ativos · Manutenção · Garantia<br>
+    • Riscos · KRIs · Compliance<br>
+    • Mudanças · CAB · RFC<br>
+    • Fornecedores · FinOps · Cloud`;
+}
+
+// =====================================================================
+// RENDER — FINOPS TORRES E FORNECEDORES
+// =====================================================================
+function renderFinopsTorres(){
+  if(!$('finopsTorres')) return;
+  $('finopsTorres').innerHTML = torresBudget.map(t=>`
+    <div class="torre-card" onclick="">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <div>
+          <div style="font-size:12px;font-weight:600;">${t.torre}</div>
+          <div style="font-size:9px;color:var(--text3);">${t.cat}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:13px;font-weight:700;color:var(--green);">R$ ${(t.realizado/1e3).toFixed(0)}K</div>
+          <div style="font-size:9px;color:var(--text3);">de R$ ${(t.budget/1e3).toFixed(0)}K</div>
+        </div>
+      </div>
+      <div class="torre-bar"><div class="torre-bar-fill" style="width:${Math.round(t.realizado/t.budget*100)}%;background:${t.cor};"></div></div>
+      <div style="font-size:9px;color:var(--text3);margin-top:4px;">${Math.round(t.realizado/t.budget*100)}% consumido · Saldo R$ ${((t.budget-t.realizado)/1e3).toFixed(0)}K</div>
+    </div>`).join('');
+  setTimeout(()=>{
+    initChart('chartBudgetTorre',{
+      type:'bar',
+      data:{
+        labels:torresBudget.map(t=>t.torre.split(' ')[0]),
+        datasets:[
+          {label:'Budget',data:torresBudget.map(t=>t.budget/1e3),backgroundColor:'rgba(79,142,247,0.25)',borderColor:'#4f8ef7',borderWidth:1,borderRadius:3},
+          {label:'Realizado',data:torresBudget.map(t=>t.realizado/1e3),backgroundColor:torresBudget.map(t=>t.cor+'bb'),borderRadius:3},
+        ]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+  },50);
+}
+
+function renderFinopsFornecedores(){
+  if(!$('finopsFornecedores')) return;
+  const fornMap={};
+  contratos.forEach(c=>{ fornMap[c.fornecedor]=(fornMap[c.fornecedor]||0)+c.valor; });
+  const top = Object.entries(fornMap).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const cols=['#4f8ef7','#22d3ee','#2dd4a0','#f5a623','#a78bfa','#f75f5f'];
+  $('finopsFornecedores').innerHTML = top.map(([n,v],i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--bg3);border-radius:8px;margin-bottom:6px;">
+      <span style="width:8px;height:8px;border-radius:50%;background:${cols[i]};flex-shrink:0;"></span>
+      <div style="flex:1;font-size:11px;font-weight:500;">${n}</div>
+      <div style="font-size:13px;font-weight:700;color:${cols[i]};">R$ ${(v/1e3).toFixed(0)}K</div>
+    </div>`).join('');
+  setTimeout(()=>{
+    initChart('chartFornecedores',{
+      type:'bar',
+      data:{
+        labels:top.map(([n])=>n.split(' ')[0]),
+        datasets:[{label:'R$ contratado',data:top.map(([,v])=>v/1e3),backgroundColor:cols,borderRadius:4}]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+  },50);
+}
+
+function renderFinopsRiscos(){
+  if(!$('finopsRiscosFinanc')) return;
+  $('finopsRiscosFinanc').innerHTML = [
+    {icon:'🔴',titulo:'Broadcom VMware +300%',desc:'Contrato CTR-008 vence 31/12/2026. Aumento previsto de R$ 280K → R$ 840K. Avaliar OpenShift/Proxmox.',impacto:'R$ 560K'},
+    {icon:'🔴',titulo:'Forecast acima do budget',desc:'Projeção atual de R$ 13,1M supera budget aprovado de R$ 12,8M. Delta: R$ 300K.',impacto:'R$ 300K'},
+    {icon:'🟡',titulo:'Renovação Oracle DB',desc:'Contrato CTR-001 vence 31/12/2026. Negociação com aumento estimado de 15%.',impacto:'R$ 72K'},
+    {icon:'🟡',titulo:'Consumo IA crescente',desc:'Custo GPT-4o (MDL-004) cresceu 45% em 3 meses. Sem forecast formal definido.',impacto:'R$ 180K/ano'},
+    {icon:'🟢',titulo:'Saving identificado — Reserved Instances',desc:'AWS Reserved Instances vs On-Demand: economia potencial de R$ 320K/ano.',impacto:'-R$ 320K'},
+  ].map(r=>`<div style="display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--bg3);border-radius:10px;margin-bottom:8px;border:1px solid var(--border);">
+    <span style="font-size:18px;flex-shrink:0;">${r.icon}</span>
+    <div style="flex:1;">
+      <div style="font-size:12px;font-weight:600;margin-bottom:3px;">${r.titulo}</div>
+      <div style="font-size:11px;color:var(--text2);line-height:1.5;">${r.desc}</div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:${r.impacto.startsWith('-')?'var(--green)':'var(--red)'};white-space:nowrap;">${r.impacto}</div>
+  </div>`).join('');
+}
+
+// Injeta chamadas extras nos renders existentes
+const _origRenderFinops = renderFinops;
+function renderFinops(){
+  _origRenderFinops();
+  renderFinopsTorres();
+  renderFinopsFornecedores();
+  renderFinopsRiscos();
+  // Saldo chart
+  setTimeout(()=>{
+    const saldos = budgetAnual.actual.slice(0,5).map((v,i)=>v?budgetAnual.plan[i]-v:null);
+    initChart('chartSaldo',{
+      type:'line',
+      data:{
+        labels:['Jan','Fev','Mar','Abr','Mai'],
+        datasets:[{
+          label:'Saldo (planejado − realizado)',
+          data:saldos,
+          borderColor:saldos.map(s=>s>=0?'#2dd4a0':'#f75f5f')[0]||'#2dd4a0',
+          backgroundColor:'rgba(45,212,160,0.08)',
+          tension:0.3,fill:true,
+          segment:{borderColor:ctx=>ctx.p1.parsed.y<0?'#f75f5f':'#2dd4a0'}
+        }]
+      },
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}
+    });
+  },60);
+}
+
+const _origRenderAtivos = renderAtivos;
+function renderAtivos(){
+  _origRenderAtivos();
+  renderAtivosExtra();
+}
 
 // =====================================================================
 // INICIALIZAÇÃO
