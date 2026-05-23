@@ -402,6 +402,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <button class="tab" data-tab="pmo" style="--tab-color:var(--blue);" onclick="switchTab('pmo',this)"><span class="tab-icon">🚀</span> PMO</button>
     <button class="tab" data-tab="cmdb" style="--tab-color:var(--teal);" onclick="switchTab('cmdb',this)"><span class="tab-icon">🧩</span> CMDB</button>
     <button class="tab" data-tab="ativos" style="--tab-color:var(--blue);" onclick="switchTab('ativos',this)"><span class="tab-icon">🖥️</span> Ativos de TI</button>
+    <button class="tab" data-tab="itsm" style="--tab-color:var(--red);" onclick="switchTab('itsm',this)"><span class="tab-icon">🎫</span> ITSM</button>
+    <button class="tab" data-tab="fornecedores" style="--tab-color:var(--teal);" onclick="switchTab('fornecedores',this)"><span class="tab-icon">🤝</span> Fornecedores</button>
+    <button class="tab" data-tab="budget" style="--tab-color:var(--amber);" onclick="switchTab('budget',this)"><span class="tab-icon">📊</span> Budget</button>
     <button class="tab" data-tab="riscos" style="--tab-color:var(--red);" onclick="switchTab('riscos',this)"><span class="tab-icon">🔥</span> Riscos</button>
     <button class="tab" data-tab="finops" style="--tab-color:var(--green);" onclick="switchTab('finops',this)"><span class="tab-icon">💰</span> FinOps</button>
     <button class="tab" data-tab="mudancas" style="--tab-color:var(--blue);" onclick="switchTab('mudancas',this)"><span class="tab-icon">🔄</span> Mudanças & CAB</button>
@@ -870,6 +873,84 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <!-- Contratos Vinculados -->
   <div class="mini-panel" id="ativos-contratos">
     <div class="card"><div class="card-title">📎 Ativos vinculados a contratos de TI</div><div class="tbl-wrap"><table class="tbl" id="tblAtivosContratos"></table></div></div>
+  </div>
+</div>
+
+<!-- ===== ITSM ===== -->
+<div class="tab-panel" id="panel-itsm">
+  <div class="kpi-grid" id="kpiItsm"></div>
+  <div class="g2" style="margin-bottom:12px;">
+    <div class="card">
+      <div class="card-title">📈 Volume de Incidentes · Últimos 6 meses</div>
+      <div style="position:relative;height:200px;"><canvas id="chartItsmTrend"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">⏱️ SLA por Categoria</div>
+      <div style="position:relative;height:200px;"><canvas id="chartItsmSla"></canvas></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎫 Incidentes em Aberto</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+      <select class="form-select" style="font-size:10px;padding:4px 8px;width:120px;" id="itsmFiltroPrio" onchange="renderItsm()">
+        <option value="">Todas prioridades</option><option>P1</option><option>P2</option><option>P3</option><option>P4</option>
+      </select>
+      <select class="form-select" style="font-size:10px;padding:4px 8px;width:120px;" id="itsmFiltroStatus" onchange="renderItsm()">
+        <option value="">Todos os status</option><option>Aberto</option><option>Em atendimento</option><option>Aguardando</option>
+      </select>
+    </div>
+    <div class="tbl-wrap"><table class="tbl" id="tblItsm"></table></div>
+  </div>
+</div>
+
+<!-- ===== FORNECEDORES ===== -->
+<div class="tab-panel" id="panel-fornecedores">
+  <div class="kpi-grid" id="kpiFornecedores"></div>
+  <div class="g2" style="margin-bottom:12px;">
+    <div class="card">
+      <div class="card-title">📊 Distribuição de Gastos por Fornecedor</div>
+      <div style="position:relative;height:220px;"><canvas id="chartFornValor"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">⭐ SLA Médio por Fornecedor (%)</div>
+      <div style="position:relative;height:220px;"><canvas id="chartFornSla"></canvas></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🤝 Carteira de Fornecedores</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblFornecedores"></table></div>
+  </div>
+</div>
+
+<!-- ===== BUDGET ===== -->
+<div class="tab-panel" id="panel-budget">
+  <div class="kpi-grid" id="kpiBudgetTab"></div>
+  <div class="g2" style="margin-bottom:12px;">
+    <div class="card">
+      <div class="card-title">🔵 CAPEX vs OPEX · Distribuição Anual</div>
+      <div style="display:flex;align-items:center;gap:20px;padding:10px 0;">
+        <div style="position:relative;width:180px;height:180px;flex-shrink:0;"><canvas id="chartBudgetCapexOpex" width="180" height="180"></canvas></div>
+        <div id="budgetCapexLegend" style="flex:1;"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📅 Realizado vs Planejado · Mensal (R$ K)</div>
+      <div style="position:relative;height:200px;"><canvas id="chartBudgetMensalTab"></canvas></div>
+    </div>
+  </div>
+  <div class="g2" style="margin-bottom:12px;">
+    <div class="card">
+      <div class="card-title">🏢 Budget por Torre de TI</div>
+      <div style="position:relative;height:220px;"><canvas id="chartBudgetTorreTab"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔮 Forecast · Projeção de Encerramento</div>
+      <div id="budgetForecast"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">📋 Contratos CAPEX e OPEX · Detalhamento</div>
+    <div class="tbl-wrap"><table class="tbl" id="tblBudgetContratos"></table></div>
   </div>
 </div>
 
@@ -1838,7 +1919,8 @@ function renderTab(tab){
     historico:renderHistorico,config:renderConfig,
     itom:renderItom,govai:renderGovai,seguranca:renderSeguranca,compliance:renderCompliance,
     pmo:renderPmo,cmdb:renderCmdb,riscos:renderRiscos,finops:renderFinops,
-    mudancas:renderMudancas,continuidade:renderContinuidade,ativos:renderAtivos
+    mudancas:renderMudancas,continuidade:renderContinuidade,ativos:renderAtivos,
+    itsm:renderItsm,fornecedores:renderFornecedores,budget:renderBudget
   };
   if(fn[tab]) fn[tab]();
 }
@@ -3081,6 +3163,15 @@ function renderGeral(){
     { icon:'🔥', nome:'Riscos', tab:'riscos', cor:'var(--red)',
       status:'4 críticos acima do apetite', statusCor:'var(--red)',
       metricas:[ 'KRI médio: 74/100', '2 sem plano de mitigação', 'Próxima revisão: Jun/26' ] },
+    { icon:'🎫', nome:'ITSM', tab:'itsm', cor:'var(--red)',
+      status:'2 P1 abertos · SLA em risco', statusCor:'var(--red)',
+      metricas:[ '23 incidentes abertos', 'MTTR médio: 4h32min', 'FCR: 67% (meta 75%)' ] },
+    { icon:'🤝', nome:'Fornecedores', tab:'fornecedores', cor:'var(--teal)',
+      status:'SLA médio 98.5%', statusCor:'var(--green)',
+      metricas:[ `${fornecedoresList?.length||8} fornecedores ativos`, 'R$ 7,5M carteira total', '1 SLA em atenção' ] },
+    { icon:'📊', nome:'Budget', tab:'budget', cor:'var(--amber)',
+      status:`${Math.round(budgetAnual.spent/budgetAnual.total*100)}% consumido`, statusCor:'var(--amber)',
+      metricas:[ `CAPEX R$ ${(budgetAnual.capex/1e6).toFixed(1)}M · OPEX R$ ${(budgetAnual.opex/1e6).toFixed(1)}M`, `Realizado: R$ ${(budgetAnual.spent/1e6).toFixed(1)}M`, `Saldo: R$ ${((budgetAnual.total-budgetAnual.spent)/1e6).toFixed(1)}M` ] },
   ];
 
   $('modulosNavGrid').innerHTML = modulos.map(m=>`
@@ -4358,6 +4449,241 @@ function renderFinopsRiscos(){
     </div>
     <div style="font-size:12px;font-weight:700;color:${r.impacto.startsWith('-')?'var(--green)':'var(--red)'};white-space:nowrap;">${r.impacto}</div>
   </div>`).join('');
+}
+
+// =====================================================================
+// ITSM — dados e render
+// =====================================================================
+const incidentesItsm = [
+  {id:'INC0042891',titulo:'Oracle DB Produção — degradação de performance',prio:'P1',status:'Em atendimento',cat:'Banco de Dados',resp:'J. Santos',abertura:'22/05/2026 07:12',sla:'2h15min',slaCor:'var(--red)'},
+  {id:'INC0042904',titulo:'SAP APP performance abaixo de 50%',prio:'P1',status:'Em atendimento',cat:'ERP',resp:'M. Oliveira',abertura:'22/05/2026 08:40',sla:'4h30min',slaCor:'var(--amber)'},
+  {id:'INC0042876',titulo:'VPN corporativa intermitente — filiais SP',prio:'P2',status:'Aberto',cat:'Rede',resp:'R. Lima',abertura:'21/05/2026 18:00',sla:'6h00min',slaCor:'var(--amber)'},
+  {id:'INC0042855',titulo:'E-mail lento — Exchange latência >5s',prio:'P2',status:'Aguardando',cat:'Comunicação',resp:'C. Ferreira',abertura:'21/05/2026 14:22',sla:'8h45min',slaCor:'var(--green)'},
+  {id:'INC0042833',titulo:'Impressora Depto. Financeiro offline',prio:'P3',status:'Aberto',cat:'Periféricos',resp:'T. Costa',abertura:'20/05/2026 09:10',sla:'OK',slaCor:'var(--green)'},
+  {id:'INC0042810',titulo:'Acesso negado ao SharePoint — 3 usuários',prio:'P3',status:'Em atendimento',cat:'IAM',resp:'F. Souza',abertura:'20/05/2026 11:30',sla:'OK',slaCor:'var(--green)'},
+  {id:'INC0042799',titulo:'Dashboard Power BI não atualiza',prio:'P3',status:'Aguardando',cat:'BI',resp:'P. Ramos',abertura:'19/05/2026 16:55',sla:'OK',slaCor:'var(--green)'},
+  {id:'INC0042780',titulo:'Notebook sem bateria — colaborador remoto',prio:'P4',status:'Aberto',cat:'Hardware',resp:'G. Nunes',abertura:'19/05/2026 08:00',sla:'OK',slaCor:'var(--green)'},
+];
+
+function renderItsm(){
+  const filPrio   = $('itsmFiltroPrio')?.value   || '';
+  const filStatus = $('itsmFiltroStatus')?.value || '';
+  const lista = incidentesItsm.filter(i=>
+    (!filPrio   || i.prio===filPrio) &&
+    (!filStatus || i.status===filStatus)
+  );
+
+  // KPIs
+  const p1=incidentesItsm.filter(i=>i.prio==='P1').length;
+  const p2=incidentesItsm.filter(i=>i.prio==='P2').length;
+  const breached=incidentesItsm.filter(i=>i.slaCor==='var(--red)'||i.slaCor==='var(--amber)').length;
+  $('kpiItsm').innerHTML = [
+    {icon:'🎫',label:'Total Incidentes Abertos',val:incidentesItsm.length,sub:`P1: ${p1} · P2: ${p2}`,accent:'var(--blue)'},
+    {icon:'🚨',label:'P1 Críticos',val:p1,sub:'SLA em risco — ação imediata',accent:'var(--red)'},
+    {icon:'⚠️',label:'P2 Altos',val:p2,sub:'Monitoramento ativo',accent:'var(--amber)'},
+    {icon:'⏰',label:'SLAs em Risco',val:breached,sub:'Abaixo do threshold',accent:'var(--red)'},
+    {icon:'✅',label:'FCR (1ª chamada)',val:'67%',sub:'meta: 75%',accent:'var(--green)'},
+    {icon:'⚡',label:'MTTR Médio',val:'4h32min',sub:'P1: 2h15 · P2: 6h40',accent:'var(--purple)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // Tabela
+  $('tblItsm').innerHTML = `<thead><tr><th>ID</th><th>Título</th><th>Prioridade</th><th>Status</th><th>Categoria</th><th>Responsável</th><th>Abertura</th><th>SLA restante</th></tr></thead><tbody>`+
+    lista.map(i=>{
+      const pc=i.prio==='P1'?'b-red':i.prio==='P2'?'b-amber':i.prio==='P3'?'b-blue':'b-teal';
+      const sc=i.status==='Em atendimento'?'b-blue':i.status==='Aguardando'?'b-amber':'b-green';
+      return `<tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--blue);">${i.id}</td>
+        <td style="font-size:11px;max-width:280px;">${i.titulo}</td>
+        <td><span class="badge ${pc}">${i.prio}</span></td>
+        <td><span class="badge ${sc}">${i.status}</span></td>
+        <td style="font-size:10px;">${i.cat}</td>
+        <td style="font-size:10px;">${i.resp}</td>
+        <td style="font-size:10px;font-family:'JetBrains Mono',monospace;">${i.abertura}</td>
+        <td style="font-size:11px;font-weight:700;color:${i.slaCor};">${i.sla}</td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // Gráficos
+  setTimeout(()=>{
+    initChart('chartItsmTrend',{type:'bar',
+      data:{labels:['Dez/25','Jan/26','Fev/26','Mar/26','Abr/26','Mai/26'],
+        datasets:[
+          {label:'P1+P2',data:[12,15,9,14,11,7],backgroundColor:'rgba(247,95,95,0.7)',borderRadius:3},
+          {label:'P3+P4',data:[66,77,56,69,60,51],backgroundColor:'rgba(79,142,247,0.5)',borderRadius:3},
+        ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{x:{stacked:true},y:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'}}}}});
+
+    initChart('chartItsmSla',{type:'bar',
+      data:{labels:['Infra','ERP','Rede','IAM','BI','Hardware','Comunicação'],
+        datasets:[{label:'SLA %',data:[94,87,91,96,88,99,92],
+          backgroundColor:['#2dd4a0','#f5a623','#2dd4a0','#2dd4a0','#f5a623','#2dd4a0','#2dd4a0'],borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},
+        scales:{x:{min:80,max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'}},y:{grid:{display:false}}}}});
+  },50);
+}
+
+// =====================================================================
+// FORNECEDORES — dados e render
+// =====================================================================
+const fornecedoresList = [
+  {nome:'Microsoft',segmento:'Cloud / SaaS',contratos:['Azure EA','M365'],valor:2440000,sla:99.9,status:'✅ OK',contato:'vendor@microsoft.com.br',critico:true},
+  {nome:'Oracle Brasil',segmento:'Software ERP',contratos:['Oracle DB','Oracle EBS'],valor:900000,sla:98.5,status:'✅ OK',contato:'suporte@oracle.com',critico:true},
+  {nome:'ServiceNow',segmento:'ITSM / Plataforma',contratos:['ITSM Platform'],valor:360000,sla:99.5,status:'✅ OK',contato:'partner@servicenow.com',critico:true},
+  {nome:'Equinix Brasil',segmento:'Datacenter / Colocation',contratos:['Co-location SP2'],valor:840000,sla:99.8,status:'✅ OK',contato:'ops@equinix.com',critico:true},
+  {nome:'Fortinet',segmento:'Segurança de Rede',contratos:['Security Suite'],valor:680000,sla:97.2,status:'⚠️ Atenção',contato:'support@fortinet.com',critico:true},
+  {nome:'Broadcom / VMware',segmento:'Virtualização',contratos:['vSphere'],valor:280000,sla:95.0,status:'⚠️ Revisão',contato:'vmware@broadcom.com',critico:false},
+  {nome:'IBM',segmento:'Mainframe / Hardware',contratos:['z16 Leasing'],valor:1400000,sla:99.9,status:'✅ OK',contato:'ibm@br.ibm.com',critico:true},
+  {nome:'SAP Brasil',segmento:'ERP / S4HANA',contratos:['S/4HANA Licença'],valor:620000,sla:98.0,status:'✅ OK',contato:'support@sap.com',critico:true},
+];
+
+function renderFornecedores(){
+  const totalValor = fornecedoresList.reduce((s,f)=>s+f.valor,0);
+  const criticos   = fornecedoresList.filter(f=>f.critico).length;
+  const slaOk      = fornecedoresList.filter(f=>f.sla>=99).length;
+  const emRisco    = fornecedoresList.filter(f=>f.sla<97).length;
+
+  $('kpiFornecedores').innerHTML = [
+    {icon:'🤝',label:'Total Fornecedores',val:fornecedoresList.length,sub:`${criticos} missão crítica`,accent:'var(--blue)'},
+    {icon:'💰',label:'Valor Total Carteira',val:`R$ ${(totalValor/1e6).toFixed(1)}M`,sub:'contratos vigentes',accent:'var(--green)'},
+    {icon:'✅',label:'SLA ≥ 99%',val:slaOk,sub:'fornecedores conformes',accent:'var(--green)'},
+    {icon:'⚠️',label:'SLA em Risco',val:emRisco,sub:'SLA < 97% — atenção',accent:'var(--red)'},
+    {icon:'📋',label:'Contratos Ativos',val:fornecedoresList.reduce((s,f)=>s+f.contratos.length,0),sub:'total de contratos',accent:'var(--teal)'},
+    {icon:'⭐',label:'SLA Médio',val:`${(fornecedoresList.reduce((s,f)=>s+f.sla,0)/fornecedoresList.length).toFixed(1)}%`,sub:'média da carteira',accent:'var(--purple)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // Tabela
+  $('tblFornecedores').innerHTML = `<thead><tr><th>Fornecedor</th><th>Segmento</th><th>Contratos</th><th>Valor Total</th><th>SLA %</th><th>Status</th><th>Missão Crítica</th></tr></thead><tbody>`+
+    fornecedoresList.sort((a,b)=>b.valor-a.valor).map(f=>{
+      const slaC=f.sla>=99?'var(--green)':f.sla>=97?'var(--amber)':'var(--red)';
+      return `<tr>
+        <td style="font-weight:600;">${f.nome}</td>
+        <td style="font-size:10px;color:var(--text3);">${f.segmento}</td>
+        <td style="font-size:10px;">${f.contratos.join(' · ')}</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">R$ ${(f.valor/1000).toFixed(0)}K</td>
+        <td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:${slaC};">${f.sla}%</td>
+        <td>${f.status}</td>
+        <td style="text-align:center;">${f.critico?'⭐ Crítico':'—'}</td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // Gráficos
+  setTimeout(()=>{
+    initChart('chartFornValor',{type:'bar',
+      data:{labels:fornecedoresList.sort((a,b)=>b.valor-a.valor).map(f=>f.nome.split(' ')[0]),
+        datasets:[{label:'Valor (R$ K)',data:fornecedoresList.sort((a,b)=>b.valor-a.valor).map(f=>Math.round(f.valor/1000)),
+          backgroundColor:['#4f8ef7','#22d3ee','#2dd4a0','#a78bfa','#f5a623','#f75f5f','#8888bb','#4f8ef7'],borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+
+    initChart('chartFornSla',{type:'bar',
+      data:{labels:fornecedoresList.map(f=>f.nome.split(' ')[0]),
+        datasets:[{label:'SLA %',data:fornecedoresList.map(f=>f.sla),
+          backgroundColor:fornecedoresList.map(f=>f.sla>=99?'#2dd4a0':f.sla>=97?'#f5a623':'#f75f5f'),borderRadius:4}]},
+      options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},
+        scales:{x:{min:90,max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(255,255,255,0.04)'}},y:{grid:{display:false}}}}});
+  },50);
+}
+
+// =====================================================================
+// BUDGET — render dedicado CAPEX/OPEX
+// =====================================================================
+function renderBudget(){
+  const totalContr = contratos.reduce((s,c)=>s+c.valor,0);
+  const capexContr = contratos.filter(c=>c.tipo==='CAPEX').reduce((s,c)=>s+c.valor,0);
+  const opexContr  = contratos.filter(c=>c.tipo==='OPEX').reduce((s,c)=>s+c.valor,0);
+  const saldo      = budgetAnual.total - budgetAnual.spent;
+  const pctUsado   = Math.round(budgetAnual.spent/budgetAnual.total*100);
+
+  $('kpiBudgetTab').innerHTML = [
+    {icon:'📊',label:'Budget TI Anual',val:'R$ 12,8M',sub:'aprovado Conselho 2026',accent:'var(--teal)'},
+    {icon:'🏗️',label:'CAPEX',val:`R$ ${(budgetAnual.capex/1e6).toFixed(1)}M`,sub:`${Math.round(budgetAnual.capex/budgetAnual.total*100)}% do budget · investimentos`,accent:'var(--blue)'},
+    {icon:'🔄',label:'OPEX',val:`R$ ${(budgetAnual.opex/1e6).toFixed(1)}M`,sub:`${Math.round(budgetAnual.opex/budgetAnual.total*100)}% do budget · operação`,accent:'var(--teal)'},
+    {icon:'✅',label:'Realizado (Mai)',val:`R$ ${(budgetAnual.spent/1e6).toFixed(1)}M`,sub:`${pctUsado}% consumido no ano`,accent:'var(--green)'},
+    {icon:'💼',label:'Saldo Disponível',val:`R$ ${(saldo/1e6).toFixed(1)}M`,sub:`${100-pctUsado}% livre para H2`,accent:saldo>0?'var(--green)':'var(--red)'},
+    {icon:'🔮',label:'Forecast Encerramento',val:'R$ 13,1M',sub:'+2,3% acima do budget',accent:'var(--amber)'},
+  ].map(k=>`<div class="kpi" style="--accent:${k.accent}"><div class="kpi-icon">${k.icon}</div><div class="kpi-label">${k.label}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join('');
+
+  // Legenda CAPEX/OPEX
+  const pctCapex=Math.round(budgetAnual.capex/budgetAnual.total*100);
+  const pctOpex =Math.round(budgetAnual.opex/budgetAnual.total*100);
+  $('budgetCapexLegend').innerHTML = `
+    <div style="margin-bottom:14px;">
+      <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;">CAPEX · Investimentos</div>
+      <div style="font-size:24px;font-weight:700;color:var(--blue);">R$ ${(budgetAnual.capex/1e6).toFixed(1)}M</div>
+      <div style="font-size:11px;color:var(--text2);">${pctCapex}% do budget total</div>
+      <div style="height:4px;border-radius:2px;background:var(--bg3);margin-top:6px;overflow:hidden;">
+        <div style="height:100%;width:${pctCapex}%;background:var(--blue);border-radius:2px;"></div></div>
+    </div>
+    <div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;">OPEX · Operação</div>
+      <div style="font-size:24px;font-weight:700;color:var(--teal);">R$ ${(budgetAnual.opex/1e6).toFixed(1)}M</div>
+      <div style="font-size:11px;color:var(--text2);">${pctOpex}% do budget total</div>
+      <div style="height:4px;border-radius:2px;background:var(--bg3);margin-top:6px;overflow:hidden;">
+        <div style="height:100%;width:${pctOpex}%;background:var(--teal);border-radius:2px;"></div></div>
+    </div>`;
+
+  // Forecast card
+  $('budgetForecast').innerHTML = [
+    {label:'Budget aprovado',val:'R$ 12,8M',cor:'var(--text1)'},
+    {label:'Realizado até mai/26',val:`R$ ${(budgetAnual.spent/1e6).toFixed(1)}M (${pctUsado}%)`,cor:'var(--amber)'},
+    {label:'Projeção H2',val:`R$ ${((budgetAnual.total-budgetAnual.spent)/1e6*1.05).toFixed(1)}M estimado`,cor:'var(--blue)'},
+    {label:'Forecast encerramento',val:'R$ 13,1M',cor:'var(--red)'},
+    {label:'Desvio projetado',val:'+R$ 300K (+2,3%)',cor:'var(--red)'},
+    {label:'Ação recomendada',val:'Revisão de escopo em projetos PMO',cor:'var(--amber)'},
+  ].map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+    <span style="font-size:11px;color:var(--text3);">${r.label}</span>
+    <span style="font-size:12px;font-weight:700;color:${r.cor};">${r.val}</span>
+  </div>`).join('');
+
+  // Tabela contratos
+  $('tblBudgetContratos').innerHTML = `<thead><tr><th>Contrato</th><th>Fornecedor</th><th>Tipo</th><th>Valor</th><th>% do Budget</th><th>Status</th></tr></thead><tbody>`+
+    contratos.sort((a,b)=>b.valor-a.valor).map(c=>{
+      const pct=Math.round(c.valor/budgetAnual.total*100);
+      const tc=c.tipo==='CAPEX'?'b-blue':'b-teal';
+      const sc=c.status==='Ativo'?'b-green':c.status==='Em andamento'?'b-blue':'b-amber';
+      return `<tr>
+        <td style="font-weight:600;">${c.nome}</td>
+        <td style="font-size:10px;color:var(--text3);">${c.fornecedor}</td>
+        <td><span class="badge ${tc}">${c.tipo}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green);">R$ ${(c.valor/1000).toFixed(0)}K</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="flex:1;height:4px;border-radius:2px;background:var(--bg3);overflow:hidden;">
+              <div style="height:100%;width:${Math.min(pct*5,100)}%;background:${c.tipo==='CAPEX'?'var(--blue)':'var(--teal)'};border-radius:2px;"></div></div>
+            <span style="font-size:10px;font-weight:600;">${pct}%</span>
+          </div>
+        </td>
+        <td><span class="badge ${sc}">${c.status}</span></td>
+      </tr>`;
+    }).join('')+'</tbody>';
+
+  // Gráficos
+  setTimeout(()=>{
+    // CAPEX vs OPEX doughnut
+    initChart('chartBudgetCapexOpex',{type:'doughnut',
+      data:{labels:['CAPEX','OPEX'],datasets:[{data:[budgetAnual.capex,budgetAnual.opex],backgroundColor:['#4f8ef7','#22d3ee'],borderWidth:0}]},
+      options:{responsive:false,plugins:{legend:{display:false}},cutout:'65%'}});
+
+    // Mensal
+    initChart('chartBudgetMensalTab',{type:'bar',
+      data:{labels:budgetAnual.labels.slice(0,8),
+        datasets:[
+          {label:'Planejado',data:budgetAnual.plan.slice(0,8),backgroundColor:'rgba(79,142,247,0.3)',borderColor:'#4f8ef7',borderWidth:1,borderRadius:3},
+          {label:'Realizado',data:budgetAnual.actual.slice(0,8).map(v=>v||null),backgroundColor:'rgba(34,211,238,0.7)',borderColor:'#22d3ee',borderWidth:1,borderRadius:3},
+        ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},
+        scales:{y:{ticks:{callback:v=>v?v+'K':''},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+
+    // Torres
+    initChart('chartBudgetTorreTab',{type:'bar',
+      data:{labels:torresBudget.map(t=>t.torre.split(' ')[0]),
+        datasets:[
+          {label:'Planejado',data:torresBudget.map(t=>Math.round(t.plan/1000)),backgroundColor:'rgba(79,142,247,0.3)',borderRadius:3},
+          {label:'Realizado',data:torresBudget.map(t=>Math.round(t.real/1000)),backgroundColor:torresBudget.map(t=>t.real>t.plan?'rgba(247,95,95,0.7)':'rgba(45,212,160,0.7)'),borderRadius:3},
+        ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},
+        scales:{y:{ticks:{callback:v=>v+'K'},grid:{color:'rgba(255,255,255,0.04)'}}}}});
+  },60);
 }
 
 // =====================================================================
