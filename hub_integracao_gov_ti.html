@@ -426,9 +426,11 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </div>
     <div class="card">
       <div class="card-title">🎯 Incidentes Abertos por Prioridade</div>
-      <div style="display:flex;align-items:center;gap:18px;">
-        <canvas id="chartIncPriority" width="150" height="150" style="flex-shrink:0;"></canvas>
-        <div id="incPriorityLegend" style="min-width:130px;max-width:180px;"></div>
+      <div style="display:flex;justify-content:center;">
+        <div style="position:relative;width:190px;height:190px;">
+          <canvas id="chartIncPriority" width="190" height="190"></canvas>
+          <div id="incPriorityLegend" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:left;pointer-events:none;"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -3077,20 +3079,18 @@ function renderGeral(){
     initChart('chartIncPriority',{
       type:'doughnut',
       data:{labels:priLabels,datasets:[{data:priData,backgroundColor:priColors,borderWidth:0}]},
-      options:{responsive:false,plugins:{legend:{display:false}},cutout:'68%'}
+      options:{responsive:false,plugins:{legend:{display:false}},cutout:'62%'}
     });
     const priTotal = priData.reduce((a,b)=>a+b,0);
-    $('incPriorityLegend').innerHTML = priLabels.map((l,i)=>
-      `<div style="margin-bottom:9px;">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
-          <span style="width:9px;height:9px;border-radius:2px;background:${priColors[i]};display:inline-block;flex-shrink:0;"></span>
-          <span style="font-size:11px;white-space:nowrap;">${l}</span>
-          <span style="font-size:13px;font-weight:700;color:${priColors[i]};margin-left:4px;">${priData[i]}</span>
-        </div>
-        <div style="height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;">
-          <div style="height:100%;width:${Math.round(priData[i]/priTotal*100)}%;background:${priColors[i]};border-radius:2px;"></div>
-        </div>
-       </div>`).join('');
+    $('incPriorityLegend').innerHTML =
+      `<div style="font-size:9px;color:var(--text3);text-align:center;margin-bottom:4px;letter-spacing:0.05em;">TOTAL</div>
+       <div style="font-size:22px;font-weight:700;color:var(--text1);text-align:center;line-height:1;margin-bottom:6px;">${priTotal}</div>`+
+      priLabels.map((l,i)=>
+        `<div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;">
+          <span style="width:7px;height:7px;border-radius:1px;background:${priColors[i]};flex-shrink:0;"></span>
+          <span style="font-size:9px;color:var(--text2);white-space:nowrap;">${l.split(' ')[0]}</span>
+          <span style="font-size:11px;font-weight:700;color:${priColors[i]};margin-left:2px;">${priData[i]}</span>
+        </div>`).join('');
 
     // Budget stacked
     initChart('chartBudgetStack',{
