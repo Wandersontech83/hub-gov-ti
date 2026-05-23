@@ -1860,8 +1860,13 @@ function switchTab(tab, el){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   $('panel-'+tab).classList.add('active');
-  el.classList.add('active');
+  if(el) el.classList.add('active');
   renderTab(tab);
+}
+function navToModule(tab){
+  const btn = document.querySelector('[data-tab="'+tab+'"]');
+  switchTab(tab, btn);
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 function openModal(id){$(id).classList.add('open');}
 function closeModal(id){$(id).classList.remove('open');}
@@ -3175,7 +3180,7 @@ function renderGeral(){
   ];
 
   $('modulosNavGrid').innerHTML = modulos.map(m=>`
-    <div class="mod-card" style="--mod-color:${m.cor};" onclick="switchTab('${m.tab}',document.querySelector('[data-tab=${m.tab}]'))">
+    <div class="mod-card" style="--mod-color:${m.cor};" onclick="navToModule('${m.tab}')">
       <div class="mod-card-icon">${m.icon}</div>
       <div class="mod-card-name">${m.nome}</div>
       <div class="mod-card-status"><span style="width:6px;height:6px;border-radius:50%;background:${m.statusCor};display:inline-block;"></span>${m.status}</div>
